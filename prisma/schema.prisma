@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Penduduk {
+  nik                 String           @id
+  no_kk              String
+  nama_lengkap       String
+  nama_ibu           String
+  nama_ayah          String
+  kelahiran_ke       Int
+  jenis_kelamin      JenisKelamin
+  jenis_kelamin_lengkap JenisKelaminLengkap
+  tempat_lahir       String
+  tanggal_lahir      DateTime
+  alamat             String
+  rt                 Int
+  rw                 Int
+  keterangan         String?
+
+  riwayatLayanan     RiwayatLayanan[] @relation("PendudukRiwayat")
+}
+
+model RiwayatLayanan {
+  no_resi     Int      @id @default(autoincrement())
+  nik         String
+  date        DateTime
+  keterangan  String
+  status      String
+
+  penduduk    Penduduk @relation("PendudukRiwayat", fields: [nik], references: [nik])
+  logStatus   LogPerubahanStatus[]
+}
+
+model Admin {
+  id       Int     @id @default(autoincrement())
+  nama     String
+  email    String
+  password String
+
+  logStatus LogPerubahanStatus[]
+}
+
+model LogPerubahanStatus {
+  id               Int              @id @default(autoincrement())
+  no_resi          Int
+  admin_id         Int
+  status_lama      String
+  status_baru      String
+  waktu_perubahan  DateTime
+
+  riwayatLayanan   RiwayatLayanan @relation(fields: [no_resi], references: [no_resi])
+  admin            Admin          @relation(fields: [admin_id], references: [id])
+}
+
+enum JenisKelamin {
+  L
+  P
+}
+
+enum JenisKelaminLengkap {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
+
