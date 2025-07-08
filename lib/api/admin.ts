@@ -34,3 +34,17 @@ export async function fetchPendudukByNik(nik: string) {
   return res.json();
 }
 
+export async function logoutAdmin() {
+  const res = await fetch("/api/auth/logout", {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Logout gagal");
+  }
+
+  return res.json();
+}
+
+

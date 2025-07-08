@@ -1,7 +1,13 @@
-import { cookies } from "next/headers"
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  const cookieStore = cookies()
-  ;(await cookieStore).delete("admin_token")
-  return Response.json({ message: "Logout berhasil" })
+  const response = NextResponse.json({ message: "Logout berhasil" });
+
+  response.cookies.set("admin_token", "", {
+    httpOnly: true,
+    path: "/",
+    expires: new Date(0),
+  });
+
+  return response;
 }
