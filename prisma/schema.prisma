@@ -19,23 +19,20 @@ model Penduduk {
   nik                String           @id
   no_kk              String
   nama_lengkap       String
-  nama_ibu           String
-  nama_ayah          String
-  kelahiran_ke       Int
-  jenis_kelamin_encode  Int
+  nama_ibu           String?
+  nama_ayah          String?
   jenis_kelamin      String
   tempat_lahir       String
   tanggal_lahir      DateTime
   alamat             String
   rt                 Int
   rw                 Int
-  keterangan         String?
 
   riwayatLayanan     RiwayatLayanan[] @relation("PendudukRiwayat")
 }
 
 model RiwayatLayanan {
-  no_resi     Int      @id @default(autoincrement())
+  no_resi     String      @id
   nik         String
   date        DateTime
   keterangan  String
@@ -43,6 +40,8 @@ model RiwayatLayanan {
 
   penduduk    Penduduk @relation("PendudukRiwayat", fields: [nik], references: [nik])
   logStatus   LogPerubahanStatus[]
+
+  @@index([nik])
 }
 
 model Admin {
@@ -56,7 +55,7 @@ model Admin {
 
 model LogPerubahanStatus {
   id               Int              @id @default(autoincrement())
-  no_resi          Int
+  no_resi          String
   admin_id         Int
   status_lama      String
   status_baru      String
@@ -64,16 +63,10 @@ model LogPerubahanStatus {
 
   riwayatLayanan   RiwayatLayanan @relation(fields: [no_resi], references: [no_resi])
   admin            Admin          @relation(fields: [admin_id], references: [id])
+
+  @@index([no_resi])
+  @@index([admin_id])
 }
 
-enum JenisKelamin {
-  L
-  P
-}
-
-enum JenisKelaminLengkap {
-  LAKI_LAKI
-  PEREMPUAN
-}
 
 

@@ -1,30 +1,49 @@
-import { prisma } from "@lib/prisma"
+// src/app/api/login/route.ts
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json()
+  const { email, password } = await req.json();
 
   if (!email || !password) {
-    return Response.json({ error: "Email dan password wajib diisi" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Email dan password wajib diisi" },
+      { status: 400 }
+    );
   }
 
-  // Cari admin dengan email & password
   const admin = await prisma.admin.findFirst({
     where: {
       email,
       password,
     },
-  })
+  });
 
   if (!admin) {
-    return Response.json({ error: "Email atau password salah" }, { status: 401 })
+    return NextResponse.json(
+      { error: "Email atau password salah" },
+      { status: 401 }
+    );
   }
 
-  return Response.json({
+  const token = `${admin.id}-${admin.email}`;
+
+  const res = NextResponse.json({
     message: "Login berhasil",
     admin: {
       id: admin.id,
       nama: admin.nama,
       email: admin.email,
     },
-  })
+  });
+
+  res.cookies.set("admin_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+    sameSite: "strict",
+  });
+
+  return res;
 }
