@@ -16,14 +16,14 @@ datasource db {
 }
 
 model Penduduk {
-  nik                 String           @id
+  nik                String           @id
   no_kk              String
   nama_lengkap       String
   nama_ibu           String
   nama_ayah          String
   kelahiran_ke       Int
-  jenis_kelamin      JenisKelamin
-  jenis_kelamin_lengkap JenisKelaminLengkap
+  jenis_kelamin_encode  Int
+  jenis_kelamin      String
   tempat_lahir       String
   tanggal_lahir      DateTime
   alamat             String
