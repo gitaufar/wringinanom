@@ -7,10 +7,8 @@ const Footer = () => {
         
         <div>
           <h1 className="text-white text-2xl font-bold">Desa Wringinanom</h1>
-          <p className="text-white text-lg leading-relaxed mt-4 whitespace-pre-line">
-            {`afadsasfaf
-              afdasfasfs
-              fasdasfasfa`}
+          <p className="text-white text-lg leading-relaxed mt-4 whitespace-pre-line max-w-[35ch]">
+            {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since `}
           </p>
         </div>
 
