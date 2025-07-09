@@ -31,6 +31,13 @@ model Penduduk {
   riwayatLayanan     RiwayatLayanan[] @relation("PendudukRiwayat")
 }
 
+model DataTambahanKematian {
+  hari               String
+  tanggal            String
+  waktu              String
+  
+}
+
 model RiwayatLayanan {
   no_resi     String      @id
   nik         String
