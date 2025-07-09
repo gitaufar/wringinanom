@@ -1,32 +1,42 @@
-import React from 'react'
+"use client";
+import { usePathname } from "next/navigation";
 
-const Footer = () => {
+export default function Footer() {
+  const path = usePathname();
+  const hideFooterRoutes = ["/login", "/register", "/Chat", "/createProfile", "/kostumasiUser"];
+  const shouldHideFooter = hideFooterRoutes.includes(path);
+
+  if (shouldHideFooter) return null;
+
   return (
-    <>
-      <section className="flex justify-between bg-[#34518D] pt-12 pb-14 px-14">
-        
+    <footer className="bg-white border-t mt-10">
+      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
-          <h1 className="text-white text-2xl font-bold">Desa Wringinanom</h1>
-          <p className="text-white text-lg leading-relaxed mt-4 whitespace-pre-line max-w-[35ch]">
-            {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since `}
+          <h2 className="text-lg font-semibold text-gray-900">Desa Wringinanom</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          </p>
+          <p className="text-sm text-gray-600">
+            Lorem Ipsum has been the industry's standard dummy text ever since.
           </p>
         </div>
 
-        
-        <div className="text-white text-right space-y-3">
-          <h2 className="text-xl font-semibold">Kontak Desa</h2>
-          <p>(kontak) 0812-3456-7890</p>
-          <p>(Email) kontak@desakita.id</p>
-          <p>(lokasi) Jl. Raya Desa No. 123</p>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Kontak Desa</h2>
+          <ul className="mt-2 text-sm text-gray-600 space-y-1">
+            <li>(kontak) 0812-3456-7890</li>
+            <li>(Email) kontak@desakita.id</li>
+            <li>(lokasi) Jl. Raya Desa No. 123</li>
+          </ul>
         </div>
-      </section>
 
-      
-      <div className="bg-[#34518D] border-t border-white py-4 text-center">
-        <p className="text-white text-sm">&copy; 2025 Desa Wringinanom. All rights reserved.</p>
+        <div className="hidden lg:block" /> {/* Optional: kolom ketiga kosong biar rapi */}
       </div>
-    </>
-  )
+      <div className="border-t">
+        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-gray-500">
+          © 2025 Desa Wringinanom. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
 }
-
-export default Footer
