@@ -8,8 +8,6 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "flowbite-react patch"
-    "lint": "next lint",
-    "postinstall": "flowbite-react patch"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
