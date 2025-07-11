@@ -1,49 +1,53 @@
 import { PencilIcon } from "lucide-react";
 
-type InputField = {
-	inputLabel?: string;
-	inputPlaceholder: string;
-	setData: (value: string) => void;
-	setEditData: (value: boolean) => void;
-	editData: boolean;
-	submited: string | null;
-	data?: string;
-	numberOnly?: boolean;
+type InputFieldDropdownProps = {
+  inputLabel?: string;
+  inputPlaceholder?: string;
+  options: string[];
+  data?: string;
+  setData: (value: string) => void;
+  setEditData: (value: boolean) => void;
+  editData: boolean;
+  submited: string | null;
 };
 
-export default function InputField({
+export default function InputFieldDropdown({
   inputLabel,
-  inputPlaceholder,
+  inputPlaceholder = "Pilih...",
+  options,
+  data = "",
   setData,
   setEditData,
   editData,
   submited,
-  data = "",
-  numberOnly = false,
-}: InputField) {
+}: InputFieldDropdownProps) {
   return (
     <div className="flex flex-col gap-3">
       {inputLabel && (
-        <label className="text-base sm:text-base font-normal text-neutral-600">{inputLabel}</label>
+        <label className="text-base font-normal text-neutral-600">{inputLabel}</label>
       )}
       <div className="relative flex justify-end items-center">
-        <input
+        <select
+          disabled={!editData}
           value={data}
           onChange={(e) => setData(e.target.value)}
-          onKeyDown={(event) => {
-            if (numberOnly && !/[0-9]/.test(event.key) && event.key !== "Backspace") {
-              event.preventDefault();
-            }
-          }}
           className={`w-full text-xs sm:text-base font-normal border ${
             editData
               ? "bg-transparent border-[#D5D5D5]"
-              : "bg-[#F5F6FA] border-transparent "
-          } placeholder:text-neutral-400 px-[12px] py-[8px] rounded-[4px] outline-none`}
-          type="text"
-          placeholder={inputPlaceholder}
-          disabled={!editData}
-        />
+              : "bg-[#F5F6FA] border-transparent"
+          } px-[12px] py-[8px] rounded-[4px] outline-none ${
+            data === "" ? "text-neutral-400" : "text-black"
+          }`}
+        >
+          <option value="" disabled hidden>
+            {inputPlaceholder}
+          </option>
+          {options.map((opt) => (
+            <option className="text-black" key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
         {(submited === null || submited === "submit") && (
           <div
             onClick={() => setEditData(!editData)}

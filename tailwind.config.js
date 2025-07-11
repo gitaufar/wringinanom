@@ -1,9 +1,12 @@
-
 module.exports = {
   content: [
-    // ... path Anda
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}", // kalau kamu simpan file di src/
+    "./node_modules/flowbite-react/**/*.js"
   ],
   plugins: [
-    require('flowbite/plugin') // <- Ini memerlukan file config
+    require("flowbite/plugin"),
   ],
-}
+};

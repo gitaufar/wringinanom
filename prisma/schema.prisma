@@ -16,19 +16,24 @@ datasource db {
 }
 
 model Penduduk {
-  nik              String            @id
-  no_kk            String
-  nama_lengkap     String
-  nama_ibu         String?
-  nama_ayah        String?
-  jenis_kelamin    String
-  tempat_lahir     String
-  tanggal_lahir    DateTime
-  alamat           String
-  rt               Int
-  rw               Int
-  pekerjaan        String?
-  agama            String?
+  nik                 String   @id
+  no_kk               String
+  nama_lengkap        String?
+  nama_ibu            String?
+  nama_ayah           String?
+  jenis_kelamin       String
+  tempat_lahir        String
+  tanggal_lahir       DateTime
+  agama               String
+  pendidikan          String
+  pekerjaan           String?
+  golongan_darah      String
+  status_perkawinan   String
+  tanggal_perkawinan  DateTime?
+  status_keluarga     String
+  alamat              String
+  rt                  Int
+  rw                  Int
 
   riwayatLayanan   RiwayatLayanan[]     @relation("PendudukRiwayat")
   permohonanSurat  PermohonanSurat[]    @relation("PendudukPermohonan")
@@ -54,7 +59,6 @@ model PermohonanSurat {
   jenis_surat    String   // contoh: "Beda Identitas", "Domisili", "Permohonan KTP"
   tanggal        DateTime @default(now())
   status         String   @default("Menunggu") // Menunggu, Diproses, Selesai
-  keterangan     String?  // opsional jika diperlukan
   data_dinamis   Json?    // data variatif sesuai jenis surat
   no_resi        String   @unique
 
