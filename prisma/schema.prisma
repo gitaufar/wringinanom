@@ -16,26 +16,22 @@ datasource db {
 }
 
 model Penduduk {
-  nik                String           @id
-  no_kk              String
-  nama_lengkap       String
-  nama_ibu           String?
-  nama_ayah          String?
-  jenis_kelamin      String
-  tempat_lahir       String
-  tanggal_lahir      DateTime
-  alamat             String
-  rt                 Int
-  rw                 Int
+  nik              String            @id
+  no_kk            String
+  nama_lengkap     String
+  nama_ibu         String?
+  nama_ayah        String?
+  jenis_kelamin    String
+  tempat_lahir     String
+  tanggal_lahir    DateTime
+  alamat           String
+  rt               Int
+  rw               Int
+  pekerjaan        String?
+  agama            String?
 
-  riwayatLayanan     RiwayatLayanan[] @relation("PendudukRiwayat")
-}
-
-model DataTambahanKematian {
-  hari               String
-  tanggal            String
-  waktu              String
-  
+  riwayatLayanan   RiwayatLayanan[]     @relation("PendudukRiwayat")
+  permohonanSurat  PermohonanSurat[]    @relation("PendudukPermohonan")
 }
 
 model RiwayatLayanan {
@@ -43,10 +39,27 @@ model RiwayatLayanan {
   nik         String
   date        DateTime
   keterangan  String
-  status      String
+  status      String      // Menunggu | Diproses | Ditolak | Selesai
 
-  penduduk    Penduduk @relation("PendudukRiwayat", fields: [nik], references: [nik])
+  penduduk    Penduduk     @relation("PendudukRiwayat", fields: [nik], references: [nik])
   logStatus   LogPerubahanStatus[]
+  permohonan  PermohonanSurat?
+
+  @@index([nik])
+}
+
+model PermohonanSurat {
+  id             String   @id @default(cuid())
+  nik            String
+  jenis_surat    String   // contoh: "Beda Identitas", "Domisili", "Permohonan KTP"
+  tanggal        DateTime @default(now())
+  status         String   @default("Menunggu") // Menunggu, Diproses, Selesai
+  keterangan     String?  // opsional jika diperlukan
+  data_dinamis   Json?    // data variatif sesuai jenis surat
+  no_resi        String   @unique
+
+  penduduk       Penduduk       @relation("PendudukPermohonan", fields: [nik], references: [nik])
+  riwayat        RiwayatLayanan @relation(fields: [no_resi], references: [no_resi])
 
   @@index([nik])
 }
@@ -54,7 +67,7 @@ model RiwayatLayanan {
 model Admin {
   id       Int     @id @default(autoincrement())
   nama     String
-  email    String
+  email    String   @unique
   password String
 
   logStatus LogPerubahanStatus[]
@@ -74,6 +87,7 @@ model LogPerubahanStatus {
   @@index([no_resi])
   @@index([admin_id])
 }
+
 
 
 

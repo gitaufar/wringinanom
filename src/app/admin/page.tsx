@@ -8,7 +8,7 @@ const page = () => {
   return (
     <div className='w-screen h-screen bg-red-900'>
       <Dashboard />
-      <ButtonLogout />
+      <ButtonLogout/>
       </div>
   )
 }
