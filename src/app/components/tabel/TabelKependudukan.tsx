@@ -2,27 +2,7 @@
 import { useEffect, useState } from "react";
 import ButtonAction from "../button/ButtonAction";
 import { format } from "date-fns";
-
-type Penduduk = {
-  nik: string;
-  no_kk: string;
-  nama_lengkap?: string;
-  nama_ibu?: string;
-  nama_ayah?: string;
-  jenis_kelamin: string;
-  tempat_lahir: string;
-  tanggal_lahir: string;
-  agama: string;
-  pendidikan: string;
-  pekerjaan?: string;
-  golongan_darah: string;
-  status_perkawinan: string;
-  tanggal_perkawinan?: string;
-  status_keluarga: string;
-  alamat: string;
-  rt: number;
-  rw: number;
-};
+import { Penduduk } from "@prisma/client";
 
 const TabelKependudukan = () => {
   const [dataPenduduk, setDataPenduduk] = useState<Penduduk[]>([]);
