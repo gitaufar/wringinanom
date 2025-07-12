@@ -5,10 +5,23 @@ import { format } from "date-fns";
 
 type Penduduk = {
   nik: string;
-  nama: string;
-  jenisKelamin: string;
-  tanggalLahir: string;
+  no_kk: string;
+  nama_lengkap?: string;
+  nama_ibu?: string;
+  nama_ayah?: string;
+  jenis_kelamin: string;
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  agama: string;
+  pendidikan: string;
+  pekerjaan?: string;
+  golongan_darah: string;
+  status_perkawinan: string;
+  tanggal_perkawinan?: string;
+  status_keluarga: string;
   alamat: string;
+  rt: number;
+  rw: number;
 };
 
 const TabelKependudukan = () => {
@@ -64,7 +77,9 @@ const TabelKependudukan = () => {
                 <td className="py-4 px-4 align-middle">{item.nik}</td>
                 <td className="py-4 px-4 align-middle">{item.nama_lengkap}</td>
                 <td className="py-4 px-4 align-middle">{item.nama_ibu}</td>
-                <td className="py-4 px-4 align-middle">{format(new Date(item.tanggal_lahir), "dd-MM-yyyy")}</td>
+                <td className="py-4 px-4 align-middle">
+                  {format(new Date(item.tanggal_lahir), "dd-MM-yyyy")}
+                </td>
                 <td className="py-4 px-4 align-middle">{item.alamat}</td>
                 <td className="py-4 px-4 align-middle">
                   <ButtonAction
