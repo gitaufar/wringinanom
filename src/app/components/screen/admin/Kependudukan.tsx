@@ -3,8 +3,11 @@ import TabelKependudukan from "../../../components/tabel/TabelKependudukan";
 import TabelKonfirmasi from "../../../components/tabel/TabelKonfirmasi";
 import ButtonTambahPenduduk from "../../../components/button/ButtonTambahPenduduk";
 import FilterPenduduk from "../../filter/FilterPenduduk";
+import { useRouter } from "next/navigation";
 
 const KependudukanPage = () => {
+const router = useRouter();
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Kependudukan</h1>
@@ -15,13 +18,13 @@ const KependudukanPage = () => {
           <FilterPenduduk />
         </div>
         <div className="ml-4 shrink-0">
-          <ButtonTambahPenduduk onClick={() => alert("Tambah Penduduk")} />
+          <ButtonTambahPenduduk onClick={() => router.push("/admin/tambah-penduduk")} />
         </div>
       </div>
 
-      {/* Tabel Konfirmasi */}
+      {/* Tabel Konfirmasi
       <h1 className="text-2xl font-semibold">Menunggu Konfirmasi</h1>
-      <TabelKonfirmasi />
+      <TabelKonfirmasi /> */}
 
       {/* Tabel Kependudukan */}
       <h1 className="text-2xl font-semibold">Data Penduduk</h1>

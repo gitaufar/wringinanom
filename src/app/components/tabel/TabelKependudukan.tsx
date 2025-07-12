@@ -1,43 +1,88 @@
 "use client";
+import { useEffect, useState } from "react";
 import ButtonAction from "../button/ButtonAction";
+import { format } from "date-fns";
 
-const dataPenduduk = Array(7).fill({
-  nik: "6403050303040001",
-  nama: "Regasari Rekyan Permatasari",
-  jenisKelamin: "Laki-laki",
-  tanggalLahir: "20-22-2020",
-  alamat: "Dusun Besuki RT 028 RW 006",
-});
+type Penduduk = {
+  nik: string;
+  nama: string;
+  jenisKelamin: string;
+  tanggalLahir: string;
+  alamat: string;
+};
 
 const TabelKependudukan = () => {
+  const [dataPenduduk, setDataPenduduk] = useState<Penduduk[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPenduduk = async () => {
+      try {
+        const res = await fetch("/api/penduduk");
+        const data = await res.json();
+        setDataPenduduk(data);
+        console.log("Data penduduk:", data);
+      } catch (err) {
+        console.error("Gagal fetch penduduk:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPenduduk();
+  }, []);
+
   return (
     <div className="bg-white rounded-xl border px-5 py-4 mt-0">
       <table className="w-full text-sm text-left">
         <thead className="text-gray-500 border-b">
-  <tr>
-    <th className="py-3 px-4">NIK</th>
-    <th className="py-3 px-4">NAMA</th>
-    <th className="py-3 px-4">JENIS KELAMIN</th>
-    <th className="py-3 px-4">TANGGAL LAHIR</th>
-    <th className="py-3 px-4">ALAMAT</th>
-    <th className="py-3 px-4">ACTION</th>
-  </tr>
-</thead>
-<tbody>
-  {dataPenduduk.map((item, index) => (
-    <tr key={index} className="border-b">
-      <td className="py-4 px-4 align-middle">{item.nik}</td>
-      <td className="py-4 px-4 align-middle">{item.nama}</td>
-      <td className="py-4 px-4 align-middle">{item.jenisKelamin}</td>
-      <td className="py-4 px-4 align-middle">{item.tanggalLahir}</td>
-      <td className="py-4 px-4 align-middle">{item.alamat}</td>
-      <td className="py-4 px-4 align-middle"><ButtonAction /></td>
-    </tr>
-  ))}
-</tbody>
-
+          <tr>
+            <th className="py-3 px-4">NIK</th>
+            <th className="py-3 px-4">NAMA</th>
+            <th className="py-3 px-4">JENIS KELAMIN</th>
+            <th className="py-3 px-4">TANGGAL LAHIR</th>
+            <th className="py-3 px-4">ALAMAT</th>
+            <th className="py-3 px-4">ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={6} className="py-4 px-4 text-center">
+                Loading...
+              </td>
+            </tr>
+          ) : dataPenduduk.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="py-4 px-4 text-center">
+                Tidak ada data penduduk
+              </td>
+            </tr>
+          ) : (
+            dataPenduduk.map((item, index) => (
+              <tr key={index} className="border-b">
+                <td className="py-4 px-4 align-middle">{item.nik}</td>
+                <td className="py-4 px-4 align-middle">{item.nama_lengkap}</td>
+                <td className="py-4 px-4 align-middle">{item.nama_ibu}</td>
+                <td className="py-4 px-4 align-middle">{format(new Date(item.tanggal_lahir), "dd-MM-yyyy")}</td>
+                <td className="py-4 px-4 align-middle">{item.alamat}</td>
+                <td className="py-4 px-4 align-middle">
+                  <ButtonAction
+                    editData={() => console.log("Edit", item.nik)}
+                    deleteData={() => console.log("Delete", item.nik)}
+                  />
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
       </table>
-      <div className="text-sm text-gray-500 mt-2">Menampilkan 1-09 dari 78</div>
+
+      {!loading && (
+        <div className="text-sm text-gray-500 mt-2">
+          Menampilkan 1-{dataPenduduk.length} dari {dataPenduduk.length}
+        </div>
+      )}
     </div>
   );
 };

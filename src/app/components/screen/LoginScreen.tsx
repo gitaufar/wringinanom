@@ -16,7 +16,7 @@ export default function LoginScreen() {
     try {
       const admin = await loginAdmin(email, password);
       console.log("Login berhasil:", admin);
-      window.location.href = "/admin";
+      window.location.href = "/admin/kependudukan";
       console.log("masuk")
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan saat login.");

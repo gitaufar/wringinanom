@@ -1,16 +1,28 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+// src/middleware.ts
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get("admin_token")?.value;
+export async function middleware(req: NextRequest) {
+  const token = req.cookies.get("admin_token")?.value;
 
-  if (request.nextUrl.pathname.startsWith("/admin") && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next();
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+
+    // ✅ Contoh: Menyimpan adminId ke header (opsional)
+    const res = NextResponse.next();
+    res.headers.set("x-admin-id", String(payload.id));
+    return res;
+  } catch (err) {
+    console.error("Token tidak valid:", err);
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 }
 
 export const config = {
-  matcher: ["/admin","/admin/:path*"]
+  matcher: ["/admin/:path*"], // Proteksi semua route /admin/*
 };

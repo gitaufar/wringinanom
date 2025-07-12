@@ -44,7 +44,7 @@ const TabelKonfirmasi = () => {
               <td className="py-4 px-4 align-middle">{item.tanggalLahir}</td>
               <td className="py-4 px-4 align-middle">{item.alamat}</td>
               <td className="py-4 px-4 align-middle">{item.keterangan}</td>
-              <td className="py-4 px-4 align-middle"><ButtonAction /></td>
+              <td className="py-4 px-4 align-middle"><ButtonAction editData={() => console.log("Edit")} deleteData={() => console.log("Delete")}/></td>
             </tr>
           ))}
         </tbody>

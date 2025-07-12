@@ -1,6 +1,6 @@
-// src/app/api/login/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
@@ -26,7 +26,15 @@ export async function POST(req: Request) {
     );
   }
 
-  const token = `${admin.id}-${admin.email}`;
+  // ✅ Buat token JWT
+  const token = jwt.sign(
+    {
+      id: admin.id,
+      email: admin.email,
+    },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "1d" }
+  );
 
   const res = NextResponse.json({
     message: "Login berhasil",
@@ -37,6 +45,7 @@ export async function POST(req: Request) {
     },
   });
 
+  // ✅ Simpan token ke cookies
   res.cookies.set("admin_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

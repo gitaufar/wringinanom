@@ -14,6 +14,7 @@ const ButtonLogout = () => {
           router.push("/login");
         })
       }
+      className="cursor-pointer text-center bg-red-500 rounded-md text-white py-2 px-4"
     >
       Logout
     </button>

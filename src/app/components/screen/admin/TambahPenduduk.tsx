@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { TambahPendudukForm } from "../../form/TambahPendudukForm";
 import { Spinner } from "flowbite-react";
@@ -94,7 +96,7 @@ export const TambahPenduduk = () => {
   };
 
   return (
-    <main className="min-h-full w-full bg-[#F5F6FA] px-7 py-10 flex flex-col gap-6 relative">
+    <main className="min-h-full w-full bg-[#F5F6FA] px-7 pb-10 pt-5 flex flex-col gap-6 relative">
       <h1 className="text-black font-bold text-3xl">Tambah Penduduk</h1>
 
       <TambahPendudukForm

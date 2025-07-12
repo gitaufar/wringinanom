@@ -1,4 +1,4 @@
-import { useState } from "react";
+"use client";
 import InputField from "../field/InputField";
 import InputFieldDropdown from "../field/InputFieldDropdown"; // jika belum ada, bisa gunakan input biasa
 import InputFieldDate from "../field/InputFieldDate";

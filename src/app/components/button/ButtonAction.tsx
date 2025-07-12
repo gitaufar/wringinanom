@@ -1,13 +1,18 @@
 "use client";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
-const ButtonAction = () => {
+type ButtonActionProps = {
+  editData: () => void;
+  deleteData: () => void;
+};
+
+const ButtonAction = ({editData, deleteData}: ButtonActionProps) => {
   return (
     <div className="flex gap-3 text-gray-600">
-      <button className="hover:text-blue-500">
+      <button onClick={editData} className="hover:text-blue-500">
         <FaEdit />
       </button>
-      <button className="hover:text-red-500">
+      <button onClick={deleteData} className="hover:text-red-500">
         <FaTrash />
       </button>
     </div>
