@@ -67,22 +67,28 @@ export const TambahPenduduk = () => {
   };
 
   const onSubmit = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/penduduk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await res.json();
-      resetForm();
-      console.log("✅ Data terkirim:", result);
-    } catch (err) {
-      console.error("❌ Gagal mengirim:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const res = await fetch("/api/penduduk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) throw new Error("Gagal mengirim data");
+
+    const result = await res.json();
+    resetForm();
+    alert("Data berhasil dikirim!");
+    console.log("✅ Data terkirim:", result);
+    window.location.href = "/admin/kependudukan";
+  } catch (err) {
+    console.error("❌ Gagal mengirim:", err);
+    alert("Gagal mengirim data!");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const resetForm = () => {
     setFormData(defaultForm);
