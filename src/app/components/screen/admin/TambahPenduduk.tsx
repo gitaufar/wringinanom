@@ -46,17 +46,33 @@ const defaultForm: PendudukProps = {
   rw: "",
 };
 
-export const TambahPenduduk = () => {
+type TambahPendudukProps = {
+  formDataProps?: PendudukProps;
+};
+
+export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<PendudukProps>(defaultForm);
+  const [formData, setFormData] = useState<PendudukProps>(
+    formDataProps || defaultForm
+  );
 
   const [editStates, setEditStates] = useState<{
     [K in keyof PendudukProps]: boolean;
   }>(
-    Object.fromEntries(Object.keys(defaultForm).map((key) => [key, true])) as {
+    Object.fromEntries(
+      Object.keys(defaultForm).map((key) => [key, formDataProps ? false : true])
+    ) as {
       [K in keyof PendudukProps]: boolean;
     }
   );
+
+  const [submitStates] = useState<{
+  [K in keyof PendudukProps]: string | null;
+}>(
+  Object.fromEntries(
+    Object.keys(defaultForm).map((key) => [key, formDataProps ? null : ""])
+  ) as { [K in keyof PendudukProps]: string | null }
+);
 
   const handleChange = (field: keyof PendudukProps, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -67,28 +83,28 @@ export const TambahPenduduk = () => {
   };
 
   const onSubmit = async () => {
-  setLoading(true);
-  try {
-    const res = await fetch("/api/penduduk", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    setLoading(true);
+    try {
+      const res = await fetch("/api/penduduk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    if (!res.ok) throw new Error("Gagal mengirim data");
+      if (!res.ok) throw new Error("Gagal mengirim data");
 
-    const result = await res.json();
-    resetForm();
-    alert("Data berhasil dikirim!");
-    console.log("✅ Data terkirim:", result);
-    window.location.href = "/admin/kependudukan";
-  } catch (err) {
-    console.error("❌ Gagal mengirim:", err);
-    alert("Gagal mengirim data!");
-  } finally {
-    setLoading(false);
-  }
-};
+      const result = await res.json();
+      resetForm();
+      alert("Data berhasil dikirim!");
+      console.log("✅ Data terkirim:", result);
+      window.location.href = "/admin/kependudukan";
+    } catch (err) {
+      console.error("❌ Gagal mengirim:", err);
+      alert("Gagal mengirim data!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData(defaultForm);
@@ -110,6 +126,7 @@ export const TambahPenduduk = () => {
         editStates={editStates}
         onChange={handleChange}
         onToggleEdit={handleToggleEdit}
+        submitStates={submitStates}
       />
 
       <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">

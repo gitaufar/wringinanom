@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "Content-Disposition": `attachment; filename=Surat_Keterangan_Beda_Identitas.docx`,
+        "Content-Disposition": `attachment; filename=Surat_Keterangan_Beda_Identitas_${body.nama}.docx`,
       },
     });
   } catch (err) {

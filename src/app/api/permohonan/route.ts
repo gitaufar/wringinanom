@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 // Auto-generate no_resi seperti: RWS-1712345678901
 const generateResi = () => {
@@ -10,11 +9,11 @@ const generateResi = () => {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, jenis_surat, keterangan, data_dinamis } = body;
+    const { nik, jenis_surat, tipe, keterangan, data_dinamis } = body;
 
-    if (!nik || !jenis_surat) {
+    if (!nik || !jenis_surat || !tipe) {
       return NextResponse.json(
-        { error: "NIK dan jenis_surat wajib diisi" },
+        { error: "NIK, jenis_surat, dan tipe wajib diisi" },
         { status: 400 }
       );
     }
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
       data: {
         nik,
         jenis_surat,
-        keterangan,
+        tipe,
         data_dinamis,
         no_resi: noResi,
       },
@@ -95,10 +94,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ data: permohonan });
   } catch (error: any) {
     console.error("❌ Internal Error GET /api/permohonan:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
-
 
 /* contouh penggunaan post permohonan
 const handleSubmit = async () => {
@@ -138,7 +139,7 @@ const handleSubmit = async () => {
   };
   */
 
-  /** contoh pemakaian get
+/** contoh pemakaian get
    * const handleFetch = async () => {
     setLoading(true);
     setError(null);

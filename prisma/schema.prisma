@@ -56,6 +56,7 @@ model RiwayatLayanan {
 model PermohonanSurat {
   id             String   @id @default(cuid())
   nik            String
+  tipe           String
   jenis_surat    String   // contoh: "Beda Identitas", "Domisili", "Permohonan KTP"
   tanggal        DateTime @default(now())
   status         String   @default("Menunggu") // Menunggu, Diproses, Selesai

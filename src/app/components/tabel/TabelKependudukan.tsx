@@ -3,27 +3,49 @@ import { useEffect, useState } from "react";
 import ButtonAction from "../button/ButtonAction";
 import { format } from "date-fns";
 import { Penduduk } from "@prisma/client";
+import { useRouter } from "next/navigation";
+
+const LIMIT = 10;
 
 const TabelKependudukan = () => {
+  const router = useRouter();
+
   const [dataPenduduk, setDataPenduduk] = useState<Penduduk[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalData, setTotalData] = useState(0);
+
+  const fetchPenduduk = async (page: number) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/penduduk?page=${page}&limit=${LIMIT}`);
+      const json = await res.json();
+      setDataPenduduk(json.data);
+      setTotalPages(json.totalPages);
+      setTotalData(json.totalData);
+    } catch (err) {
+      console.error("Gagal fetch penduduk:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (nik: string) => {
+    const confirmed = window.confirm("Yakin ingin menghapus penduduk ini?");
+    if (!confirmed) return;
+
+    try {
+      await fetch(`/api/penduduk/${nik}`, { method: "DELETE" });
+      fetchPenduduk(page);
+    } catch (err) {
+      console.error("Gagal menghapus penduduk:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchPenduduk = async () => {
-      try {
-        const res = await fetch("/api/penduduk");
-        const data = await res.json();
-        setDataPenduduk(data);
-        console.log("Data penduduk:", data);
-      } catch (err) {
-        console.error("Gagal fetch penduduk:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPenduduk();
-  }, []);
+    fetchPenduduk(page);
+  }, [page]);
 
   return (
     <div className="bg-white rounded-xl border px-5 py-4 mt-0">
@@ -56,15 +78,17 @@ const TabelKependudukan = () => {
               <tr key={index} className="border-b">
                 <td className="py-4 px-4 align-middle">{item.nik}</td>
                 <td className="py-4 px-4 align-middle">{item.nama_lengkap}</td>
-                <td className="py-4 px-4 align-middle">{item.nama_ibu}</td>
+                <td className="py-4 px-4 align-middle">{item.jenis_kelamin}</td>
                 <td className="py-4 px-4 align-middle">
                   {format(new Date(item.tanggal_lahir), "dd-MM-yyyy")}
                 </td>
                 <td className="py-4 px-4 align-middle">{item.alamat}</td>
                 <td className="py-4 px-4 align-middle">
                   <ButtonAction
-                    editData={() => console.log("Edit", item.nik)}
-                    deleteData={() => console.log("Delete", item.nik)}
+                    editData={() => {
+                      router.push(`/admin/kependudukan/edit/${item.nik}`);
+                    }}
+                    deleteData={() => handleDelete(item.nik)}
                   />
                 </td>
               </tr>
@@ -73,9 +97,33 @@ const TabelKependudukan = () => {
         </tbody>
       </table>
 
+      {/* Info jumlah dan navigasi halaman */}
       {!loading && (
-        <div className="text-sm text-gray-500 mt-2">
-          Menampilkan 1-{dataPenduduk.length} dari {dataPenduduk.length}
+        <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+          <div>
+            Menampilkan {(page - 1) * LIMIT + 1} -{" "}
+            {(page - 1) * LIMIT + dataPenduduk.length} dari {totalData}
+          </div>
+
+          <div className="space-x-2">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+            >
+              ⬅️ Sebelumnya
+            </button>
+            <span>
+              Halaman {page} dari {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+              className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+            >
+              Berikutnya ➡️
+            </button>
+          </div>
         </div>
       )}
     </div>

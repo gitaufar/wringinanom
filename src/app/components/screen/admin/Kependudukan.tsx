@@ -4,7 +4,6 @@ import TabelKonfirmasi from "../../../components/tabel/TabelKonfirmasi";
 import ButtonTambahPenduduk from "../../../components/button/ButtonTambahPenduduk";
 import FilterPenduduk from "../../filter/FilterPenduduk";
 import { useRouter } from "next/navigation";
-
 const KependudukanPage = () => {
 const router = useRouter();
 
@@ -18,7 +17,7 @@ const router = useRouter();
           <FilterPenduduk />
         </div>
         <div className="ml-4 shrink-0">
-          <ButtonTambahPenduduk onClick={() => router.push("/admin/tambah-penduduk")} />
+          <ButtonTambahPenduduk onClick={() => router.push("/admin/kependudukan/tambah")} />
         </div>
       </div>
 

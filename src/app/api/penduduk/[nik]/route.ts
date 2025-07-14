@@ -25,3 +25,26 @@ export async function GET(req: Request, { params }: Params) {
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request, { params }: Params) {
+  const { nik } = params;
+
+  try {
+    const existing = await prisma.penduduk.findUnique({
+      where: { nik },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Penduduk tidak ditemukan" }, { status: 404 });
+    }
+
+    await prisma.penduduk.delete({
+      where: { nik },
+    });
+
+    return NextResponse.json({ message: "Penduduk berhasil dihapus" });
+  } catch (error) {
+    console.error("Gagal menghapus penduduk:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+  }
+}
