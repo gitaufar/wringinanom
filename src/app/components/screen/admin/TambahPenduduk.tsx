@@ -16,7 +16,6 @@ export type PendudukProps = {
   agama: string;
   pendidikan: string;
   pekerjaan?: string;
-  golongan_darah: string;
   status_perkawinan: string;
   tanggal_perkawinan?: string;
   status_keluarga: string;
@@ -37,7 +36,6 @@ const defaultForm: PendudukProps = {
   agama: "",
   pendidikan: "",
   pekerjaan: "",
-  golongan_darah: "",
   status_perkawinan: "",
   tanggal_perkawinan: "",
   status_keluarga: "",

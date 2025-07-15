@@ -153,16 +153,6 @@ export const TambahPendudukForm = ({
       {/* Status */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <InputFieldDropdown
-          options={["A", "B", "AB", "O"]}
-          inputLabel="Golongan Darah"
-          inputPlaceholder="Masukkan Golongan Darah"
-          data={formData.golongan_darah}
-          setData={(val) => onChange("golongan_darah", val)}
-          setEditData={() => onToggleEdit("golongan_darah")}
-          editData={editStates.golongan_darah}
-          submited={submitStates.golongan_darah}
-        />
-        <InputFieldDropdown
           inputLabel="Status Perkawinan"
           inputPlaceholder="Pilih Status Perkawinan"
           options={["Sudah", "Belum", "Cerai"]}

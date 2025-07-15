@@ -27,7 +27,6 @@ model Penduduk {
   agama               String
   pendidikan          String
   pekerjaan           String?
-  golongan_darah      String
   status_perkawinan   String
   tanggal_perkawinan  DateTime?
   status_keluarga     String

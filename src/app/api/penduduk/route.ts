@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
       agama,
       pendidikan,
       pekerjaan,
-      golongan_darah,
       status_perkawinan,
       tanggal_perkawinan,
       status_keluarga,
@@ -70,8 +69,7 @@ export async function POST(req: NextRequest) {
       !status_perkawinan ||
       !alamat ||
       !rt ||
-      !rw ||
-      !golongan_darah
+      !rw
     ) {
       return NextResponse.json(
         { error: "Data wajib tidak lengkap" },
@@ -97,7 +95,6 @@ export async function POST(req: NextRequest) {
           agama,
           pendidikan,
           pekerjaan,
-          golongan_darah,
           status_perkawinan,
           tanggal_perkawinan: tanggal_perkawinan
             ? new Date(tanggal_perkawinan)
@@ -127,7 +124,6 @@ export async function POST(req: NextRequest) {
           agama,
           pendidikan,
           pekerjaan,
-          golongan_darah,
           status_perkawinan,
           tanggal_perkawinan: tanggal_perkawinan
             ? new Date(tanggal_perkawinan)
