@@ -4,7 +4,7 @@ import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: true, 
+    
   },
 };
 

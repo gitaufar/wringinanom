@@ -5,7 +5,7 @@ interface LetterCardProps {
   title: string;
   description: string;
   topic: string;
-  level: string;
+  
   color: string;
   icon: string;
 }
@@ -14,7 +14,6 @@ const LetterCard: React.FC<LetterCardProps> = ({
   title,
   description,
   topic,
-  level,
   color,
   icon,
 }) => {
@@ -42,9 +41,6 @@ const LetterCard: React.FC<LetterCardProps> = ({
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
               {topic}
-            </span>
-            <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-              {level}
             </span>
           </div>
           

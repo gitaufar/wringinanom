@@ -12,6 +12,8 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.11.1",
+    "@zip.js/zip.js": "^2.7.63",
+    "docxtemplater": "^3.65.2",
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.11.8",
     "lucide-react": "^0.525.0",
@@ -25,6 +27,7 @@
     "@types/node": "^20.19.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/webpack": "^5.28.5",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "prisma": "^6.11.1",

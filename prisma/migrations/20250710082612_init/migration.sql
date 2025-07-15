@@ -11,6 +11,8 @@ CREATE TABLE `Penduduk` (
     `alamat` VARCHAR(191) NOT NULL,
     `rt` INTEGER NOT NULL,
     `rw` INTEGER NOT NULL,
+    `pekerjaan` VARCHAR(191) NULL,
+    `agama` VARCHAR(191) NULL,
 
     PRIMARY KEY (`nik`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -28,12 +30,29 @@ CREATE TABLE `RiwayatLayanan` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `PermohonanSurat` (
+    `id` VARCHAR(191) NOT NULL,
+    `nik` VARCHAR(191) NOT NULL,
+    `jenis_surat` VARCHAR(191) NOT NULL,
+    `tanggal` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `status` VARCHAR(191) NOT NULL DEFAULT 'Menunggu',
+    `keterangan` VARCHAR(191) NULL,
+    `data_dinamis` JSON NULL,
+    `no_resi` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `PermohonanSurat_no_resi_key`(`no_resi`),
+    INDEX `PermohonanSurat_nik_idx`(`nik`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Admin` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nama` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `Admin_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -53,6 +72,12 @@ CREATE TABLE `LogPerubahanStatus` (
 
 -- AddForeignKey
 ALTER TABLE `RiwayatLayanan` ADD CONSTRAINT `RiwayatLayanan_nik_fkey` FOREIGN KEY (`nik`) REFERENCES `Penduduk`(`nik`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PermohonanSurat` ADD CONSTRAINT `PermohonanSurat_nik_fkey` FOREIGN KEY (`nik`) REFERENCES `Penduduk`(`nik`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PermohonanSurat` ADD CONSTRAINT `PermohonanSurat_no_resi_fkey` FOREIGN KEY (`no_resi`) REFERENCES `RiwayatLayanan`(`no_resi`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `LogPerubahanStatus` ADD CONSTRAINT `LogPerubahanStatus_no_resi_fkey` FOREIGN KEY (`no_resi`) REFERENCES `RiwayatLayanan`(`no_resi`) ON DELETE RESTRICT ON UPDATE CASCADE;
