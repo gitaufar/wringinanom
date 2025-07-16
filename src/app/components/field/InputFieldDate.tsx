@@ -5,7 +5,7 @@ type InputFieldDateProps = {
   setData: (value: string) => void;
   setEditData: (value: boolean) => void;
   editData: boolean;
-  submited: string | null;
+  submited?: string | null;
   data?: string;
 };
 
@@ -39,7 +39,7 @@ export default function InputFieldDate({
         {(submited === null || submited === "submit") && (
           <div
             onClick={() => setEditData(!editData)}
-            className="cursor-pointer absolute right-1 sm:right-2 bottom-1 sm:bottom-2 flex items-center bg-neutral-700 gap-x-[5px] sm:gap-x-[10px] px-[8px] py-[5px] rounded-[8px]"
+            className="cursor-pointer absolute right-1 sm:right-2 bottom-1 sm:bottom-2 flex items-center bg-neutral-200 gap-x-[5px] sm:gap-x-[10px] px-[8px] py-[5px] rounded-[8px]"
           >
             <p className="text-xs text-neutral-400">
               {editData ? "Simpan" : "Edit"}

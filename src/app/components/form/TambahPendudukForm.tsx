@@ -1,6 +1,6 @@
 "use client";
 import InputField from "../field/InputField";
-import InputFieldDropdown from "../field/InputFieldDropdown"; // jika belum ada, bisa gunakan input biasa
+import InputFieldDropdown from "../field/InputFieldDropdown";
 import InputFieldDate from "../field/InputFieldDate";
 import { PendudukProps } from "../screen/admin/TambahPenduduk";
 
@@ -9,6 +9,7 @@ type Props = {
   editStates: { [K in keyof PendudukProps]: boolean };
   onChange: (field: keyof PendudukProps, value: string) => void;
   onToggleEdit: (field: keyof PendudukProps) => void;
+  submitStates: { [K in keyof PendudukProps]: string | null };
 };
 
 export const TambahPendudukForm = ({
@@ -16,6 +17,7 @@ export const TambahPendudukForm = ({
   editStates,
   onChange,
   onToggleEdit,
+  submitStates,
 }: Props) => {
   return (
     <div className="pt-6 px-6 pb-10 flex flex-col bg-white rounded-md gap-8">
@@ -28,7 +30,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("nik", val)}
           setEditData={() => onToggleEdit("nik")}
           editData={editStates.nik}
-          submited=""
+          submited={submitStates.nik}
           numberOnly
         />
         <InputField
@@ -38,7 +40,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("no_kk", val)}
           setEditData={() => onToggleEdit("no_kk")}
           editData={editStates.no_kk}
-          submited=""
+          submited={submitStates.no_kk}
           numberOnly
         />
       </section>
@@ -51,7 +53,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("nama_lengkap", val)}
           setEditData={() => onToggleEdit("nama_lengkap")}
           editData={editStates.nama_lengkap ?? true}
-          submited=""
+          submited={submitStates.nama_lengkap}
         />
         <InputField
           inputLabel="Nama Ibu"
@@ -60,7 +62,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("nama_ibu", val)}
           setEditData={() => onToggleEdit("nama_ibu")}
           editData={editStates.nama_ibu ?? true}
-          submited=""
+          submited={submitStates.nama_ibu}
         />
         <InputField
           inputLabel="Nama Ayah"
@@ -69,7 +71,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("nama_ayah", val)}
           setEditData={() => onToggleEdit("nama_ayah")}
           editData={editStates.nama_ayah ?? true}
-          submited=""
+          submited={submitStates.nama_ayah}
         />
       </section>
 
@@ -83,7 +85,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("jenis_kelamin", val)}
           setEditData={() => onToggleEdit("jenis_kelamin")}
           editData={editStates.jenis_kelamin}
-          submited=""
+          submited={submitStates.jenis_kelamin}
         />
         <InputField
           inputLabel="Tempat Lahir"
@@ -92,7 +94,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("tempat_lahir", val)}
           setEditData={() => onToggleEdit("tempat_lahir")}
           editData={editStates.tempat_lahir}
-          submited=""
+          submited={submitStates.tempat_lahir}
         />
         <InputFieldDate
           inputLabel="Tanggal Lahir"
@@ -100,7 +102,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("tanggal_lahir", val)}
           setEditData={() => onToggleEdit("tanggal_lahir")}
           editData={editStates.tanggal_lahir}
-          submited=""
+          submited={submitStates.tanggal_lahir}
         />
       </section>
 
@@ -125,24 +127,17 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("pendidikan", val)}
           setEditData={() => onToggleEdit("pendidikan")}
           editData={editStates.pendidikan}
-          submited=""
+          submited={submitStates.pendidikan}
         />
         <InputFieldDropdown
-          options={[
-            "Islam",
-            "Hindu",
-            "Budha",
-            "Konghucu",
-            "Protestan",
-            "Katolik",
-          ]}
+          options={["Islam", "Hindu", "Budha", "Konghucu", "Protestan", "Katolik"]}
           inputLabel="Agama"
           inputPlaceholder="Masukkan Agama"
           data={formData.agama}
           setData={(val) => onChange("agama", val)}
           setEditData={() => onToggleEdit("agama")}
           editData={editStates.agama}
-          submited=""
+          submited={submitStates.agama}
         />
         <InputField
           inputLabel="Pekerjaan"
@@ -151,22 +146,12 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("pekerjaan", val)}
           setEditData={() => onToggleEdit("pekerjaan")}
           editData={editStates.pekerjaan ?? true}
-          submited=""
+          submited={submitStates.pekerjaan}
         />
       </section>
 
       {/* Status */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <InputFieldDropdown
-          options={["A", "B", "AB", "O"]}
-          inputLabel="Golongan Darah"
-          inputPlaceholder="Masukkan Golongan Darah"
-          data={formData.golongan_darah}
-          setData={(val) => onChange("golongan_darah", val)}
-          setEditData={() => onToggleEdit("golongan_darah")}
-          editData={editStates.golongan_darah}
-          submited=""
-        />
         <InputFieldDropdown
           inputLabel="Status Perkawinan"
           inputPlaceholder="Pilih Status Perkawinan"
@@ -175,7 +160,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("status_perkawinan", val)}
           setEditData={() => onToggleEdit("status_perkawinan")}
           editData={editStates.status_perkawinan}
-          submited=""
+          submited={submitStates.status_perkawinan}
         />
         {formData.status_perkawinan === "Sudah" && (
           <InputFieldDate
@@ -184,7 +169,7 @@ export const TambahPendudukForm = ({
             setData={(val) => onChange("tanggal_perkawinan", val)}
             setEditData={() => onToggleEdit("tanggal_perkawinan")}
             editData={editStates.tanggal_perkawinan ?? true}
-            submited=""
+            submited={submitStates.tanggal_perkawinan}
           />
         )}
       </section>
@@ -199,7 +184,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("status_keluarga", val)}
           setEditData={() => onToggleEdit("status_keluarga")}
           editData={editStates.status_keluarga}
-          submited=""
+          submited={submitStates.status_keluarga}
         />
         <InputFieldDropdown
           options={["Simpar", "Kunci", "Besuki"]}
@@ -209,7 +194,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("alamat", val)}
           setEditData={() => onToggleEdit("alamat")}
           editData={editStates.alamat}
-          submited=""
+          submited={submitStates.alamat}
         />
       </section>
 
@@ -222,7 +207,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("rt", val)}
           setEditData={() => onToggleEdit("rt")}
           editData={editStates.rt}
-          submited=""
+          submited={submitStates.rt}
           numberOnly
         />
         <InputField
@@ -232,7 +217,7 @@ export const TambahPendudukForm = ({
           setData={(val) => onChange("rw", val)}
           setEditData={() => onToggleEdit("rw")}
           editData={editStates.rw}
-          submited=""
+          submited={submitStates.rw}
           numberOnly
         />
       </section>

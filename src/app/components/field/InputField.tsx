@@ -6,7 +6,7 @@ type InputField = {
 	setData: (value: string) => void;
 	setEditData: (value: boolean) => void;
 	editData: boolean;
-	submited: string | null;
+	submited?: string | null;
 	data?: string;
 	numberOnly?: boolean;
 };

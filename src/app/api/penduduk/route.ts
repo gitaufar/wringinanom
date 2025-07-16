@@ -2,12 +2,31 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const penduduk = await prisma.penduduk.findMany();
-    return NextResponse.json(penduduk);
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.penduduk.findMany({
+        skip,
+        take: limit,
+        orderBy: { nama_lengkap: "asc" }, // optional: urutkan berdasarkan nama
+      }),
+      prisma.penduduk.count(),
+    ]);
+
+    return NextResponse.json({
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalData: total,
+      data,
+    });
   } catch (error) {
-    console.error("Failed to fetch penduduk:", error);
+    console.error("Failed to fetch penduduk with pagination:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -29,7 +48,6 @@ export async function POST(req: NextRequest) {
       agama,
       pendidikan,
       pekerjaan,
-      golongan_darah,
       status_perkawinan,
       tanggal_perkawinan,
       status_keluarga,
@@ -51,8 +69,7 @@ export async function POST(req: NextRequest) {
       !status_perkawinan ||
       !alamat ||
       !rt ||
-      !rw ||
-      !golongan_darah
+      !rw
     ) {
       return NextResponse.json(
         { error: "Data wajib tidak lengkap" },
@@ -78,7 +95,6 @@ export async function POST(req: NextRequest) {
           agama,
           pendidikan,
           pekerjaan,
-          golongan_darah,
           status_perkawinan,
           tanggal_perkawinan: tanggal_perkawinan
             ? new Date(tanggal_perkawinan)
@@ -108,7 +124,6 @@ export async function POST(req: NextRequest) {
           agama,
           pendidikan,
           pekerjaan,
-          golongan_darah,
           status_perkawinan,
           tanggal_perkawinan: tanggal_perkawinan
             ? new Date(tanggal_perkawinan)
