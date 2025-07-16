@@ -3,23 +3,54 @@
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
+import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function CeraiMatiForm() {
-  const [edit, setEdit] = useState(true);
+export default function BiodataCeraiMati() {
+  const initialData = {
+    NamaPengaju: "",
+    NIKPengaju: "",
+
+    //Page1 
+    namaLengkap: "",
+    Kabupaten: "",
+    nomorKK: "",
+    kotaLahir: "",
+    tanggalLahir: "",
+    NIK1: "",
+    jenisKelamin: "",
+    Status: "",
+    goldarah: "",
+    statusperkawinan: "",
+    agama: "",
+    Alamat1: "",
+    Tujuan1: "",
+
+
+    //Page2
+    Nomorkartukeluarga: "",
+    Nomorpaspor: "",
+    TanggalKadaluarsaPaspor: "",
+    NomorAktakelahiran: "",
+    NomorAktaPerkawinan: "",
+    TanggalPerkawinan: "",
+    NomorAktaPerceraian: "",
+    TanggalPerceraian: "",
+  };
+
+  const [formData, setFormData] = useState(initialData);
+  const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const [namaOrangTua, setNamaOrangTua] = useState("John");
-  const [kotaLahir, setKotaLahir] = useState("Co. Malang");
-  const [tanggalLahir, setTanggalLahir] = useState("2005-11-22");
-  const [nik, setNik] = useState("929292929");
-  const [jenisKelamin, setJenisKelamin] = useState("Laki-laki");
-  const [status, setStatus] = useState("Cerai Mati");
-  const [agama, setAgama] = useState("Co. Kejawen");
-  const [alamat, setAlamat] = useState("Co. Dusun Simpar No 003");
-
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setSubmited("submit");
-    setEdit(false);
+    setEditData(false);
+  };
+
+  const handleReset = () => {
+    setFormData(initialData);
+    setSubmited(null);
+    setEditData(true);
   };
 
   return (
@@ -54,106 +85,162 @@ export default function CeraiMatiForm() {
   </div>
 </div>
 
-      <div className="w-full pt-24 px-5 lg:px-[170px]">
+
+      {/* Main Content */}
+      <div className="w-full pt-20">
         {/* Header */}
-        <div className="flex justify-center items-center py-10 text-center">
-          <div className="flex flex-col gap-4">
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] py-8 md:py-[60px]">
+          <div className="flex flex-col items-center gap-6 flex-1">
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               SURAT KETERANGAN CERAI MATI
             </h1>
-            <p className="text-black text-base max-w-xl mx-auto">
-              Silakan lengkapi data berikut untuk proses pengajuan surat.
+            <p className="max-w-full md:max-w-[520px] text-black text-center font-roboto text-base font-normal leading-6 px-4">
+              Mohon isi sesuai data dan dengan sejujur-jujurnya.
             </p>
           </div>
         </div>
 
         {/* Form Section */}
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Orang Tua</h2>
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
+          >
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Nama Pengaju
+            </h1>
 
             <InputField
-              inputLabel="Nama Orang Tua"
-              inputPlaceholder="Nama Orang Tua"
-              data={namaOrangTua}
-              setData={setNamaOrangTua}
-              setEditData={setEdit}
-              editData={edit}
+              inputLabel="Nama Pengaju"
+              inputPlaceholder="Nama Pengaju"
+              data={formData.NamaPengaju}
+              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="NIK "
+              inputPlaceholder="NIK"
+              data={formData.NIKPengaju}
+              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Identitas Personal
+            </h1>
+
+            <InputField
+              inputLabel="Nama Lengkap"
+              inputPlaceholder="Nama Lengkap"
+              data={formData.namaLengkap}
+              setData={(val) => setFormData({ ...formData, namaLengkap: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
 
             <InputField
               inputLabel="Kota/Kabupaten Lahir"
               inputPlaceholder="Kota/Kabupaten"
-              data={kotaLahir}
-              setData={setKotaLahir}
-              setEditData={setEdit}
-              editData={edit}
+              data={formData.kotaLahir}
+              setData={(val) => setFormData({ ...formData, kotaLahir: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
-
+              
             <InputFieldDate
               inputLabel="Tanggal Lahir"
-              data={tanggalLahir}
-              setData={setTanggalLahir}
-              setEditData={setEdit}
-              editData={edit}
+              data={formData.tanggalLahir}
+              setData={(val) => setFormData({ ...formData, tanggalLahir: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
 
             <InputField
               inputLabel="NIK"
-              inputPlaceholder="NIK"
-              data={nik}
-              setData={setNik}
-              setEditData={setEdit}
-              editData={edit}
+              inputPlaceholder="Masukan NIK"
+              data={formData.NIK1}
+              setData={(val) => setFormData({ ...formData, NIK1: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
-              numberOnly
             />
-            
-            {/* <InputField inputLabel="Jenis Kelamin" inputPlaceholder="Jenis Kelamin" data={jenisKelamin} setData={setJenisKelamin} setEditData={setEdit} editData={edit} submited={submited} /> */}
+
+            <InputFieldDropdown
+              inputLabel="Jenis Kelamin"
+              options={["Laki-laki", "Perempuan"]}
+              data={formData.jenisKelamin}
+              setData={(val) => setFormData({ ...formData, jenisKelamin: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
 
             <InputField
               inputLabel="Status"
-              inputPlaceholder="Cerai Mati"
-              data={status}
-              setData={setStatus}
-              setEditData={setEdit}
-              editData={edit}
+              inputPlaceholder="Masukan Status"
+              data={formData.Status}
+              setData={(val) => setFormData({ ...formData, Status: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
 
-            <InputField
+            <InputFieldDropdown
               inputLabel="Agama"
-              inputPlaceholder="Agama"
-              data={agama}
-              setData={setAgama}
-              setEditData={setEdit}
-              editData={edit}
+              options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]}
+              data={formData.agama}
+              setData={(val) => setFormData({ ...formData, agama: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
 
             <InputField
               inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={alamat}
-              setData={setAlamat}
-              setEditData={setEdit}
-              editData={edit}
+              inputPlaceholder="Masukan Alamat"
+              data={formData.Alamat1}
+              setData={(val) => setFormData({ ...formData, Alamat1: val })}
+              setEditData={setEditData}
+              editData={editData}
               submited={submited}
             />
-          </div>
 
-          {/* Submit Button (Left-Aligned) */}
-          <div className="text-start">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
-            >
-              Submit
-            </button>
-          </div>
+            <InputField
+              inputLabel="Tujuan"
+              inputPlaceholder="Masukan Tujuan"
+              data={formData.Tujuan1}
+              setData={(val) => setFormData({ ...formData, Tujuan1: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            {/* Button Group */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Footer */}

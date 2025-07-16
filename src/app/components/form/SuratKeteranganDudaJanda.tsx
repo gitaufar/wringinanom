@@ -3,26 +3,40 @@
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
+import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function DudaJandaForm() {
-  const [edit, setEdit] = useState(true);
+export default function SuratKeteranganDudaJanda() {
+  const initialData = {
+    NamaPengaju: "",
+    NIKPengaju: "",
+
+    //Page1 
+    namaLengkap: "",
+    Kabupaten: "",
+    NIK: "",
+    Nomorkartukeluarga: "",
+    JenisKelamin: "",
+    Agama: "",
+    StatusPerkawinan: "",
+    Pekerjaan: "",
+    Kewarganegaraan: "",
+    Alamat: "",
+  };
+
+  const [formData, setFormData] = useState(initialData);
+  const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const [namaLengkap, setNamaLengkap] = useState("Co. Siti");
-  const [nikAnak, setNikAnak] = useState("929292929");
-  const [nomorKK, setNomorKK] = useState("929292929");
-  const [kotaLahir, setKotaLahir] = useState("Co. Malang");
-  const [tanggalLahir, setTanggalLahir] = useState("2005-11-22");
-  const [jenisKelamin, setJenisKelamin] = useState("Laki-laki");
-  const [agama, setAgama] = useState("Co. Kejawen");
-  const [statusPerkawinan, setStatusPerkawinan] = useState("Cerai Mati");
-  const [pekerjaan, setPekerjaan] = useState("Co. Guru");
-  const [kewarganegaraan, setKewarganegaraan] = useState("Co. Indonesia");
-  const [alamat, setAlamat] = useState("Co. Dusun Simpar No 003");
-
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setSubmited("submit");
-    setEdit(false);
+    setEditData(false);
+  };
+
+  const handleReset = () => {
+    setFormData(initialData);
+    setSubmited(null);
+    setEditData(true);
   };
 
   return (
@@ -58,41 +72,178 @@ export default function DudaJandaForm() {
 </div>
 
 
-      <div className="w-full pt-24 px-5 lg:px-[170px]">
-        <div className="flex justify-center items-center py-10 text-center">
-          <div className="flex flex-col gap-4">
+      {/* Main Content */}
+      <div className="w-full pt-20">
+        {/* Header */}
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] py-8 md:py-[60px]">
+          <div className="flex flex-col items-center gap-6 flex-1">
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
-              SURAT KETERANGAN DUDA/JANDA
+              SURAT KETERANGAN DUDA JANDA
             </h1>
-            <p className="text-black text-base max-w-xl mx-auto">
-              Silakan lengkapi data berikut untuk proses pengajuan surat.
+            <p className="max-w-full md:max-w-[520px] text-black text-center font-roboto text-base font-normal leading-6 px-4">
+              Mohon isi sesuai data dan dengan sejujur-jujurnya.
             </p>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={namaLengkap} setData={setNamaLengkap} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={kotaLahir} setData={setKotaLahir} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={nikAnak} setData={setNikAnak} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-            <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor KK" data={nomorKK} setData={setNomorKK} setEditData={setEdit} editData={edit} submited={submited} />
-            {/* <InputField inputLabel="Jenis Kelamin" inputPlaceholder="Jenis Kelamin" data={jenisKelamin} setData={setJenisKelamin} setEditData={setEdit} editData={edit} submited={submited} /> */}
-            <InputField inputLabel="Agama" inputPlaceholder="Agama" data={agama} setData={setAgama} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Status Perkawinan" inputPlaceholder="Cerai Mati" data={statusPerkawinan} setData={setStatusPerkawinan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={pekerjaan} setData={setPekerjaan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={kewarganegaraan} setData={setKewarganegaraan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={alamat} setData={setAlamat} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+        {/* Form Section */}
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
+          >
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Nama Pengaju
+            </h1>
 
+            <InputField
+              inputLabel="Nama Pengaju"
+              inputPlaceholder="Nama Pengaju"
+              data={formData.NamaPengaju}
+              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
 
-          <div className="text-start">
-            <button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
-              Submit
-            </button>
-          </div>
+            <InputField
+              inputLabel="NIK "
+              inputPlaceholder="NIK"
+              data={formData.NIKPengaju}
+              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Duda/Janda
+            </h1>
+
+            <InputField
+              inputLabel="Nama Lengkap"
+              inputPlaceholder="Nama Lengkap"
+              data={formData.namaLengkap}
+              setData={(val) => setFormData({ ...formData, namaLengkap: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+              <InputField
+              inputLabel=" Kota/Kabupaten Lahir"
+              inputPlaceholder=" Kota/Kabupaten Lahir"
+              data={formData.Kabupaten}
+              setData={(val) => setFormData({ ...formData, Kabupaten: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="NIK"
+              inputPlaceholder="NIK"
+              data={formData.NIK}
+              setData={(val) => setFormData({ ...formData, NIK: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nomor Kartu Keluarga"
+              inputPlaceholder="Nomor Kartu Keluarga"
+              data={formData.Nomorkartukeluarga}
+              setData={(val) => setFormData({ ...formData, Nomorkartukeluarga: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDropdown
+              inputLabel="Jenis Kelamin"
+              inputPlaceholder="Jenis Kelamin"
+              data={formData.JenisKelamin}
+              setData={(val) => setFormData({ ...formData, JenisKelamin: val })}
+              options={["Laki-laki", "Perempuan"]}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Agama"
+              inputPlaceholder="Agama"
+              data={formData.Agama}
+              setData={(val) => setFormData({ ...formData, Agama: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDropdown
+              inputLabel="Status Perkawinan"
+              inputPlaceholder="Status Perkawinan"
+              data={formData.StatusPerkawinan}
+              setData={(val) => setFormData({ ...formData, StatusPerkawinan: val })}
+              options={["Belum Menikah", "Sudah Menikah", "Cerai Hidup", "Cerai Mati"]}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Pekerjaan"
+              inputPlaceholder="Pekerjaan"
+              data={formData.Pekerjaan}
+              setData={(val) => setFormData({ ...formData, Pekerjaan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Kewarganegaraan"
+              inputPlaceholder="Kewarganegaraan"
+              data={formData.Kewarganegaraan}
+              setData={(val) => setFormData({ ...formData, Kewarganegaraan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Alamat"
+              inputPlaceholder="Alamat"
+              data={formData.Alamat}
+              setData={(val) => setFormData({ ...formData, Alamat: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            {/* Button Group */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
         </div>
 
+        {/* Footer */}
         <div className="py-10 text-center text-sm text-neutral-500">
           © 2025 Pemerintah Desa. All rights reserved.
         </div>

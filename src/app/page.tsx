@@ -19,13 +19,18 @@ import SuratKeteranganDomisili from "./components/form/SuratKeteranganDomisili";
 import SuratKeteranganDitinggalSuamiAtauIstri from "./components/form/SuratKeteranganDitinggalSuamiAtauIstri";
 import SuratKeteranganKematian from "./components/form/SuratKeteranganKematian";
 import SuratKeteranganStatus from "./components/form/SuratKeteranganStatus";
-import SuratKeteranganPenambahanAnggotaKeluarga from "./components/form/SuratKeteranganIdentitas";
+import SuratKeteranganPenambahanAnggotaKeluarga from "./components/form/SuratPenambahanAnggotaKeluarga";
+import SuratKeteranganTidakDiketahuiKeberadaannya from "./components/form/SuratKeteranganTidakDiketahuiKeberadaannya";
+import SuratKeteranganTidakKeberatan from "./components/form/SuratKeteranganTidakKeberatan";
+import SuratKeteranganCatatanKepolisian from "./components/form/SuratKeteranganCatatanKepolisian";
+import SuratKehilanganKepolisian from "./components/form/SuratKehilanganKepolisian";
+import SuratPengantar from "./components/form/SuratPengantar";
 
 export default function Home() {
   // return <PengajuanKeteranganAnakKandung />;
-  // return <SuratKeteranganBedaIdentitas/>;
+   return <SuratKeteranganBedaIdentitas/>;
   // return <SuratKeteranganBelumNikah/>
-   return <SuratKeteranganBiodataPenduduk/>;
+  // return <SuratKeteranganBiodataPenduduk/>;
   // return <SuratKeteranganCeraiMati/>;
   // return <SuratKeteranganDudaJanda/>;
   // return <SuratPenambahanAnggotaKeluarga/>;
@@ -44,6 +49,11 @@ export default function Home() {
   // return <SuratKeteranganDitinggalSuamiAtauIstri/>;
   // return <SuratKeteranganKematian/>;
   // return <SuratKeteranganStatus/>;
+  // return <SuratKeteranganTidakDiketahuiKeberadaannya/>;
+  // return <SuratKeteranganTidakKeberatan/>;
+  // return <SuratKeteranganCatatanKepolisian />;
+  // return <SuratKehilanganKepolisian />;
+  // return <SuratPengantar />;
 
 
   
