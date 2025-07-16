@@ -6,6 +6,8 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { useParams } from "next/navigation";
 import { terbilang } from "angka-menjadi-terbilang";
+import { ALargeSmall, Tangent } from "lucide-react";
+import { Kotta_One } from "next/font/google";
 
 export async function POST(req: NextRequest) {
   const { tipe } = useParams();
@@ -270,44 +272,201 @@ export async function POST(req: NextRequest) {
         doc.setData({
           Nama:body.nama,
           Nama_Orangtua:body.namaOrangtua,
-          
         });
         break;
       case "status":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Nama_Orangtua: body.namaOrangtua, 
+          NIK: body.nik,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Status_Perkawinan: body.statusPerkawinan,
+          Pekerjaan: body.pekerjaan,
+          Agama: body.agama,
+          Alamat: body.alamat,
+          Nama_Istri_Siri: body.namaIstriSiri,
+          Nama_Orangtua_Istri_Siri: body.namaOrangtuaIstriSiri,
+        });
         break;
       case "tidak_diketahui":
-        doc.setData({});
+        doc.setData({
+          Nama:body.nama,
+          NIK:body.nik,
+          NO_KK:body.noKK,
+          Jenis_Kelamin:body.jenisKelamin,
+          Umur:body.umur,
+          Pekerjaan:body.pekerjaan,
+          Alamat:body.alamat,
+        });
         break;
       case "penambahan_anggota":
-        doc.setData({});
+        doc.setData({
+          Nama_Kepala_Keluarga: body.namaKepalaKeluarga,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Agama: body.agama,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Nama_Anggota: body.namaAnggota,
+          Kota_Anggota: body.kotaAnggota,
+          Tanggal_Lahir_Anggota: body.tanggalLahirAnggota,
+          Jenis_Kelamin: body.jenisKelamin,
+          Status_Perkawinan: body.statusPerkawinan,
+          Nama_Ayah: body.namaAyah,
+          Nama_Ibu: body.namaIbu,
+          Hubungan_Dalam_Keluarga: body.hubunganDalamKeluarga,
+          Alamat_Anggota: body.alamatAnggota,
+          Nama_Pembuat_Pernyataan: body.namaKepalaKeluarga,
+        });
         break;
       case "pernyataan_kelahiran":
-        doc.setData({});
+        doc.setData({
+          Nama_Anak: body.namaAnak,
+          Jenis_Kelamin: body.jenisKelamin,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Hari: body.hari,
+          Jam: body.jam,
+          Agama: body.agama,
+          Alamat: body.alamat,
+          Angka_Num: body.angkaNum,
+          Angka_Str: terbilang(body.angkaNum),
+          Nama_Ayah: body.namaAyah,
+          NIK_Ayah: body.nikAyah,
+          Kota_Lahir_Ayah: body.kotaLahirAyah,
+          Tanggal_Lahir_Ayah: body.tanggalLahirAyah,
+          Pekerjaan_Ayah: body.pekerjaanAyah,
+          Alamat_Ayah: body.alamatAyah,
+          Nama_Ibu: body.namaIbu,
+          NIK_Ibu: body.nikIbu,
+          Kota_Lahir_Ibu: body.kotaLahirIbu,
+          Tanggal_Lahir_Ibu: body.tanggalLahirIbu,
+          Pekerjaan_Ibu: body.pekerjaanIbu,
+          Alamat_Ibu: body.alamatIbu,
+          Nomor_KK: body.noKK,
+        });
         break;
       case "panggilan":
-        doc.setData({});
+        doc.setData({
+          //kosong dulu
+        });
         break;
       case "tidak_keberatan":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          NIK: body.nik,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Status_Perkawinan: body.statusPerkawinan,
+          Pekerjaan: body.pekerjaan,
+          Agama: body.agama,
+          Alamat: body.alamat,
+          Nama_Anak: body.namaAnak,
+          NIK_Anak: body.nikAnak,
+          Kota_Anak: body.kotaAnak,
+          Tanggal_Lahir_Anak: body.tanggalLahirAnak,
+          Jenis_Kelamin_Anak: body.jenisKelaminAnak,
+          Status_Perkawinan_Anak: body.statusPerkawinanAnak,
+          Pekerjaan_Anak: body.pekerjaanAnak,
+          Agama_Anak: body.agamaAnak,
+          Alamat_Anak: body.alamatAnak,
+          Alamat_Tujuan: body.alamatTujuan,
+          Orangtua: body.orangtua,
+          Nama_Yang_Bersangkutan: body.nama,
+        });
         break;
       case "catatan_kepolisian":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Status_Perkawinan: body.statusPerkawinan,
+          Agama: body.agama,
+          Pekerjaan: body.pekerjaan,
+          Pendidikan_Terakhir: body.pendidikanTerakhir,
+          NIK: body.nik,
+          No_KK: body.noKK,
+          Alamat: body.alamat,
+          Tujuan_Pembuatan_Surat: body.tujuanPembuatanSurat,
+        });
         break;
       case "kehilangan_kepolisian":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Agama: body.agama,
+          Alamat: body.alamat,
+          Nama_Barang: body.namaBarang,
+          Lokasi_Kehilangan: body.lokasiKehilangan,
+          Tanggal_Kehilangan: body.tanggalKehilangan,
+          Jam_Kehilangan: body.jamKehilangan,
+        });
         break;
       case "pengantar":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          NIK: body.nik,
+          No_KK: body.noKK,
+          Jenis_Kelamin: body.jenisKelamin,
+          Agama: body.agama,
+          Status_Perkawinan: body.statusPerkawinan,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Pengajuan: body.pengajuan,
+          Tujuan: body.tujuan,
+        });
         break;
       case "tidak_mampu":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Pekerjaan: body.pekerjaan,
+          NIK: body.nik,
+          Alamat: body.alamat,
+          Dusun: body.dusun,
+          Tujuan: body.tujuan,
+        });
         break;
       case "wali_nikah":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin: body.jenisKelamin,
+          Agama: body.agama,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Hubungan_Keluarga: body.hubunganKeluarga,
+          Status_Keluarga: body.statusKeluarga,
+          Kelamin_Mempelai: body.jenisKelamin,
+          //skip dulu
+        });
         break;
       case "wali_murid":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Nama_Anak: body.namaAnak,
+          Kota_Anak: body.kotaAnak,
+          Tanggal_Lahir_Anak: body.tanggalLahirAnak,
+          Jenis_Kelamin_Anak: body.jenisKelaminAnak,
+          Kelas_Romawi: body.kelasRomawi,
+          Kelas_Huruf: body.kelasHuruf,
+          Sekolah: body.sekolah,
+        });
         break;
       case "domisili":
         doc.setData({});
