@@ -1,34 +1,41 @@
+"use client"; // Diperlukan karena menggunakan useRouter
+
 import { Button } from 'flowbite-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
+// 1. Perbarui interface: Hapus 'color' & 'icon', tambahkan 'imageUrl'
 interface LetterCardProps {
   title: string;
   description: string;
   topic: string;
-  
-  color: string;
-  icon: string;
+  link?: string;
+  imageUrl: string; // Properti baru untuk gambar preview
 }
 
 const LetterCard: React.FC<LetterCardProps> = ({
   title,
   description,
   topic,
-  color,
-  icon,
+  link,
+  imageUrl, // Gunakan properti baru ini
 }) => {
+  const router = useRouter();
+
   return (
-    // 1. Ganti <Card> dengan <div> biasa untuk kontrol penuh
-    //    Kita gunakan flexbox untuk memastikan layout konsisten
-    <div className="rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 overflow-hidden flex flex-col">
+    <div className="rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 overflow-hidden flex flex-col bg-white">
       
-      {/* Bagian ATAS: Latar belakang berwarna dengan ikon */}
-      <div className={`h-32 flex items-center justify-center ${color}`}>
-        <div className="text-6xl text-white opacity-80">{icon}</div>
+      {/* 2. Ganti bagian atas dengan preview gambar */}
+      <div className="relative h-48 w-full bg-gray-100 flex items-center justify-center overflow-auto">
+        <img 
+          src={imageUrl} 
+          alt={`Preview untuk ${title}`} 
+          className="h-full w-full object-cover object-top pb-2" // 'object-contain' agar gambar pas dan tidak terpotong
+        />
       </div>
 
-      {/* Bagian BAWAH: Konten dengan latar belakang putih eksplisit */}
-      <div className="p-4 bg-white flex flex-col flex-grow">
+      {/* Bagian bawah tetap sama */}
+      <div className="p-4 flex flex-col flex-grow">
         <h3 className="font-semibold text-gray-900 text-lg mb-2 line-clamp-2 min-h-[2.8rem]">
           {title}
         </h3>
@@ -44,11 +51,13 @@ const LetterCard: React.FC<LetterCardProps> = ({
             </span>
           </div>
           
+          {/* 3. Fungsionalitas tombol navigasi dipertahankan */}
           <Button
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg"
             size="sm"
+            onClick={() => router.push(`/surat/${link}`)}
           >
-            Pilih Template
+            Ajukan Surat
           </Button>
         </div>
       </div>
