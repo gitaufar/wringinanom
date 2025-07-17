@@ -3,19 +3,48 @@
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
+import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function BiodataPendudukForm() {
+type SuratKeteranganBiodataPendudukProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeteranganBiodataPendudukProps) {
   const initialData = {
-    namaLengkap: "Co. Regas",
-    nik: "929292929",
-    nomorKK: "929292929",
-    kotaLahir: "Co. Malang",
-    tanggalLahir: "2005-11-22",
-    alamat: "Co. Dusun Simpar No 003",
-    agama: "Co. Kejawen",
-    kewarganegaraan: "Co. Indonesia",
-    pekerjaan: "Pelajar",
-    pendidikan: "SMA",
+    NamaPengaju: "",
+    NIKPengaju: "",
+
+    //Page1 
+    namaLengkap: "",
+    Kabupaten: "",
+    nomorKK: "",
+    kotaLahir: "",
+    tanggalLahir: "",
+    jenisKelamin: "",
+    goldarah: "",
+    statusperkawinan: "",
+    agama: "",
+    pekerjaan: "",
+    pendidikan: "",
+    statuskeluarga: "",
+    nikibu: "",
+    namaibu: "",
+    nikayah: "",
+    namaayah: "",
+    alamatsebelum: "",
+    alamatsetelah: "",
+    kewarganegaraan: "",
+
+
+    //Page2
+    Nomorkartukeluarga: "",
+    Nomorpaspor: "",
+    TanggalKadaluarsaPaspor: "",
+    NomorAktakelahiran: "",
+    NomorAktaPerkawinan: "",
+    TanggalPerkawinan: "",
+    NomorAktaPerceraian: "",
+    TanggalPerceraian: "",
   };
 
   const [formData, setFormData] = useState(initialData);
@@ -76,7 +105,7 @@ export default function BiodataPendudukForm() {
               SURAT KETERANGAN BIODATA PENDUDUK
             </h1>
             <p className="max-w-full md:max-w-[520px] text-black text-center font-roboto text-base font-normal leading-6 px-4">
-              Silakan lengkapi data berikut untuk proses pengajuan surat.
+              Mohon isi sesuai data dan dengan sejujur-jujurnya.
             </p>
           </div>
         </div>
@@ -87,33 +116,40 @@ export default function BiodataPendudukForm() {
             onSubmit={handleSubmit}
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Nama Pengaju
+            </h1>
+
+            <InputField
+              inputLabel="Nama Pengaju"
+              inputPlaceholder="Nama Pengaju"
+              data={formData.NamaPengaju}
+              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="NIK "
+              inputPlaceholder="NIK"
+              data={formData.NIKPengaju}
+              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Identitas Personal
+            </h1>
+
             <InputField
               inputLabel="Nama Lengkap"
               inputPlaceholder="Nama Lengkap"
               data={formData.namaLengkap}
               setData={(val) => setFormData({ ...formData, namaLengkap: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-
-            <InputField
-              inputLabel="NIK"
-              inputPlaceholder="NIK"
-              data={formData.nik}
-              setData={(val) => setFormData({ ...formData, nik: val })}
-              numberOnly
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-
-            <InputField
-              inputLabel="Nomor Kartu Keluarga"
-              inputPlaceholder="Nomor KK"
-              data={formData.nomorKK}
-              setData={(val) => setFormData({ ...formData, nomorKK: val })}
-              numberOnly
               setEditData={setEditData}
               editData={editData}
               submited={submited}
@@ -138,19 +174,29 @@ export default function BiodataPendudukForm() {
               submited={submited}
             />
 
-            <InputField
-              inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={formData.alamat}
-              setData={(val) => setFormData({ ...formData, alamat: val })}
+            <InputFieldDropdown
+              inputLabel="Jenis Kelamin"
+              options={["Laki-laki", "Perempuan"]}
+              data={formData.jenisKelamin}
+              setData={(val) => setFormData({ ...formData, jenisKelamin: val })}
               setEditData={setEditData}
               editData={editData}
               submited={submited}
             />
 
-            <InputField
+            <InputFieldDropdown
+              inputLabel="Golongan Darah"
+              options={["A", "B", "AB", "O"]}
+              data={formData.goldarah}
+              setData={(val) => setFormData({ ...formData, goldarah: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDropdown
               inputLabel="Agama"
-              inputPlaceholder="Agama"
+              options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]}
               data={formData.agama}
               setData={(val) => setFormData({ ...formData, agama: val })}
               setEditData={setEditData}
@@ -158,18 +204,18 @@ export default function BiodataPendudukForm() {
               submited={submited}
             />
 
-            <InputField
-              inputLabel="Kewarganegaraan"
-              inputPlaceholder="Kewarganegaraan"
-              data={formData.kewarganegaraan}
-              setData={(val) => setFormData({ ...formData, kewarganegaraan: val })}
+            <InputFieldDropdown
+              inputLabel="Status Perkawinan"
+              options={["Belum Menikah", "Menikah", "Cerai"]}
+              data={formData.statusperkawinan}
+              setData={(val) => setFormData({ ...formData, statusperkawinan: val })}
               setEditData={setEditData}
               editData={editData}
               submited={submited}
             />
 
             <InputField
-              inputLabel="Pekerjaan"
+              inputLabel="Perkerjaan"
               inputPlaceholder="Pekerjaan"
               data={formData.pekerjaan}
               setData={(val) => setFormData({ ...formData, pekerjaan: val })}
@@ -183,6 +229,168 @@ export default function BiodataPendudukForm() {
               inputPlaceholder="Pendidikan"
               data={formData.pendidikan}
               setData={(val) => setFormData({ ...formData, pendidikan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDropdown
+              inputLabel="Status Dalam Keluarga"
+              options={["Kepala Keluarga", "Istri", "Anak"]}
+              data={formData.statuskeluarga}
+              setData={(val) => setFormData({ ...formData, statuskeluarga: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="NIK Ibu"
+              inputPlaceholder="NIK Ibu"
+              data={formData.nikibu}
+              setData={(val) => setFormData({ ...formData, nikibu: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nama Ibu"
+              inputPlaceholder="Nama Ibu"
+              data={formData.namaibu}
+              setData={(val) => setFormData({ ...formData, namaibu: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />  
+
+            <InputField
+              inputLabel="NIK Ayah"
+              inputPlaceholder="NIK Ayah"
+              data={formData.nikayah}
+              setData={(val) => setFormData({ ...formData, nikayah: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nama Ayah"
+              inputPlaceholder="Nama Ayah"
+              data={formData.namaayah}
+              setData={(val) => setFormData({ ...formData, namaayah: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+
+            <InputField
+              inputLabel="Alamat Sebelumnya"
+              inputPlaceholder="Alamat Sebelumnya"
+              data={formData.alamatsebelum}
+              setData={(val) => setFormData({ ...formData, alamatsebelum: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Alamat Sekarang"
+              inputPlaceholder="Alamat Sekarang"
+              data={formData.alamatsetelah}
+              setData={(val) => setFormData({ ...formData, alamatsetelah: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+            
+            <InputField
+              inputLabel="Kewarganegaraan"
+              inputPlaceholder="Kewarganegaraan"
+              data={formData.kewarganegaraan}
+              setData={(val) => setFormData({ ...formData, kewarganegaraan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Kepemilikan Dokumen
+            </h1>
+
+            <InputField
+              inputLabel="Nomor Kartu Keluarga"
+              inputPlaceholder="Nomor Kartu Keluarga"
+              data={formData.Nomorkartukeluarga}
+              setData={(val) => setFormData({ ...formData, Nomorkartukeluarga: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nomor Paspor, Kosongkan jika tidak ada"
+              inputPlaceholder="Nomor Paspor"
+              data={formData.Nomorpaspor}
+              setData={(val) => setFormData({ ...formData, Nomorpaspor: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDate
+              inputLabel="Tanggal Kadaluarsa Paspor, Kosongkan jika tidak ada"
+              data={formData.TanggalKadaluarsaPaspor}
+              setData={(val) => setFormData({ ...formData, TanggalKadaluarsaPaspor: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nomor Akta Kelahiran"
+              inputPlaceholder="Nomor Akta Kelahiran"
+              data={formData.NomorAktakelahiran}
+              setData={(val) => setFormData({ ...formData, NomorAktakelahiran: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nomor Akta Perkawinan"
+              inputPlaceholder="Nomor Akta Perkawinan"
+              data={formData.NomorAktaPerkawinan}
+              setData={(val) => setFormData({ ...formData, NomorAktaPerkawinan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDate
+              inputLabel="Tanggal Perkawinan. Kosongkan jika tidak ada"
+              data={formData.TanggalPerkawinan}
+              setData={(val) => setFormData({ ...formData, TanggalPerkawinan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nomor Akta Perceraian"
+              inputPlaceholder="Nomor Akta Perceraian"
+              data={formData.NomorAktaPerceraian}
+              setData={(val) => setFormData({ ...formData, NomorAktaPerceraian: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDate
+              inputLabel="Tanggal Perceraian. Kosongkan jika tidak ada"
+              data={formData.TanggalPerceraian}
+              setData={(val) => setFormData({ ...formData, TanggalPerceraian: val })}
               setEditData={setEditData}
               editData={editData}
               submited={submited}

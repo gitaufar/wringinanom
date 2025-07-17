@@ -1,35 +1,50 @@
-    "use client";
+"use client";
 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
-import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import { useState } from "react";
+import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function DitinggalPasanganForm() {
-  const [edit, setEdit] = useState(true);
+type SuratKeteranganDitinggalSuamiAtauIstriProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKeteranganDitinggalSuamiAtauIstriProps) {
+  const initialData = {
+    NamaPengaju: "",
+    NIKPengaju: "",
+
+    //Page1 
+    namaLengkap: "",
+    umur2:"",
+    Alamat2: "",
+    pekerjaan: "",
+    
+
+
+    //Page2
+    StatusPasangan: "",
+    NamaLengkap: "",
+    Umur: "",
+    Alamat3: "",
+    Perkerjaan: "",
+    TanggalMenigallkan: "",
+  };
+
+  const [formData, setFormData] = useState(initialData);
+  const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  // NAMA PENGAJU
-  const [namaPengaju, setNamaPengaju] = useState("Dewi");
-  const [nikPengaju, setNikPengaju] = useState("987654321");
-
-  // DATA PASANGAN YANG MENINGGALKAN
-  const [namaMeninggalkan, setNamaMeninggalkan] = useState("Rudi");
-  const [umurMeninggalkan, setUmurMeninggalkan] = useState("40");
-  const [alamatMeninggalkan, setAlamatMeninggalkan] = useState("Jl. Kenanga No. 5");
-  const [pekerjaanMeninggalkan, setPekerjaanMeninggalkan] = useState("Petani");
-
-  // DATA PASANGAN YANG DITINGGALKAN
-  const [statusPasangan, setStatusPasangan] = useState("Suami");
-  const [namaDitinggalkan, setNamaDitinggalkan] = useState("Dewi");
-  const [umurDitinggalkan, setUmurDitinggalkan] = useState("38");
-  const [alamatDitinggalkan, setAlamatDitinggalkan] = useState("Jl. Kenanga No. 5");
-  const [pekerjaanDitinggalkan, setPekerjaanDitinggalkan] = useState("Ibu Rumah Tangga");
-  const [tempatMeninggalkan, setTempatMeninggalkan] = useState("Kota Jakarta");
-
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setSubmited("submit");
-    setEdit(false);
+    setEditData(false);
+  };
+
+  const handleReset = () => {
+    setFormData(initialData);
+    setSubmited(null);
+    setEditData(true);
   };
 
   return (
@@ -65,58 +80,177 @@ export default function DitinggalPasanganForm() {
 </div>
 
 
-      <div className="w-full pt-24 px-5 lg:px-[170px]">
+      {/* Main Content */}
+      <div className="w-full pt-20">
         {/* Header */}
-        <div className="flex justify-center items-center py-10 text-center">
-          <div className="flex flex-col gap-4">
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] py-8 md:py-[60px]">
+          <div className="flex flex-col items-center gap-6 flex-1">
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               SURAT KETERANGAN DITINGGAL SUAMI ATAU ISTRI
             </h1>
-            <p className="text-black text-base max-w-xl mx-auto">
-              Silakan lengkapi data berikut untuk proses pengajuan surat.
+            <p className="max-w-full md:max-w-[520px] text-black text-center font-roboto text-base font-normal leading-6 px-4">
+              Mohon isi sesuai data dan dengan sejujur-jujurnya.
             </p>
           </div>
         </div>
 
         {/* Form Section */}
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
+          >
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Nama Pengaju
+            </h1>
 
-          {/* NAMA PENGAJU */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Pengaju</h2>
-            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={namaPengaju} setData={setNamaPengaju} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={nikPengaju} setData={setNikPengaju} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-          </div>
+            <InputField
+              inputLabel="Nama Pengaju"
+              inputPlaceholder="Nama Pengaju"
+              data={formData.NamaPengaju}
+              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
 
-          {/* DATA PASANGAN YANG MENINGGALKAN */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Pasangan yang Meninggalkan</h2>
-            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={namaMeninggalkan} setData={setNamaMeninggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Umur" inputPlaceholder="Umur" data={umurMeninggalkan} setData={setUmurMeninggalkan} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={alamatMeninggalkan} setData={setAlamatMeninggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={pekerjaanMeninggalkan} setData={setPekerjaanMeninggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+            <InputField
+              inputLabel="NIK "
+              inputPlaceholder="NIK"
+              data={formData.NIKPengaju}
+              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
 
-          {/* DATA PASANGAN YANG DITINGGALKAN */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Pasangan yang Ditinggalkan</h2>
-            <InputFieldDropdown inputLabel="Status Pasangan" options={["Suami", "Istri"]} data={statusPasangan} setData={setStatusPasangan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={namaDitinggalkan} setData={setNamaDitinggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Umur" inputPlaceholder="Umur" data={umurDitinggalkan} setData={setUmurDitinggalkan} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={alamatDitinggalkan} setData={setAlamatDitinggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={pekerjaanDitinggalkan} setData={setPekerjaanDitinggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Tempat Meninggalkan" inputPlaceholder="Tempat Meninggalkan" data={tempatMeninggalkan} setData={setTempatMeninggalkan} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Pasangan Yang Meninggalkan
+            </h1>
 
-          {/* Submit Button */}
-          <div className="text-start">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
-            >
-              Submit
-            </button>
-          </div>
+            <InputField
+              inputLabel="Nama Lengkap"
+              inputPlaceholder="Nama Lengkap"
+              data={formData.namaLengkap}
+              setData={(val) => setFormData({ ...formData, namaLengkap: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Umur"
+              inputPlaceholder="Umur"
+              data={formData.umur2}
+              setData={(val) => setFormData({ ...formData, umur2: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Alamat"
+              inputPlaceholder="Masukan Alamat"
+              data={formData.Alamat2}
+              setData={(val) => setFormData({ ...formData, Alamat2: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Perkerjaan"
+              inputPlaceholder="Pekerjaan"
+              data={formData.pekerjaan}
+              setData={(val) => setFormData({ ...formData, pekerjaan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Data Pasangan Yang Ditinggalkan
+            </h1>
+
+            <InputFieldDropdown
+              inputLabel="Status Pasangan"
+              options={["Suami", "Istri"]}
+              data={formData.StatusPasangan}
+              setData={(val) => setFormData({ ...formData, StatusPasangan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nama Lengkap"
+              inputPlaceholder="Nama Lengkap"
+              data={formData.NamaLengkap}
+              setData={(val) => setFormData({ ...formData, NamaLengkap: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Umur"
+              inputPlaceholder="Umur"
+              data={formData.Umur}
+              setData={(val) => setFormData({ ...formData, Umur: val })}
+              numberOnly
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Alamat"
+              inputPlaceholder="Masukan Alamat"
+              data={formData.Alamat3}
+              setData={(val) => setFormData({ ...formData, Alamat3: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Pekerjaan"
+              inputPlaceholder="Pekerjaan"
+              data={formData.Perkerjaan}
+              setData={(val) => setFormData({ ...formData, Perkerjaan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputFieldDate
+              inputLabel="Tanggal Meninggalkan"
+              data={formData.TanggalMenigallkan}
+              setData={(val) => setFormData({ ...formData, TanggalMenigallkan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            {/* Button Group */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Footer */}

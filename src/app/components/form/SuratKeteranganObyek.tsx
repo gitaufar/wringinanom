@@ -1,76 +1,222 @@
 "use client";
 
-import { useState } from "react";
-import InputField from "../field/InputField";
-import InputFieldDate from "../field/InputFieldDate";
 
-export default function PenambahanAnggotaForm() {
-  const [edit, setEdit] = useState(true);
+import InputField from "../../components/field/InputField";
+import InputFieldDate from "../../components/field/InputFieldDate";
+import { useState } from "react";
+import InputFieldDropdown from "../field/InputFieldDropdown";
+
+type SuratKeteranganObyekProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganObyek({ tipe }: SuratKeteranganObyekProps) {
+  const initialData = {
+    NamaPengaju: "",
+    NOP: "",
+    AlaamatOP: "",
+    AlamatOPW: "",
+    Luas: "",
+    NJOP: "",
+    TotalNJOP: "",
+    PBB: "",
+    Tahunterbit: "",
+    TujuanPengajuan: "",
+  };
+
+  const [formData, setFormData] = useState(initialData);
+  const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  // Data Pengaju
-  const [nama, setNama] = useState("");
-  const [NOP, setNOP] = useState("");
-  const [AlmatObyek, setAlamatObyek] = useState("");
-  const [Alamatwajib, setAlamatWajib] = useState("");
-  const [luas, setLuas] = useState("");
-  const [NJOP, setNJOP] = useState("");
-  const [TotalNJOP, setTotalNJOP] = useState("");
-  const [Tahundata, setTahundata] = useState("");
-  const [tahunbelumterbitang, setTahunBelumTerbit] = useState("");
-  const [tujuanpengajuan, setTujuanPengajuan] = useState("");
-
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setSubmited("submit");
-    setEdit(false);
+    setEditData(false);
+  };
+
+  const handleReset = () => {
+    setFormData(initialData);
+    setSubmited(null);
+    setEditData(true);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
-      {/* Top Bar */}
-      <div className="w-full h-20 flex items-center justify-center gap-5 px-4 md:px-5 bg-white shadow fixed top-0 z-10">
-        <div className="w-10 h-10 rounded-full bg-black/10 flex-shrink-0" />
-        <div className="flex-1 text-black font-roboto text-xl md:text-[28px] font-medium leading-9">
-          Pengajuan Surat
-        </div>
-      </div>
+      {/* Header */}
+<div className="w-full h-20 flex items-center justify-center gap-5 px-4 md:px-5 bg-white shadow fixed top-0 z-10">
+  {/* Tombol Back */}
+  <button
+    onClick={() => window.history.back()}
+    className="p-2 rounded-full hover:bg-gray-100 transition"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="w-6 h-6 text-black"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 19.5L8.25 12l7.5-7.5"
+      />
+    </svg>
+  </button>
+
+  {/* Avatar & Judul */}
+  <div className="w-10 h-10 rounded-full bg-black/10 flex-shrink-0" />
+  <div className="flex-1 text-black font-roboto text-xl md:text-[28px] font-medium leading-9">
+    Pengajuan Surat
+  </div>
+</div>
+
 
       {/* Main Content */}
-      <div className="w-full pt-24 px-5 lg:px-[170px]">
-        <div className="flex justify-center items-center py-10 text-center">
-          <div className="flex flex-col gap-4">
+      <div className="w-full pt-20">
+        {/* Header */}
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] py-8 md:py-[60px]">
+          <div className="flex flex-col items-center gap-6 flex-1">
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
-              SURAT KETRANGAN OBYEK
+              SURAT KETERANGAN OBYEK
             </h1>
-            <p className="text-black text-base max-w-xl mx-auto">
-              Silakan lengkapi data berikut untuk proses pengajuan surat.
+            <p className="max-w-full md:max-w-[520px] text-black text-center font-roboto text-base font-normal leading-6 px-4">
+              Mohon isi sesuai data dan dengan sejujur-jujurnya.
             </p>
           </div>
         </div>
 
-        {/* Form Card */}
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          {/* Data Pengaju */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField inputLabel="Nama" inputPlaceholder="Nama Pengaju" data={nama} setData={setNama} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NOP" inputPlaceholder="Nomor Objek Pajak" data={NOP} setData={setNOP} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat Obyek" inputPlaceholder="Alamat Obyek" data={AlmatObyek} setData={setAlamatObyek} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat Wajib Pajak" inputPlaceholder="Alamat Wajib Pajak" data={Alamatwajib} setData={setAlamatWajib} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Luas Obyek" inputPlaceholder="Luas Obyek" data={luas} setData={setLuas} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NJOP" inputPlaceholder="Co. 200000" data={NJOP} setData={setNJOP} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Total NJOP" inputPlaceholder="Co. 24.000.000" data={TotalNJOP} setData={setTotalNJOP} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tahun Data" data={Tahundata} setData={setTahundata} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tahun Belum Terbit" data={tahunbelumterbitang} setData={setTahunBelumTerbit} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Tujuan Pengajuan" inputPlaceholder="Co. Pelengkap dokumen jual beli tanah" data={tujuanpengajuan} setData={setTujuanPengajuan} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+        {/* Form Section */}
+        <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
+          >
+            <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+              Nama Pengaju
+            </h1>
 
-          {/* Submit */}
-          <div className="text-start">
-            <button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
-              Submit
-            </button>
-          </div>
+            <InputField
+              inputLabel="Nama Wajib Pajak "
+              inputPlaceholder="Nama Wajib Pajak "
+              data={formData.NamaPengaju}
+              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+
+
+            <InputField
+              inputLabel="Nomor Objek Pajak (NOP)"
+              inputPlaceholder="Nomor Objek Pajak"
+              data={formData.NOP}
+              setData={(val) => setFormData({ ...formData, NOP: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited} 
+            />
+
+            <InputField
+              inputLabel="Alamat Objek Pajak"
+              inputPlaceholder="Alamat Objek Pajak"
+              data={formData.AlaamatOP}
+              setData={(val) => setFormData({ ...formData, AlaamatOP: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Alamat Objek Pajak Wajib"
+              inputPlaceholder="Alamat Objek Pajak Wajib"
+              data={formData.AlamatOPW}
+              setData={(val) => setFormData({ ...formData, AlamatOPW: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Luas Objek Pajak"
+              inputPlaceholder="Luas Objek Pajak"
+              data={formData.Luas}
+              setData={(val) => setFormData({ ...formData, Luas: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Nilai Jual Objek Pajak (NJOP)"
+              inputPlaceholder="Nilai Jual Objek Pajak"
+              data={formData.NJOP}
+              setData={(val) => setFormData({ ...formData, NJOP: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Total NJOP"
+              inputPlaceholder="Total NJOP"
+              data={formData.TotalNJOP}
+              setData={(val) => setFormData({ ...formData, TotalNJOP: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Pajak Bumi dan Bangunan (PBB)"
+              inputPlaceholder="Pajak Bumi dan Bangunan"
+              data={formData.PBB}
+              setData={(val) => setFormData({ ...formData, PBB: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            <InputField
+              inputLabel="Tahun Terbit"
+              inputPlaceholder="Tahun Terbit"
+              data={formData.Tahunterbit}
+              setData={(val) => setFormData({ ...formData, Tahunterbit: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+
+            <InputField
+              inputLabel="Tujuan Pengajuan"
+              inputPlaceholder="Tujuan Pengajuan"
+              data={formData.TujuanPengajuan}
+              setData={(val) => setFormData({ ...formData, TujuanPengajuan: val })}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+            />
+
+            {/* Button Group */}
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Footer */}
