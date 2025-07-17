@@ -6,7 +6,11 @@ import InputFieldDropdown from "./../../components/field/InputFieldDropdown";
 
 import { useState } from "react";
 
-export default function BedaIdentitasForm() {
+type SuratKeteranganBedaIdentitasProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBedaIdentitasProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
@@ -27,10 +31,46 @@ export default function BedaIdentitasForm() {
 
   const [form, setForm] = useState(initialState);
 
-  const handleSubmit = () => {
-    setSubmited("submit");
-    setEdit(false);
+  const handleSubmit = async () => {
+    try {
+      setSubmited("submit");
+      setEdit(false);
+
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nik: form.nikPengaju,
+          jenis_surat: "Beda Identitas",
+          tipe,
+          keterangan: `Permohonan Surat Beda Identitas oleh ${form.namaPengaju}`,
+          data_dinamis: {
+            namaPengaju: form.namaPengaju,
+            namaLama: form.namaLama,
+            namaBaru: form.namaBaru,
+            nikSubjek: form.nikAnak,
+            kotaLahir: form.kotaLahir,
+            tanggalLahir: form.tanggalLahir,
+            jenisKelamin: form.jenisKelamin,
+            alamat: form.alamat,
+            agama: form.agama,
+            pekerjaan: form.pekerjaan,
+            kewarganegaraan: form.kewarganegaraan,
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      alert(`✅ Berhasil mengajukan surat. Resi: ${data.permohonan.no_resi}`);
+    } catch (err: any) {
+      alert(`❌ Gagal mengirim permohonan: ${err.message}`);
+      setEdit(true);
+    }
   };
+
+
 
   const handleReset = () => {
     setForm(initialState);

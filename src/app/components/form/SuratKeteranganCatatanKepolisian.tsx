@@ -5,7 +5,11 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 
-export default function SuratKeteranganSKCK() {
+type SuratKeteranganCatatanKepolisianProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeteranganCatatanKepolisianProps) {
   const initialData = {
     namaLengkap: "",
     kotaLahir: "",

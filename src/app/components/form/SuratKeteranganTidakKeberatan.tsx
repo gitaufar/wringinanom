@@ -5,7 +5,11 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 
-export default function SuratTidakKeberatan() {
+type SuratKeteranganTidakKeberatanProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganTidakKeberatanProps) {
   const initialData = {
     namaPengaju: "",
     nikPengaju: "",

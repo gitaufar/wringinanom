@@ -3,8 +3,13 @@
 import { useState } from "react";
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
+import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 
-export default function SuratTidakDiketahuiKeberadaan() {
+type SuratKeteranganTidakDiketahuiKeberadaannyaProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: SuratKeteranganTidakDiketahuiKeberadaannyaProps) {
   const initialData = {
     namaPengaju: "",
     nikPengaju: "",
@@ -136,15 +141,15 @@ export default function SuratTidakDiketahuiKeberadaan() {
               editData={editData}
               submited={submited}
             />
-            <InputField
-              inputLabel="Jenis Kelamin"
-              inputPlaceholder="Laki-laki / Perempuan"
-              data={formData.jenisKelamin}
-              setData={(val) => setFormData({ ...formData, jenisKelamin: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
+            <InputFieldDropdown
+  inputLabel="Jenis Kelamin"
+  inputPlaceholder="Pilih jenis kelamin"
+  options={["Laki-laki", "Perempuan"]}
+  setData={(val) => setFormData({ ...formData, jenisKelamin: val })}
+  setEditData={setEditData}
+  editData={editData}
+  submited={submited}
+/>
             <InputField
               inputLabel="Umur"
               inputPlaceholder="Umur"

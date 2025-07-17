@@ -6,7 +6,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import InputFieldTime from "../../components/field/InputFieldTime";
 
-export default function SuratKeteranganKehilanganKepolisian() {
+type SuratKehilanganKepolisianProps = {
+  tipe: String;
+};
+
+export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepolisianProps) {
   const [formData, setFormData] = useState({
     namaLengkap: "",
     kotaLahir: "",

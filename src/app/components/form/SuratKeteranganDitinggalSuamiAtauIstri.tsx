@@ -5,7 +5,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function BiodataCeraiMati1() {
+type SuratKeteranganDitinggalSuamiAtauIstriProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKeteranganDitinggalSuamiAtauIstriProps) {
   const initialData = {
     NamaPengaju: "",
     NIKPengaju: "",

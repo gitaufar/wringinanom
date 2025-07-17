@@ -5,7 +5,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import { useState } from "react";
 
-export default function BelumMenikahForm() {
+type SuratKeteranganBelumNikahProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelumNikahProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 

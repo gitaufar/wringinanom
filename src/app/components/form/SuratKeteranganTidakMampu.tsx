@@ -6,7 +6,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function SuratKeteranganTidakMampu() {
+type SuratKeteranganTidakMampuProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidakMampuProps) {
   const initialData = {
     NamaPengaju: "",
     NIK: "",

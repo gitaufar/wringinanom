@@ -5,7 +5,11 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 
-export default function SuratPengantar() {
+type SuratPengantarProps = {
+  tipe: String;
+};
+
+export default function SuratPengantar({ tipe }: SuratPengantarProps) {
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>(null);
 

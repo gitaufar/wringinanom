@@ -6,7 +6,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function SuratKeteranganWaliMurid() {
+type SuratKeteranganWaliMuridProps = {
+  tipe: String;
+};
+
+export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMuridProps) {
   const initialData = {
     NamaPengaju: "",
     Kotakabupaten: "",

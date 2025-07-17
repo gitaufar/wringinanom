@@ -3,7 +3,7 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 
-import SuratKeteranganKehilanganKepolisian from '@/app/components/form/SuratKehilanganKepolisian';
+import SuratKehilanganKepolisian from '@/app/components/form/SuratKehilanganKepolisian';
 import SuratKeteranganCatatanKepolisian from '@/app/components/form/SuratKeteranganCatatanKepolisian';
 import SuratKeteranganIdentitas from '@/app/components/form/SuratKeteranganIdentitas';
 import SuratKeteranganTidakDiketahuiKeberadaannya from '@/app/components/form/SuratKeteranganTidakDiketahuiKeberadaannya';
@@ -29,101 +29,95 @@ import SuratKeteranganKuasa from '@/app/components/form/SuratKeteranganKuasa';
 import SuratKeteranganObyek from '@/app/components/form/SuratKeteranganObyek';
 import SuratKeteranganPenghasilan from '@/app/components/form/SuratKeteranganPenghasilan';
 import SuratKeteranganUsaha from '@/app/components/form/Usaha';
+import BedaIdentitasForm from '@/app/components/form/SuratKeteranganBedaIdentitas';
 
 export default function Page() {
-  const { jenis_surat } = useParams();
+    const { tipe } = useParams();
 
-  let componentToRender;
+    let componentToRender;
 
-  switch (jenis_surat) {
-    case 'pengantar':
-      componentToRender = <SuratPengantar />;
-      break;
-    case 'kehilangan_kepolisian':
-      componentToRender = <SuratKeteranganKehilanganKepolisian />;
-      break;
-    case 'identitas':
-      componentToRender = <SuratKeteranganIdentitas />;
-      break;
-    case 'pernyataan_kelahiran':
-      componentToRender = <SuratPernyataanKelahiran />;
-      break;
-    case 'tidak_diketahui':
-      componentToRender = <SuratKeteranganTidakDiketahuiKeberadaannya />;
-      break;
-    case 'tidak_keberatan':
-      componentToRender = <SuratKeteranganTidakKeberatan />;
-      break;
-    case 'catatan_kepolisian':
-      componentToRender = <SuratKeteranganCatatanKepolisian />;
-      break;
-    case 'anak_kandung':
-      componentToRender = <PengajuanKeteranganAnakKandung />;
-      break;
-    case 'beda_identitas':
-      componentToRender = <SuratKeteranganBedaIdentitas />;
-      break;
-    case 'belum_nikah':
-      componentToRender = <SuratKeteranganBelumNikah />;
-      break;
-    case 'biodata_penduduk':
-      componentToRender = <SuratKeteranganBiodataPenduduk />;
-      break;
-    case 'cerai_mati':
-      componentToRender = <SuratKeteranganCeraiMati />;
-      break;
-    case 'ditinggal_pasangan':
-      componentToRender = <SuratKeteranganDitinggalSuamiAtauIstri />;
-      break;
-    case 'duda_janda':
-      componentToRender = <SuratKeteranganDudaJanda />;
-      break;
-    case 'biodata_penduduk':
-      componentToRender = <SuratKeteranganBiodataPenduduk />;
-      break;
-    case 'kematian':
-      componentToRender = <SuratKeteranganKematian />;
-      break;
-    case 'status':
-      componentToRender = <SuratKeteranganStatus />;
-      break;
-    case 'penambahan_anggota':
-      componentToRender = <SuratPenambahanAnggotaKeluarga />;
-      break;
-    case 'panggilan':
-      componentToRender = <SuratKeteranganPanggilan />;
-      break;
-    case 'biodata_penduduk':
-      componentToRender = <SuratKeteranganBiodataPenduduk />;
-      break;
-    case 'tidak_mampu':
-      componentToRender = <SuratKeteranganTidakMampu />;
-      break;
-    case 'wali_nikah':
-      componentToRender = <SuratKeteranganWaliNikah />;
-      break;
-    case 'wali_murid':
-      componentToRender = <SuratKeteranganWaliMurid />;
-      break;
-    case 'domisili':
-      componentToRender = <SuratKeteranganDomisili />;
-      break;
-    case 'kuasa':
-      componentToRender = <SuratKeteranganKuasa />;
-      break;
-    case 'objek':
-      componentToRender = <SuratKeteranganObyek />;
-      break;
-    case 'penghasilan':
-      componentToRender = <SuratKeteranganPenghasilan />;
-      break;
-    case 'usaha':
-      componentToRender = <SuratKeteranganUsaha />;
-      break;
-    default:
-      componentToRender = <div>Halaman tidak ditemukan</div>;
-      break;
-  }
+    switch (tipe) {
+        case 'pengantar':
+            componentToRender = <SuratPengantar tipe={tipe} />;
+            break;
+        case 'kehilangan_kepolisian':
+            componentToRender = <SuratKehilanganKepolisian tipe={tipe} />;
+            break;
+        case 'identitas':
+            componentToRender = <SuratKeteranganIdentitas tipe={tipe} />;
+            break;
+        case 'pernyataan_kelahiran':
+            componentToRender = <SuratPernyataanKelahiran tipe={tipe} />;
+            break;
+        case 'tidak_diketahui':
+            componentToRender = <SuratKeteranganTidakDiketahuiKeberadaannya tipe={tipe} />;
+            break;
+        case 'tidak_keberatan':
+            componentToRender = <SuratKeteranganTidakKeberatan tipe={tipe} />;
+            break;
+        case 'catatan_kepolisian':
+            componentToRender = <SuratKeteranganCatatanKepolisian tipe={tipe} />;
+            break;
+        case 'anak_kandung':
+            componentToRender = <PengajuanKeteranganAnakKandung tipe={tipe} />;
+            break;
+        case 'beda_identitas':
+            componentToRender = <BedaIdentitasForm tipe={tipe} />;            break;
+        case 'belum_nikah':
+            componentToRender = <SuratKeteranganBelumNikah tipe={tipe} />;
+            break;
+        case 'biodata_penduduk':
+            componentToRender = <SuratKeteranganBiodataPenduduk tipe={tipe} />;
+            break;
+        case 'cerai_mati':
+            componentToRender = <SuratKeteranganCeraiMati tipe={tipe} />;
+            break;
+        case 'ditinggal_pasangan':
+            componentToRender = <SuratKeteranganDitinggalSuamiAtauIstri tipe={tipe} />;
+            break;
+        case 'duda_janda':
+            componentToRender = <SuratKeteranganDudaJanda tipe={tipe} />;
+            break;
+        case 'kematian':
+            componentToRender = <SuratKeteranganKematian tipe={tipe} />;
+            break;
+        case 'status':
+            componentToRender = <SuratKeteranganStatus tipe={tipe} />;
+            break;
+        case 'penambahan_anggota':
+            componentToRender = <SuratPenambahanAnggotaKeluarga tipe={tipe} />;
+            break;
+        case 'panggilan':
+            componentToRender = <SuratKeteranganPanggilan tipe={tipe} />;
+            break;
+        case 'tidak_mampu':
+            componentToRender = <SuratKeteranganTidakMampu tipe={tipe} />;
+            break;
+        case 'wali_nikah':
+            componentToRender = <SuratKeteranganWaliNikah tipe={tipe} />;
+            break;
+        case 'wali_murid':
+            componentToRender = <SuratKeteranganWaliMurid tipe={tipe} />;
+            break;
+        case 'domisili':
+            componentToRender = <SuratKeteranganDomisili tipe={tipe} />;
+            break;
+        case 'kuasa':
+            componentToRender = <SuratKeteranganKuasa tipe={tipe} />;
+            break;
+        case 'objek':
+            componentToRender = <SuratKeteranganObyek tipe={tipe} />;
+            break;
+        case 'penghasilan':
+            componentToRender = <SuratKeteranganPenghasilan tipe={tipe} />;
+            break;
+        case 'usaha':
+            componentToRender = <SuratKeteranganUsaha tipe={tipe} />;
+            break;
+        default:
+            componentToRender = <div>Halaman tidak ditemukan</div>;
+            break;
+    }
 
-  return <>{componentToRender}</>;
+    return <>{componentToRender}</>;
 }

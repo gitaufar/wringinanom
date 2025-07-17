@@ -4,7 +4,11 @@ import { useState } from "react";
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 
-export default function PengajuanKeteranganAnakKandung() {
+type PengajuanKeteranganAnakKandungProps = {
+  tipe: String;
+};
+
+export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKeteranganAnakKandungProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 

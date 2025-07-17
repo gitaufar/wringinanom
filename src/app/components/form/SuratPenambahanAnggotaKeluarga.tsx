@@ -6,7 +6,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function SuratPenambahanAnggotaKeluarga() {
+type SuratPenambahanAnggotaKeluargaProps = {
+  tipe: String;
+};
+
+export default function SuratPenambahanAnggotaKeluarga({ tipe }: SuratPenambahanAnggotaKeluargaProps) {
   const initialData = {
     NamaKepalaKeluarga: "",
     Kabupaten1: "",

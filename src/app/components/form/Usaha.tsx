@@ -6,7 +6,11 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 
-export default function SuratKeteranganUsaha() {
+type UsahaProps = {
+  tipe: String;
+};
+
+export default function Usaha({ tipe }: UsahaProps) {
   const initialData = {
     NamaPengaju: "",
     Kotakabupaten: "",
@@ -25,12 +29,40 @@ export default function SuratKeteranganUsaha() {
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
+  const jenis_surat = "pelayanan umum";
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setSubmited("submit");
+  setEditData(false);
+
+  try {
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nik: formData.NIK1,
+        jenis_surat,
+        tipe,
+        data_dinamis: formData,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Gagal membuat permohonan");
+    }
+
+    alert(`✅ Permohonan berhasil! No Resi: ${data.permohonan.no_resi}`);
+  } catch (err: any) {
+    console.error("❌ Error:", err.message);
+    alert("❌ Gagal mengirim permohonan: " + err.message);
+  }
+};
+
 
   const handleReset = () => {
     setFormData(initialData);
