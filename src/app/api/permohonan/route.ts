@@ -119,7 +119,7 @@ const handleSubmit = async () => {
           keterangan,
           data_dinamis: {
             nama_dipakai: namaDipakai,
-            nama_alias: namaAlias,
+            nama_alias: namaAlias,b
           },
         }),
       });
