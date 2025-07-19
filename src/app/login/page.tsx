@@ -1,10 +1,12 @@
 "use client";
 import LoginScreen from "../components/screen/LoginScreen";
+import SuratKeteranganDitinggalSuamiAtauIstri  from "../comp"
+
 
 const page = () => {
   return (
     <div>
-      <LoginScreen />
+      <SuratKeteranganDitinggalSuamiAtauIstri />
     </div>
   );
 };

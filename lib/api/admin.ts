@@ -33,7 +33,7 @@ export async function fetchPendudukByNik(nik: string) {
 
   return res.json();
 }
-
+W
 export async function logoutAdmin() {
   const res = await fetch("/api/auth/logout", {
     method: "POST",
