@@ -203,7 +203,7 @@ const Receipt = () => {
             {copied ? "Disalin!" : "Salin Resi"}
           </button>
 
-          <Link href="https://wa.me" target="_blank">
+          <Link href={`https://wa.me?text=${order.receiptNumber}`} target="_blank">
             <button
               style={{
                 padding: "10px 20px",

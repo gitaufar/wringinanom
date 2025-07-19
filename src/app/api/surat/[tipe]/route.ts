@@ -1,14 +1,17 @@
 // src/app/api/surat/[tipe]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
-import { useParams } from "next/navigation";
 import { terbilang } from "angka-menjadi-terbilang";
 
-export async function POST(req: NextRequest) {
-  const { tipe } = useParams();
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { tipe: string } }
+) {
+  const { tipe } = params;
   let pathFile = "";
   switch (tipe) {
     case "anak_kandung":
