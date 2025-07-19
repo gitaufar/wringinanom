@@ -45,10 +45,68 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmited("submit");
+
     setEditData(false);
+
+    // Kumpulkan semua data form ke dalam satu objek untuk dikirim
+    const data_dinamis = {
+      nama_pengaju: formData.NamaPengaju,
+      nik_pengaju: formData.NIKPengaju,
+      // Data Pasangan yang Meninggal
+      nama_lengkap_pasangan: formData.namaLengkap,
+      kabupaten: formData.Kabupaten,
+      nomor_kk: formData.nomorKK,
+      kota_lahir_pasangan: formData.kotaLahir,
+      tanggal_lahir_pasangan: formData.tanggalLahir,
+      nik_pasangan: formData.NIK1,
+      jenis_kelamin_pasangan: formData.jenisKelamin,
+      status_pasangan: formData.Status,
+      golongan_darah_pasangan: formData.goldarah,
+      status_perkawinan_pasangan: formData.statusperkawinan,
+      agama_pasangan: formData.agama,
+      alamat_pasangan: formData.Alamat1,
+      tujuan_pembuatan_surat: formData.Tujuan1,
+      // Data Tambahan
+      nomor_kartu_keluarga_tambahan: formData.Nomorkartukeluarga,
+      nomor_paspor: formData.Nomorpaspor,
+      tanggal_kadaluarsa_paspor: formData.TanggalKadaluarsaPaspor,
+      nomor_akta_kelahiran: formData.NomorAktakelahiran,
+      nomor_akta_perkawinan: formData.NomorAktaPerkawinan,
+      tanggal_perkawinan: formData.TanggalPerkawinan,
+      nomor_akta_perceraian: formData.NomorAktaPerceraian,
+      tanggal_perceraian: formData.TanggalPerceraian,
+    };
+
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: formData.NIKPengaju, // NIK dari pemohon utama
+          jenis_surat: "Surat Keterangan Cerai Mati",
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Keterangan Cerai Mati oleh ${formData.NamaPengaju}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Gagal mengirim permohonan");
+      }
+
+      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+      window.location.href = "/"; // Redirect ke homepage
+
+    } catch (err: any) {
+      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setEditData(true); // Aktifkan kembali form jika gagal
+    }
   };
 
   const handleReset = () => {

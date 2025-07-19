@@ -37,11 +37,72 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  // 1. Mencegah refresh halaman
+  e.preventDefault();
+
+  // 2. Mengumpulkan data spesifik ke dalam satu objek.
+  // Di sini kita kelompokkan data pengaju dan anak agar lebih terstruktur.
+  const data_dinamis = {
+    pengaju: {
+      nama: formData.namaPengaju,
+      nik: formData.nikPengaju,
+      kota_lahir: formData.kotaLahirPengaju,
+      tanggal_lahir: formData.tanggalLahirPengaju,
+      jenis_kelamin: formData.jenisKelaminPengaju,
+      kewarganegaraan: formData.kewarganegaraanPengaju,
+      status_perkawinan: formData.statusPerkawinanPengaju,
+      pekerjaan: formData.pekerjaanPengaju,
+      agama: formData.agamaPengaju,
+      alamat: formData.alamatPengaju,
+    },
+    anak: {
+      nama: formData.namaAnak,
+      nik: formData.nikAnak,
+      kota_lahir: formData.kotaLahirAnak,
+      tanggal_lahir: formData.tanggalLahirAnak,
+      jenis_kelamin: formData.jenisKelaminAnak,
+      kewarganegaraan: formData.kewarganegaraanAnak,
+      status_perkawinan: formData.statusPerkawinanAnak,
+      pekerjaan: formData.pekerjaanAnak,
+      agama: formData.agamaAnak,
+      alamat: formData.alamatAnak,
+    },
   };
+
+  try {
+    // 3. Mengirim data ke endpoint API
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Data utama yang dibutuhkan oleh API
+        nik: formData.nikPengaju, // NIK pengaju sebagai identitas utama
+        jenis_surat: "Surat Keterangan Tidak Keberatan",
+        tipe: tipe,
+        keterangan: `Pengajuan surat tidak keberatan oleh ${formData.namaPengaju} untuk anaknya ${formData.namaAnak}`,
+        data_dinamis, // Semua data tambahan yang terstruktur
+      }),
+    });
+
+    const result = await res.json();
+
+    // 4. Memeriksa jika ada error dari server
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    // 5. Jika berhasil, tampilkan notifikasi dan redirect
+    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // Arahkan ke halaman utama
+
+  } catch (err: any) {
+    // 6. Jika terjadi kesalahan, tampilkan notifikasi error
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
 
   const handleReset = () => {
     setFormData(initialData);

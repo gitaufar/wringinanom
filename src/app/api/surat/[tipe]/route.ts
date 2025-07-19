@@ -6,8 +6,6 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { useParams } from "next/navigation";
 import { terbilang } from "angka-menjadi-terbilang";
-import { ALargeSmall, Tangent } from "lucide-react";
-import { Kotta_One } from "next/font/google";
 
 export async function POST(req: NextRequest) {
   const { tipe } = useParams();

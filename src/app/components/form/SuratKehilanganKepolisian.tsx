@@ -30,11 +30,55 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setSubmited("submit");
+  setEditData(false);
+
+  const data_dinamis = {
+    namaLengkap: formData.namaLengkap,
+    kotaLahir: formData.kotaLahir,
+    tanggalLahir: formData.tanggalLahir,
+    nik: formData.nik,
+    nomorKK: formData.nomorKK,
+    jenisKelamin: formData.jenisKelamin,
+    agama: formData.agama,
+    pekerjaan: formData.pekerjaan,
+    alamat: formData.alamat,
+    namaBarang: formData.namaBarang,
+    lokasiKehilangan: formData.lokasiKehilangan,
+    tanggalKehilangan: formData.tanggalKehilangan,
+    jamKehilangan: formData.jamKehilangan,
   };
+
+  try {
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nik: formData.nik,
+        jenis_surat: "SK Kehilangan Kepolisian",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Kehilangan oleh ${formData.namaLengkap}`,
+        data_dinamis,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    alert(`✅ Berhasil! Resi: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // redirect ke halaman utama
+  } catch (err: any) {
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
+
 
   const handleReset = () => {
     setFormData({

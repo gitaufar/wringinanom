@@ -40,9 +40,66 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
 
   const [form, setForm] = useState(initialState);
 
-  const handleSubmit = () => {
-    setSubmited("submit");
-    setEdit(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Mencegah reload halaman
+
+    setEdit(false); // Nonaktifkan form
+
+    const data_dinamis = {
+      // Data Pengaju
+      nama_pengaju: form.namaPengaju,
+      nik_pengaju: form.nikPengaju,
+      // Data dari Dokumen 1
+      dokumen_1: {
+        nama: form.namaDok1,
+        kota_lahir: form.kotaLahirDok1,
+        tanggal_lahir: form.tanggalLahirDok1,
+        nik: form.nikDok1,
+        nomor_kk: form.kkDok1,
+        jenis_kelamin: form.jenisKelaminDok1,
+        alamat: form.alamatDok1,
+        status: form.statusDok1,
+      },
+      // Data dari Dokumen 2
+      dokumen_2: {
+        nama: form.namaDok2,
+        kota_lahir: form.kotaLahirDok2,
+        tanggal_lahir: form.tanggalLahirDok2,
+        nik: form.nikDok2,
+        nomor_kk: form.kkDok2,
+        jenis_kelamin: form.jenisKelaminDok2,
+        alamat: form.alamatDok2,
+        status: form.statusDok2,
+      },
+    };
+
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: form.nikPengaju,
+          jenis_surat: "Surat Keterangan Identitas",
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Keterangan Identitas oleh ${form.namaPengaju}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.error || "Gagal mengirim permohonan");
+      }
+
+      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+      window.location.href = "/"; // Arahkan ke homepage
+
+    } catch (err: any) {
+      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setEdit(true); // Aktifkan kembali form jika gagal
+    }
   };
 
   const handleReset = () => {

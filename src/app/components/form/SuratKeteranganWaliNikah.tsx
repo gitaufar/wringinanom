@@ -30,11 +30,61 @@ export default function SuratKeteranganWaliNikah({ tipe }: SuratKeteranganWaliNi
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  // 1. Mencegah refresh halaman
+  e.preventDefault();
+
+  // 2. Mengumpulkan data spesifik dari form ke dalam satu objek
+  const data_dinamis = {
+    // Data dari bagian "Nama Pengaju"
+    nama_pengaju: formData.NamaPengaju,
+    nik_pengaju: formData.NIK,
+
+    // Data dari bagian "Identitas Wali"
+    nama_wali: formData.Nama,
+    tempat_lahir_wali: formData.KabupatenLahir,
+    tanggal_lahir_wali: formData.TanggalLahir,
+    nik_wali: formData.NIK2,
+    jenis_kelamin_wali: formData.JenisKelamin2,
+    agama_wali: formData.Agama,
+    pekerjaan_wali: formData.Perkerjaan,
+    alamat_wali: formData.Alamat,
   };
+
+  try {
+    // 3. Mengirim data ke endpoint API
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Data utama yang dibutuhkan oleh API
+        nik: formData.NIK, // Menggunakan NIK pengaju sebagai identitas utama
+        jenis_surat: "Surat Keterangan Wali Nikah",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Keterangan Wali Nikah oleh ${formData.NamaPengaju}`,
+        data_dinamis, // Semua data tambahan
+      }),
+    });
+
+    const result = await res.json();
+
+    // 4. Memeriksa jika ada error dari server
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    // 5. Jika berhasil, tampilkan notifikasi dan redirect
+    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // Arahkan ke halaman utama
+
+  } catch (err: any) {
+    // 6. Jika terjadi kesalahan, tampilkan notifikasi error
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
+
 
   const handleReset = () => {
     setFormData(initialData);

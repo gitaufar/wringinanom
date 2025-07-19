@@ -12,7 +12,7 @@ const ButtonAction = ({editData, deleteData}: ButtonActionProps) => {
       <button onClick={editData} className="hover:text-blue-500">
         <FaEdit />
       </button>
-      <button onClick={deleteData} className="hover:text-red-500">
+      <button onClick={deleteData} className="text-red-500">
         <FaTrash />
       </button>
     </div>

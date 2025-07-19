@@ -40,10 +40,49 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
 
   const [form, setForm] = useState(initialState);
 
-  const handleSubmit = () => {
-    setSubmited("submit");+
-    setEdit(false);
+  const handleSubmit = async () => {
+  setEdit(false);
+
+  const data_dinamis = {
+    namaPengaju: form.namaPengaju,
+    namaLengkap: form.namaLengkap,
+    alamatAnak: form.alamatAnak,
+    anakKe: form.anakKe,
+    darixSaudara: form.darixSaudara,
+    kotaLahir: form.kotaLahir,
+    tanggalLahir: form.tanggalLahir,
+    ayah: form.ayah,
+    ibu: form.ibu,
   };
+
+  try {
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nik: form.nikPengaju,
+        jenis_surat: "SK Anak Kandung",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Keterangan Anak Kandung oleh ${form.namaPengaju}`,
+        data_dinamis,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    alert(`✅ Berhasil! Resi: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // redirect ke halaman utama
+  } catch (err: any) {
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
+
 
   const handleReset = () => {
     setForm(initialState);
