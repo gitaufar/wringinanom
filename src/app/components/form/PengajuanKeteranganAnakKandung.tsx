@@ -13,27 +13,75 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
   const [submited, setSubmited] = useState<string | null>("");
 
   const initialState = {
-    namaPengaju: "",
-    nikPengaju: "",
-    namaLengkap: "",
-    alamatAnak: "",
-    anakKe: "",
-    darixSaudara: "",
-    kotaLahir: "",
-    tanggalLahir: "",
-    alamat: "",
-    namaBaru: "",
-    tanggalLahirBaru: "",
-    kotaKabupatenLahir: "",
-    pekerjaan: "",
-  };
+  namaPengaju: "",
+  nikPengaju: "",
+  namaLengkap: "",
+  alamatAnak: "",
+  anakKe: "",
+  darixSaudara: "",
+  kotaLahir: "",
+  tanggalLahir: "",
+
+  namaAyah: "",
+  kotaLahirAyah: "",
+  tanggalLahirAyah: "",
+  alamatAyah: "",
+  pekerjaanAyah: "",
+
+  namaIbu: "",
+  kotaLahirIbu: "",
+  tanggalLahirIbu: "",
+  alamatIbu: "",
+  pekerjaanIbu: "",
+};
 
   const [form, setForm] = useState(initialState);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+  try {
     setSubmited("submit");
     setEdit(false);
-  };
+
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nik: form.nikPengaju,
+        jenis_surat: "Anak Kandung",
+        tipe,
+        keterangan: `Permohonan Surat Anak Kandung oleh ${form.namaPengaju}`,
+        data_dinamis: {
+          namaPengaju: form.namaPengaju,
+          namaAnak: form.namaLengkap,
+          alamatAnak: form.alamatAnak,
+          anakKe: form.anakKe,
+          dariSaudara: form.darixSaudara,
+          kotaLahirAnak: form.kotaLahir,
+          tanggalLahirAnak: form.tanggalLahir,
+
+          namaAyah: form.namaAyah,
+          kotaLahirAyah: form.kotaLahirAyah,
+          tanggalLahirAyah: form.tanggalLahirAyah,
+          alamatAyah: form.alamatAyah,
+          pekerjaanAyah: form.pekerjaanAyah,
+
+          namaIbu: form.namaIbu,
+          kotaLahirIbu: form.kotaLahirIbu,
+          tanggalLahirIbu: form.tanggalLahirIbu,
+          alamatIbu: form.alamatIbu,
+          pekerjaanIbu: form.pekerjaanIbu,
+        },
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    alert(`✅ Permohonan berhasil! No Resi: ${data.permohonan.no_resi}`);
+  } catch (err: any) {
+    alert(`❌ Gagal mengirim permohonan: ${err.message}`);
+    setEdit(true);
+  }
+};
 
   const handleReset = () => {
     setForm(initialState);
@@ -86,23 +134,26 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
 
           {/* Data Ayah */}
           <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Ayah</h2>
-            <InputField inputLabel="Nama Ayah" inputPlaceholder="Nama" data={form.namaBaru} setData={(val) => setForm({ ...form, namaBaru: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kota/Kabupaten Lahir Ayah" inputPlaceholder="Kota/Kabupaten" data={form.kotaKabupatenLahir} setData={(val) => setForm({ ...form, kotaKabupatenLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahirBaru} setData={(val) => setForm({ ...form, tanggalLahirBaru: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat Ayah" data={form.alamat} setData={(val) => setForm({ ...form, alamat: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => setForm({ ...form, pekerjaan: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <h2 className="text-xl font-bold">Data Ayah</h2>
+  <InputField inputLabel="Nama Ayah" inputPlaceholder="Nama Lengkap" data={form.namaAyah} setData={(val) => setForm({ ...form, namaAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Kota/Kabupaten Lahir Ayah" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirAyah} setData={(val) => setForm({ ...form, kotaLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputFieldDate inputLabel="Tanggal Lahir Ayah" data={form.tanggalLahirAyah} setData={(val) => setForm({ ...form, tanggalLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Alamat Ayah" inputPlaceholder="Alamat Lengkap" data={form.alamatAyah} setData={(val) => setForm({ ...form, alamatAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Pekerjaan Ayah" inputPlaceholder="Pekerjaan" data={form.pekerjaanAyah} setData={(val) => setForm({ ...form, pekerjaanAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+</div>
+
           </div>
 
           {/* Data Ibu */}
           <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Ibu</h2>
-            <InputField inputLabel="Nama Ibu" inputPlaceholder="Nama" data={form.namaBaru} setData={(val) => setForm({ ...form, namaBaru: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kota/Kabupaten Lahir Ibu" inputPlaceholder="Kota/Kabupaten" data={form.kotaKabupatenLahir} setData={(val) => setForm({ ...form, kotaKabupatenLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahirBaru} setData={(val) => setForm({ ...form, tanggalLahirBaru: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Co. Dusun Simpar No 003" data={form.alamat} setData={(val) => setForm({ ...form, alamat: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => setForm({ ...form, pekerjaan: val })} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+  <h2 className="text-xl font-bold">Data Ibu</h2>
+  <InputField inputLabel="Nama Ibu" inputPlaceholder="Nama Lengkap" data={form.namaIbu} setData={(val) => setForm({ ...form, namaIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Kota/Kabupaten Lahir Ibu" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirIbu} setData={(val) => setForm({ ...form, kotaLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputFieldDate inputLabel="Tanggal Lahir Ibu" data={form.tanggalLahirIbu} setData={(val) => setForm({ ...form, tanggalLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Alamat Ibu" inputPlaceholder="Alamat Lengkap" data={form.alamatIbu} setData={(val) => setForm({ ...form, alamatIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  <InputField inputLabel="Pekerjaan Ibu" inputPlaceholder="Pekerjaan" data={form.pekerjaanIbu} setData={(val) => setForm({ ...form, pekerjaanIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+</div>
+
 
           {/* Button Group */}
           <div className="flex gap-4">
@@ -126,6 +177,5 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
-    </div>
   );
 }
