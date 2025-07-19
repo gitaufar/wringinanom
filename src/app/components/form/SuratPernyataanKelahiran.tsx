@@ -54,11 +54,82 @@ export default function SuratPernyataanKelahiran({ tipe }: SuratPernyataanKelahi
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  // 1. Mencegah refresh halaman
+  e.preventDefault();
+
+  // 2. Mengumpulkan semua data ke dalam objek terstruktur
+  const data_dinamis = {
+    pengaju: {
+      nama: formData.NamaPengaju,
+      nik: formData.NIK1,
+    },
+    anak: {
+      nama: formData.Nama2,
+      jenis_kelamin: formData.Jeniskelamin,
+      tempat_lahir: formData.Kotalahir,
+      tanggal_lahir: formData.TanggalLahir,
+      hari_lahir: formData.Hari2,
+      agama: formData.Agama,
+      kewarganegaraan: formData.Kewarganegaran,
+      status_perkawinan: formData.statusprekawinan,
+      pekerjaan: formData.Perkerjaan,
+      alamat: formData.Alamat,
+    },
+    ayah: {
+      nama: formData.Nama3,
+      nik: formData.NIK3,
+      tempat_lahir: formData.Kotalahir3,
+      tanggal_lahir: formData.Tanggallahirayah,
+      pekerjaan: formData.perkerjaan,
+      alamat: formData.Alamat3,
+    },
+    ibu: {
+      nama: formData.Nama4,
+      nik: formData.NIK4,
+      tempat_lahir: formData.Kotalahir4,
+      tanggal_lahir: formData.Tanggallahiribu,
+      pekerjaan: formData.perkerjaan4,
+      alamat: formData.Alamat4,
+    },
+    kartu_keluarga: {
+        nomor: formData.Nomorkartukeluarga,
+    }
   };
+
+  try {
+    // 3. Mengirim data ke endpoint API
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Data utama yang dibutuhkan oleh API
+        nik: formData.NIK1, // NIK Pengaju sebagai identitas utama
+        jenis_surat: "Surat Pernyataan Kelahiran",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Pernyataan Kelahiran oleh ${formData.NamaPengaju} untuk anak ${formData.Nama2}`,
+        data_dinamis, // Semua data tambahan
+      }),
+    });
+
+    const result = await res.json();
+
+    // 4. Memeriksa jika ada error dari server
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    // 5. Jika berhasil, tampilkan notifikasi dan redirect
+    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // Arahkan ke halaman utama
+
+  } catch (err: any) {
+    // 6. Jika terjadi kesalahan, tampilkan notifikasi error
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
 
   const handleReset = () => {
     setFormData(initialData);

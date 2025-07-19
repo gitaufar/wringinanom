@@ -29,10 +29,60 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Mencegah halaman reload
+
+
+    // Nonaktifkan form setelah disubmit
     setEditData(false);
+
+    // Persiapkan data dinamis dari state formData
+    const data_dinamis = {
+        nama_lengkap: formData.namaLengkap,
+        kota_lahir: formData.kotaLahir,
+        tanggal_lahir: formData.tanggalLahir,
+        jenis_kelamin: formData.jenisKelamin,
+        status_perkawinan: formData.statusPerkawinan,
+        kewarganegaraan: formData.kewarganegaraan,
+        agama: formData.agama,
+        pekerjaan: formData.pekerjaan,
+        pendidikan_terakhir: formData.pendidikanTerakhir,
+        nomor_kk: formData.nomorKK,
+        alamat: formData.alamat,
+    };
+
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: formData.nik,
+          jenis_surat: "SKCK", // Jenis surat spesifik untuk form ini
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Keterangan Catatan Kepolisian (SKCK) atas nama ${formData.namaLengkap}`,
+          data_dinamis, // Data spesifik form
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        // Jika respons dari server tidak "ok", lempar error
+        throw new Error(result.error || "Gagal mengirim permohonan");
+      }
+
+      // Tampilkan notifikasi sukses dan arahkan ke halaman utama
+      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+      window.location.href = "/"; // Redirect ke homepage
+
+    } catch (err: any) {
+      // Tangkap error dan tampilkan notifikasi
+      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      // Aktifkan kembali form jika terjadi error agar bisa diedit lagi
+      setEditData(true);
+    }
   };
 
   const handleReset = () => {

@@ -35,10 +35,57 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmited("submit");
+
     setEditData(false);
+
+    // Kumpulkan semua data form ke dalam satu objek untuk dikirim
+    const data_dinamis = {
+      nama_pengaju: formData.NamaPengaju,
+      nik_pengaju: formData.NIKPengaju,
+      // Data Pasangan yang Meninggalkan
+      nama_pasangan_meninggalkan: formData.namaLengkap,
+      umur_pasangan_meninggalkan: formData.umur2,
+      alamat_pasangan_meninggalkan: formData.Alamat2,
+      pekerjaan_pasangan_meninggalkan: formData.pekerjaan,
+      // Data Pasangan yang Ditinggalkan
+      status_ditinggalkan: formData.StatusPasangan, // Suami atau Istri
+      nama_pasangan_ditinggalkan: formData.NamaLengkap,
+      umur_pasangan_ditinggalkan: formData.Umur,
+      alamat_pasangan_ditinggalkan: formData.Alamat3,
+      pekerjaan_pasangan_ditinggalkan: formData.Perkerjaan,
+      tanggal_meninggalkan: formData.TanggalMenigallkan,
+    };
+
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: formData.NIKPengaju, // NIK dari pemohon utama
+          jenis_surat: "Surat Keterangan Ditinggal Suami atau Istri",
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Keterangan Ditinggal Pasangan oleh ${formData.NamaPengaju}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Gagal mengirim permohonan");
+      }
+
+      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+      window.location.href = "/"; // Redirect ke homepage
+
+    } catch (err: any) {
+      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setEditData(true); // Aktifkan kembali form jika gagal
+    }
   };
 
   const handleReset = () => {

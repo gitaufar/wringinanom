@@ -29,11 +29,60 @@ export default function SuratPengantar({ tipe }: SuratPengantarProps) {
     tujuanPengajuan: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  // 1. Mencegah refresh halaman
+  e.preventDefault();
+
+  // 2. Mengumpulkan semua data dari form ke dalam satu objek
+  const data_dinamis = {
+    nama_lengkap: formData.namaLengkap,
+    tempat_lahir: formData.kotaLahir,
+    tanggal_lahir: formData.tanggalLahir,
+    nik: formData.nik,
+    nomor_kk: formData.nomorKK,
+    jenis_kelamin: formData.jenisKelamin,
+    agama: formData.agama,
+    status_perkawinan: formData.statusPerkawinan,
+    pekerjaan: formData.pekerjaan,
+    kewarganegaraan: formData.kewarganegaraan,
+    alamat: formData.alamat,
+    pengajuan: formData.pengajuan,
+    tujuan_pengajuan: formData.tujuanPengajuan,
   };
+
+  try {
+    // 3. Mengirim data ke endpoint API
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Data utama yang dibutuhkan oleh API
+        nik: formData.nik, // NIK pengaju sebagai identitas utama
+        jenis_surat: "Surat Pengantar",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Pengantar oleh ${formData.namaLengkap} untuk keperluan ${formData.pengajuan}`,
+        data_dinamis, // Semua data tambahan
+      }),
+    });
+
+    const result = await res.json();
+
+    // 4. Memeriksa jika ada error dari server
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    // 5. Jika berhasil, tampilkan notifikasi dan redirect
+    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // Arahkan ke halaman utama
+
+  } catch (err: any) {
+    // 6. Jika terjadi kesalahan, tampilkan notifikasi error
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
 
   const handleReset = () => {
     setFormData({

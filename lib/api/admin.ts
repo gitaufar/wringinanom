@@ -3,15 +3,19 @@ export async function loginAdmin(email: string, password: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
-  })
+  });
+
+  const text = await res.text(); // baca sebagai text terlebih dahulu
 
   if (!res.ok) {
-    const data = await res.json()
-    throw new Error(data.error || "Login gagal")
+    // cek apakah text tidak kosong, baru parse
+    const data = text ? JSON.parse(text) : null;
+    throw new Error(data?.error || "Login gagal");
   }
 
-  return await res.json()
+  return text ? JSON.parse(text) : {}; // response sukses, pastikan ada isi juga
 }
+
 export async function fetchPenduduk() {
   const res = await fetch("/api/penduduk");
 

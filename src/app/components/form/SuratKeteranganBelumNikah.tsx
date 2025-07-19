@@ -13,23 +13,63 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const [namaPengaju, setNamaPengaju] = useState("Agung");
-  const [nikPengaju, setNikPengaju] = useState("929292929");
-  const [namaLengkap, setNamaLengkap] = useState("Co. Regas");
-  const [nikAnak, setNikAnak] = useState("929292929");
-  const [nomorKK, setNomorKK] = useState("929292929");
-  const [kotaLahir, setKotaLahir] = useState("Co. Malang");
-  const [tanggalLahir, setTanggalLahir] = useState("Co. 22-11-2005");
-  const [jenisKelamin, setJenisKelamin] = useState("Laki-laki");
-  const [alamat, setAlamat] = useState("Co. Dusun Simpar No 003");
-  const [agama, setAgama] = useState("Co. Kejawen");
-  const [kewarganegaraan, setKewarganegaraan] = useState("Co. Indonesia");
-  const [statusPerkawinan, setStatusPerkawinan] = useState("Belum Kawin");
+  const [namaPengaju, setNamaPengaju] = useState("");
+  const [nikPengaju, setNikPengaju] = useState("");
+  const [namaLengkap, setNamaLengkap] = useState("");
+  const [nikAnak, setNikAnak] = useState("");
+  const [nomorKK, setNomorKK] = useState("");
+  const [kotaLahir, setKotaLahir] = useState("");
+  const [tanggalLahir, setTanggalLahir] = useState("");
+  const [jenisKelamin, setJenisKelamin] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [agama, setAgama] = useState("");
+  const [kewarganegaraan, setKewarganegaraan] = useState("");
+  const [statusPerkawinan, setStatusPerkawinan] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+  try {
     setSubmited("submit");
     setEdit(false);
-  };
+
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nik: nikPengaju,
+        jenis_surat: "Belum Menikah",
+        tipe,
+        keterangan: `Permohonan Surat Belum Menikah oleh ${namaPengaju}`,
+        data_dinamis: {
+          namaPengaju,
+          namaLengkap,
+          nikSubjek: nikAnak,
+          nomorKK,
+          kotaLahir,
+          tanggalLahir,
+          jenisKelamin,
+          alamat,
+          agama,
+          kewarganegaraan,
+          statusPerkawinan,
+        },
+      }),
+    });
+
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    alert(`✅ Berhasil! Resi: ${result.permohonan.no_resi}`);
+    window.location.href = "/";
+  } catch (err: any) {
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+    setEdit(true);
+  }
+};
+
 
   return (
        <div className="min-h-screen flex flex-col items-center bg-white">

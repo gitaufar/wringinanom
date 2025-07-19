@@ -31,10 +31,55 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmited("submit");
+
     setEditData(false);
+
+    // Kumpulkan semua data form ke dalam satu objek untuk dikirim
+    const data_dinamis = {
+      nama_pengaju: formData.NamaPengaju,
+      nik_pengaju: formData.NIKPengaju,
+      nama_lengkap_duda_janda: formData.namaLengkap,
+      kota_kabupaten_lahir: formData.Kabupaten,
+      nik_duda_janda: formData.NIK,
+      nomor_kk: formData.Nomorkartukeluarga,
+      jenis_kelamin: formData.JenisKelamin,
+      agama: formData.Agama,
+      status_perkawinan: formData.StatusPerkawinan,
+      pekerjaan: formData.Pekerjaan,
+      kewarganegaraan: formData.Kewarganegaraan,
+      alamat: formData.Alamat,
+    };
+
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: formData.NIKPengaju, // NIK dari pemohon utama
+          jenis_surat: "Surat Keterangan Duda atau Janda",
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Keterangan Duda/Janda oleh ${formData.NamaPengaju}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Gagal mengirim permohonan");
+      }
+
+      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+      window.location.href = "/"; // Redirect ke homepage
+
+    } catch (err: any) {
+      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setEditData(true); // Aktifkan kembali form jika gagal
+    }
   };
 
   const handleReset = () => {
@@ -139,7 +184,6 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
               inputPlaceholder=" Kota/Kabupaten Lahir"
               data={formData.Kabupaten}
               setData={(val) => setFormData({ ...formData, Kabupaten: val })}
-              numberOnly
               setEditData={setEditData}
               editData={editData}
               submited={submited}

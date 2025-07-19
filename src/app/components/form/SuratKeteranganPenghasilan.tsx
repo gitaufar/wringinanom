@@ -27,11 +27,56 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+  // 1. Mencegah refresh halaman bawaan dari form
+  e.preventDefault();
+
+  // 2. Kumpulkan data dinamis dari state 'formData'
+  const data_dinamis = {
+    nama_pengaju: formData.NamaPengaju,
+    tempat_lahir: formData.KabupatenLahir,
+    tanggal_lahir: formData.TanggalLahir,
+    jenis_kelamin: formData.JenisKelamin2,
+    pekerjaan: formData.perkerjaan,
+    alamat: formData.Alamat,
+    penghasilan_per_bulan: formData.Penghasilan,
   };
+
+  try {
+    // 3. Kirim data ke endpoint API
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Data utama yang dibutuhkan oleh API
+        nik: formData.NIK,
+        jenis_surat: "Surat Keterangan Penghasilan",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Keterangan Penghasilan oleh ${formData.NamaPengaju}`,
+        data_dinamis, // Data spesifik untuk surat ini
+      }),
+    });
+
+    const result = await res.json();
+
+    // 4. Periksa jika respons dari server tidak berhasil (status bukan 2xx)
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    // 5. Jika berhasil, tampilkan notifikasi sukses dan redirect
+    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
+    window.location.href = "/"; // Arahkan ke halaman utama
+
+  } catch (err: any) {
+    // 6. Jika terjadi error, tampilkan notifikasi kesalahan
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+    // (Opsional) Izinkan pengguna mengedit form kembali jika terjadi error
+    // setEditData(true); 
+  }
+};
 
   const handleReset = () => {
     setFormData(initialData);

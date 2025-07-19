@@ -51,11 +51,52 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmited("submit");
-    setEditData(false);
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault(); // Hindari reload halaman saat submit
+  setSubmited("submit");
+  setEditData(false);
+
+  const data_dinamis = {
+    namaPengaju: formData.NamaPengaju,
+    namaLengkap: formData.namaLengkap,
+    alamatAnak: formData.alamatsetelah, // Gantilah jika ada field 'alamatAnak' sendiri
+    anakKe: "", // Jika tidak digunakan, hapus
+    darixSaudara: "", // Jika tidak digunakan, hapus
+    kotaLahir: formData.kotaLahir,
+    tanggalLahir: formData.tanggalLahir,
+    ayah: formData.namaayah,
+    ibu: formData.namaibu,
   };
+
+  try {
+    const res = await fetch("/api/permohonan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nik: formData.NIKPengaju,
+        jenis_surat: "SK Anak Kandung",
+        tipe: tipe,
+        keterangan: `Pengajuan Surat Keterangan Anak Kandung oleh ${formData.NamaPengaju}`,
+        data_dinamis,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.error || "Gagal mengirim permohonan");
+    }
+
+    alert(`✅ Berhasil! Resi: ${result.permohonan.no_resi}`);
+    window.location.href = "/";
+  } catch (err: any) {
+    alert(`❌ Terjadi kesalahan: ${err.message}`);
+  }
+};
+
+
 
   const handleReset = () => {
     setFormData(initialData);
