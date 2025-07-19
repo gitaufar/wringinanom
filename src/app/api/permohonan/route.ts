@@ -70,28 +70,40 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+    const noResi = searchParams.get("no_resi");
     const jenis = searchParams.get("jenis");
 
-    const filter = jenis
-      ? {
-          jenis_surat: {
-            equals: jenis,
-          },
-        }
-      : undefined;
+    if (noResi) {
+      const permohonan = await prisma.permohonanSurat.findUnique({
+        where: { no_resi: noResi },
+        include: {
+          penduduk: true,
+          riwayat: true,
+        },
+      });
 
-    const permohonan = await prisma.permohonanSurat.findMany({
+      if (!permohonan) {
+        return NextResponse.json(
+          { error: "Data tidak ditemukan untuk resi tersebut" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ data: permohonan });
+    }
+
+    const filter = jenis ? { jenis_surat: { equals: jenis } } : undefined;
+
+    const allPermohonan = await prisma.permohonanSurat.findMany({
       where: filter,
       include: {
         penduduk: true,
         riwayat: true,
       },
-      orderBy: {
-        tanggal: "desc",
-      },
+      orderBy: { tanggal: "desc" },
     });
 
-    return NextResponse.json({ data: permohonan });
+    return NextResponse.json({ data: allPermohonan });
   } catch (error: any) {
     console.error("❌ Internal Error GET /api/permohonan:", error);
     return NextResponse.json(
