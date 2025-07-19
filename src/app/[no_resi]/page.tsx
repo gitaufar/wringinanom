@@ -9,14 +9,15 @@ import {
   FaClipboard,
 } from "react-icons/fa";
 
-export type Order = {
+type Order = {
   receiptNumber: string;
   applicantName: string;
   applicantNIK: string;
   letterType: string;
   submissionDate: string;
   creationDate: string;
-}
+  status: string; // 🆕 tambahkan status
+};
 
 const Receipt = () => {
   const { no_resi } = useParams();
@@ -45,6 +46,7 @@ const Receipt = () => {
           creationDate: new Date(permohonan.tanggal).toLocaleDateString(
             "id-ID"
           ),
+          status: permohonan.status, // 🆕 status ditambahkan di sini
         });
       } catch (err: any) {
         setError(err.message);
@@ -155,6 +157,16 @@ const Receipt = () => {
             <span style={{ fontWeight: "bold" }}>Tanggal Pembuatan</span>
             <span>{order.creationDate}</span>
           </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "10px",
+            }}
+          >
+            <span style={{ fontWeight: "bold" }}>Status</span>
+            <span>{order.status}</span>
+          </div>
         </div>
 
         <div style={{ borderTop: "2px solid #ddd", margin: "30px 0" }}></div>
@@ -203,7 +215,10 @@ const Receipt = () => {
             {copied ? "Disalin!" : "Salin Resi"}
           </button>
 
-          <Link href={`https://wa.me?text=${order.receiptNumber}`} target="_blank">
+          <Link
+            href={`https://wa.me?text=${order.receiptNumber}`}
+            target="_blank"
+          >
             <button
               style={{
                 padding: "10px 20px",
