@@ -1,6 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import ButtonGeneral from "../button/ButtonGeneral";
 import SearchIcon from "../icon/SearchIcon";
 
@@ -15,43 +16,55 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="min-h-screen relative flex items-center justify-center flex-col text-center text-white gap-4">
-      <img
-        src="/png/bg-home.png"
-        className="absolute h-screen md:w-screen object-cover -z-20"
-      />
-      <div className="size-full bg-black absolute opacity-50 -z-10"></div>
-      <div className="w-full flex justify-center absolute inset-0 mt-10 py-3.5 px-4 sm:px-6 md:px-10">
-        <div className="bg-white w-full max-w-xl h-fit px-5 py-3.5 rounded-2xl justify-between flex flex-row items-center">
-          <input
-            type="text"
-            placeholder="Cari riwayat laporanmu di sini..."
-            className="w-full h-full bg-transparent outline-none text-black text-base"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
+    <section className="relative w-full">
+      <div className="relative w-full h-[60vh] sm:h-[90vh] overflow-hidden">
+        {/* Background */}
+        <img
+          src="/png/bg-home.png"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover z-[-2]"
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50 z-[-1]" />
+
+        {/* Search bar */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-[90%] sm:max-w-md px-4 z-10">
+          <div className="flex items-center bg-white rounded-full px-5 py-2 shadow-md">
+            <input
+              type="text"
+              placeholder="Cari riwayat laporanmu di sini..."
+              className="flex-grow text-sm sm:text-base text-gray-800 bg-transparent border-none focus:outline-none"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+            />
+            <SearchIcon />
+          </div>
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative h-full flex flex-col justify-center items-center text-center px-6 sm:px-10 text-white max-w-5xl mx-auto">
+<h1
+  className="text-[32px] sm:text-[40px] md:text-[64px] font-semibold leading-tight mb-3"
+>
+  DESA WRINGINANOM
+</h1>
+
+
+          <p className="text-sm sm:text-lg md:text-xl leading-relaxed mb-6 max-w-full sm:max-w-[80%] md:max-w-[60%]">
+            Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom,
+            Kec. Poncokusumo, Kab. Malang
+          </p>
+          <ButtonGeneral
+            className="px-4 py-1.5 sm:px-6 sm:py-2.5 text-xs sm:text-sm"
+            text="Mulai Sekarang"
+            icon="arrow"
+            onClick={() => {}}
           />
-          <SearchIcon />
         </div>
       </div>
-      <p className="w-full text-base sm:text-lg md:text-xl lg:text-2xl text-center px-4">
-        Selamat Datang di Website Resmi Administrasi
-      </p>
-      <h1 className="w-full text-6xl sm:text-8xl md:text-10xl font-bold">
-        DESA WRINGINANOM
-      </h1>
-      <p className="w-full text-2xl">
-        Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom, Kec.
-        Poncokusumo, Kab. Malang
-      </p>
-      <ButtonGeneral
-        className="mt-6 px-6 py-3 text-base sm:text-lg"
-        text="Mulai Sekarang"
-        icon="arrow"
-        onClick={() => {}}
-      />
     </section>
   );
 };
