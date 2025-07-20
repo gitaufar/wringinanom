@@ -11,14 +11,14 @@ type ButtonGeneralProps = {
 };
 
 const ButtonGeneral = ({ text, icon, onClick, className, href }: ButtonGeneralProps) => {
-  const ButtonComponent = href ? 'a' : 'button';
+  const ButtonComponent = href ? "a" : "button";
   return (
     <ButtonComponent
       href={href}
-      className={`${className} cursor-pointer flex flex-row gap-6 py-4 px-6 bg-[#008266] items-center rounded-3xl`}
       onClick={onClick}
+      className={`cursor-pointer flex flex-row gap-4 sm:gap-6 py-3 sm:py-4 px-4 sm:px-6 bg-[#008266] hover:bg-[#00664f] transition-all duration-200 ease-in-out items-center rounded-3xl ${className}`}
     >
-      <p className="cursor-pointer text-xl text-white">{text}</p>
+      <p className="text-sm sm:text-xl text-white">{text}</p>
       {icon === "arrow" && <ArrowIcon />}
     </ButtonComponent>
   );

@@ -1,25 +1,29 @@
 "use client"
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Checkbox, TextInput } from 'flowbite-react';
 import LetterCard from '../components/card/LetterCard';
-import { link } from 'fs';
+import { useRouter } from "next/navigation";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { ChevronLeft } from "lucide-react";
 
-// Fungsi bantuan untuk membuat slug URL dari judul
-const createSlug = (title: string) => {
-  return title
-    .toLowerCase()
-    .replace(/ /g, '-')
-    .replace(/[^\w-]+/g, '');
-};
+
+// Buat slug dari judul surat
+const createSlug = (title: string) =>
+  title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 
 const LetterSelectionPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const router = useRouter();
 
-  // Data surat mentah
-  const baseLetters = [
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
+const baseLetters = [
     { id: 1, title: "Surat Keterangan Anak Kandung", description: "Surat keterangan yang menyatakan hubungan anak kandung.", topic: "Pemerintahan", link:"anak_kandung" },
     { id: 2, title: "Surat Keterangan Ditinggal Suami atau Istri", description: "Surat keterangan mengenai ditinggalkannya oleh suami atau istri", topic: "Pemerintahan", link:"ditinggal_pasangan" },
     { id: 3, title: "Surat Keterangan Beda Identitas Formal", description: "Surat keterangan perbedaan identitas secara resmi.", topic: "Pemerintahan", link:"beda_identitas" },
@@ -49,42 +53,49 @@ const LetterSelectionPage = () => {
     { id: 27, title: "Surat Keterangan Usaha", description: "Surat keterangan yang menyatakan keberadaan suatu usaha.", topic: "Pelayanan Umum", link:"usaha" }
   ];
 
-  // Transformasi data untuk menambahkan link dan imageUrl secara dinamis
-  const letters = useMemo(() => {
-    return baseLetters.map(letter => {
-      const slug = createSlug(letter.title);
-      return {
-        ...letter,
-        // Path gambar diperbarui sesuai dengan nama folder Anda
-        imageUrl: `/preview surat/${slug}.png` 
-      };
-    });
-  }, []);
+  const letters = useMemo(() => baseLetters.map(letter => ({
+    ...letter,
+    imageUrl: `/preview surat/${createSlug(letter.title)}.png`
+  })), []);
 
   const topics = ["Pemerintahan", "Kesejahteraan Rakyat", "Pelayanan Umum"];
 
-  const filteredLetters = useMemo(() => {
-    return letters.filter(letter => {
+  const filteredLetters = useMemo(() =>
+    letters.filter(letter => {
       const matchesSearch = letter.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        letter.description.toLowerCase().includes(searchTerm.toLowerCase());
+                            letter.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesTopic = selectedTopics.length === 0 || selectedTopics.includes(letter.topic);
       return matchesSearch && matchesTopic;
-    });
-  }, [searchTerm, selectedTopics, letters]);
+    }), [searchTerm, selectedTopics, letters]);
 
   const handleTopicChange = (topic: string) => {
     setSelectedTopics(prev =>
       prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]
     );
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="bg-blue-900 py-8 md:py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">Layanan Surat Desa</h1>
-          <h2 className="text-xl md:text-2xl mb-4 text-gray-300">Pilih Template Surat Sesuai Kebutuhan Anda</h2>
-          <div className="max-w-md mx-auto">
+      {/* Bagian Header Biru */}
+      <div className="bg-blue-900 py-6 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 text-center space-y-4">
+          <div className="text-left">
+  <button
+    onClick={() => router.back()}
+    className="bg-white text-blue-900 p-2 rounded-full shadow hover:bg-gray-200 transition"
+    aria-label="Kembali"
+    data-aos="fade-right"
+  >
+    <ChevronLeft size={20} />
+  </button>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white" data-aos="fade-up">
+            Layanan Surat Desa
+          </h1>
+          <h2 className="text-xl md:text-2xl text-gray-300" data-aos="fade-up" data-aos-delay="100">
+            Pilih Template Surat Sesuai Kebutuhan Anda
+          </h2>
+          <div className="max-w-md mx-auto" data-aos="fade-up" data-aos-delay="200">
             <TextInput
               id="search"
               type="text"
@@ -98,10 +109,15 @@ const LetterSelectionPage = () => {
         </div>
       </div>
 
+      {/* Konten */}
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <div className="flex flex-col md:flex-row gap-6 md:gap-8">
           
-          <aside className="w-full md:w-64 flex-shrink-0 bg-white border border-gray-200 p-4 rounded-lg shadow-sm h-fit">
+          {/* Sidebar Filter */}
+          <aside
+            className="w-full md:w-64 flex-shrink-0 bg-white border border-gray-200 p-4 rounded-lg shadow-sm h-fit"
+            data-aos="fade-right"
+          >
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Tipe Surat</h3>
             <div className="space-y-2">
               {topics.map((topic) => (
@@ -119,26 +135,28 @@ const LetterSelectionPage = () => {
               ))}
             </div>
           </aside>
-          
-          <main className="flex-1">
+
+          {/* List Surat */}
+          <main className="flex-1" data-aos="fade-left">
             <p className="text-lg sm:text-xl font-semibold text-gray-800 mb-6">
               Semua Surat ({filteredLetters.length})
             </p>
             {filteredLetters.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredLetters.map((letter) => (
-                  <LetterCard
-                    key={letter.id}
-                    title={letter.title}
-                    description={letter.description}
-                    topic={letter.topic}
-                    link={letter.link}
-                    imageUrl={letter.imageUrl}
-                  />
+                {filteredLetters.map((letter, index) => (
+                  <div key={letter.id} data-aos="zoom-in" data-aos-delay={index * 50}>
+                    <LetterCard
+                      title={letter.title}
+                      description={letter.description}
+                      topic={letter.topic}
+                      link={letter.link}
+                      imageUrl={letter.imageUrl}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-12" data-aos="fade-up">
                 <div className="text-gray-300 text-6xl mb-4">📄</div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Tidak ada surat ditemukan</h3>
                 <p className="text-gray-600">Coba ubah kata kunci pencarian atau filter yang dipilih.</p>
