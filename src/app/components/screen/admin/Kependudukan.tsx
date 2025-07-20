@@ -18,7 +18,6 @@ export default function KependudukanPage() {
         <FilterPenduduk />
         <ButtonTambahPenduduk
           onClick={() => router.push('/admin/kependudukan/tambah')}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
         />
       </div>
 
