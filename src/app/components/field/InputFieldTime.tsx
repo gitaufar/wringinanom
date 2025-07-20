@@ -30,7 +30,8 @@ export default function InputFieldTime({
         value={data}
         onChange={(e) => setData(e.target.value)}
         disabled={!editData}
-        placeholder="HH:MM"
+        placeholder="00:00"
+        step="60"
       />
       {submited && !data && (
         <p className="text-red-500 text-xs">Wajib diisi</p>

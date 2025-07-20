@@ -31,7 +31,7 @@ export default function ConfirmationModal({
   // Tampilan Sukses
   if (successInfo) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-50">
+      <div className="fixed inset-0 bg-black/50 h-full w-full flex justify-center items-center z-50">
         <div className="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md text-center animate-fade-in-scale">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <CheckCircle2 className="h-6 w-6 text-green-600" />
@@ -61,7 +61,7 @@ export default function ConfirmationModal({
   // Tampilan Konfirmasi (Default)
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center z-50"
+      className="fixed inset-0 bg-black/50 h-full w-full flex justify-center items-center z-50"
       onClick={onClose}
     >
       <div

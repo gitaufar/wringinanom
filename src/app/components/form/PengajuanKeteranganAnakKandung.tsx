@@ -76,7 +76,7 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
   const handleReset = () => {
     setForm(initialState);
     setEdit(true);
-    setSubmited(null);
+    setSubmited("");
   };
 
   return (

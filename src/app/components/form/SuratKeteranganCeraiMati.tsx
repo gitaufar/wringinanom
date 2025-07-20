@@ -4,6 +4,7 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganCeraiMatiProps = {
   tipe: String;
@@ -44,13 +45,19 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
+   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
- const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmited("");
+    setShowConfirmModal(true);
+  };
 
-    setEditData(false);
-
-    // Kumpulkan semua data form ke dalam satu objek untuk dikirim
+ const handleConfirm = async () => {
+    setLoading(true);
     const data_dinamis = {
       nama_pengaju: formData.NamaPengaju,
       nik_pengaju: formData.NIKPengaju,
@@ -100,18 +107,18 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
         throw new Error(result.error || "Gagal mengirim permohonan");
       }
 
-      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
-      window.location.href = "/"; // Redirect ke homepage
-
+      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
     } catch (err: any) {
-      alert(`❌ Terjadi kesalahan: ${err.message}`);
-      setEditData(true); // Aktifkan kembali form jika gagal
+      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
+      setEditData(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleReset = () => {
     setFormData(initialData);
-    setSubmited(null);
+    setSubmited("");
     setEditData(true);
   };
 
@@ -310,6 +317,19 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+      <ConfirmationModal
+              isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+              onClose={() => {
+                setShowConfirmModal(false);
+                setErrorInfo(null);
+                if (successInfo) window.location.href = "/";
+              }}
+              onConfirm={handleConfirm}
+              isLoading={loading}
+              title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+              message={errorInfo || "Apakah data yang Anda isi sudah benar dan ingin melanjutkan pengajuan?"}
+              successInfo={successInfo}
+            />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import InputField from "./../../components/field/InputField";
 import InputFieldDate from "./../../components/field/InputFieldDate";
 import InputFieldDropdown from "./../../components/field/InputFieldDropdown";
-
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
 
 type SuratKeteranganBedaIdentitasProps = {
@@ -13,6 +13,10 @@ type SuratKeteranganBedaIdentitasProps = {
 export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBedaIdentitasProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const initialState = {
     namaPengaju: "",
@@ -31,10 +35,14 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
 
   const [form, setForm] = useState(initialState);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirm = async () => {
     try {
       setSubmited("submit");
-      setEdit(false);
+      setLoading(true);
 
       const res = await fetch("/api/permohonan", {
         method: "POST",
@@ -63,19 +71,22 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      alert(`✅ Berhasil mengajukan surat. Resi: ${data.permohonan.no_resi}`);
+      setSuccessInfo({
+        title: "Pengajuan Berhasil!",
+        resi: data.permohonan.no_resi,
+      });
     } catch (err: any) {
-      alert(`❌ Gagal mengirim permohonan: ${err.message}`);
+      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
       setEdit(true);
+    } finally {
+      setLoading(false);
     }
   };
-
-
 
   const handleReset = () => {
     setForm(initialState);
     setEdit(true);
-    setSubmited(null);
+    setSubmited("");
   };
 
   return (
@@ -146,6 +157,20 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
     </div>
   );
 }

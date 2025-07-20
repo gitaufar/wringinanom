@@ -1,17 +1,18 @@
-// app/components/field/InputFieldDate.tsx (Updated)
+// app/components/field/InputFieldDate.tsx
 
 "use client";
 
 import { PencilIcon } from "lucide-react";
-import { Dispatch, SetStateAction } from "react"; // Import Dispatch dan SetStateAction
+import { Dispatch, SetStateAction } from "react";
 
 type InputFieldDateProps = {
   inputLabel?: string;
   setData: (value: string) => void;
-  setEditData: Dispatch<SetStateAction<boolean>>; // Menggunakan tipe yang lebih spesifik
+  setEditData: Dispatch<SetStateAction<boolean>>;
   editData: boolean;
   submited?: string | null;
   data?: string;
+  error?: string; // BARU: Tambahkan prop error
 };
 
 export default function InputFieldDate({
@@ -21,11 +22,10 @@ export default function InputFieldDate({
   editData,
   submited,
   data = "",
+  error, // BARU: Ambil prop error
 }: InputFieldDateProps) {
   
-  // Fungsi ini akan dipanggil saat tombol Simpan/Edit diklik
   const handleToggleEdit = () => {
-    // Jika sedang dalam mode edit dan input kosong, jangan biarkan 'Simpan'
     if (editData && !data) {
       alert("Harap isi tanggal terlebih dahulu.");
       return;
@@ -40,27 +40,27 @@ export default function InputFieldDate({
           {inputLabel}
         </label>
       )}
-      {/* MENGGUNAKAN FLEXBOX UNTUK LAYOUT YANG LEBIH BAIK */}
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={data}
           onChange={(e) => setData(e.target.value)}
           disabled={!editData}
-          // Input akan mengisi ruang yang tersedia
-          className={`flex-1 w-full text-xs ${
-            data === "" ? "text-neutral-400" : "text-black"
-          } sm:text-base font-normal border ${
-            editData
-              ? "bg-transparent border-gray-300"
-              // Saat tidak bisa diedit, beri tampilan yang lebih jelas
-              : "bg-gray-100 border-gray-100 text-gray-700"
-          } px-3 py-2 rounded-md outline-none focus:ring-2 focus:ring-blue-500`}
+          // DIUBAH: Logika className diperbarui untuk menangani state error
+          className={`
+            flex-1 w-full text-xs sm:text-base font-normal border rounded-md
+            px-3 py-2 outline-none transition-colors
+            focus:ring-2
+            ${data === "" ? "text-neutral-400" : "text-black"}
+            ${editData ? "bg-transparent" : "bg-gray-100 text-gray-700"}
+            ${error
+              ? "border-red-500 focus:ring-red-500" // Style saat ada error
+              : editData
+                ? "border-gray-300 focus:ring-blue-500" // Style saat bisa diedit
+                : "border-gray-100" // Style saat tidak bisa diedit
+            }
+          `}
         />
-        {/*
-          LOGIKA DIPERBAIKI: Tombol hanya muncul setelah form pernah disubmit.
-          Gunakan 'button' dengan 'type="button"' di dalam form.
-        */}
         {submited === "submit" && (
           <button
             type="button"
@@ -74,6 +74,8 @@ export default function InputFieldDate({
           </button>
         )}
       </div>
+      {/* BARU: Tampilkan pesan error jika ada */}
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );
 }

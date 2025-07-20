@@ -5,6 +5,7 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import InputFieldTime from "../../components/field/InputFieldTime";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKehilanganKepolisianProps = {
   tipe: String;
@@ -29,56 +30,50 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
 
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setSubmited("submit");
-  setEditData(false);
-
-  const data_dinamis = {
-    namaLengkap: formData.namaLengkap,
-    kotaLahir: formData.kotaLahir,
-    tanggalLahir: formData.tanggalLahir,
-    nik: formData.nik,
-    nomorKK: formData.nomorKK,
-    jenisKelamin: formData.jenisKelamin,
-    agama: formData.agama,
-    pekerjaan: formData.pekerjaan,
-    alamat: formData.alamat,
-    namaBarang: formData.namaBarang,
-    lokasiKehilangan: formData.lokasiKehilangan,
-    tanggalKehilangan: formData.tanggalKehilangan,
-    jamKehilangan: formData.jamKehilangan,
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowConfirmModal(true);
   };
 
-  try {
-    const res = await fetch("/api/permohonan", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nik: formData.nik,
-        jenis_surat: "SK Kehilangan Kepolisian",
-        tipe: tipe,
-        keterangan: `Pengajuan Surat Kehilangan oleh ${formData.namaLengkap}`,
-        data_dinamis,
-      }),
-    });
+  const handleConfirm = async () => {
+    setSubmited("");
+    setLoading(true);
 
-    const result = await res.json();
+    const data_dinamis = { ...formData };
 
-    if (!res.ok) {
-      throw new Error(result.error || "Gagal mengirim permohonan");
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nik: formData.nik,
+          jenis_surat: "SK Kehilangan Kepolisian",
+          tipe: tipe,
+          keterangan: `Pengajuan Surat Kehilangan oleh ${formData.namaLengkap}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
+
+      setSuccessInfo({
+        title: "Pengajuan Berhasil!",
+        resi: result.permohonan.no_resi,
+      });
+    } catch (err: any) {
+      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
-
-    alert(`✅ Berhasil! Resi: ${result.permohonan.no_resi}`);
-    window.location.href = "/"; // redirect ke halaman utama
-  } catch (err: any) {
-    alert(`❌ Terjadi kesalahan: ${err.message}`);
-  }
-};
-
+  };
 
   const handleReset = () => {
     setFormData({
@@ -96,7 +91,7 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
       tanggalKehilangan: "",
       jamKehilangan: "",
     });
-    setSubmited(null);
+    setSubmited("");
     setEditData(true);
   };
 
@@ -137,10 +132,7 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
           </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
-        >
+        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Pengaju</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaLengkap} setData={(val) => setFormData({ ...formData, namaLengkap: val })} setEditData={setEditData} editData={editData} submited={submited} />
@@ -163,12 +155,8 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
           </div>
 
           <div className="flex gap-4">
-            <button type="submit" className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium">
-              Submit
-            </button>
-            <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">
-              Reset
-            </button>
+            <button type="submit" className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium">Submit</button>
+            <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">Reset</button>
           </div>
         </form>
 
@@ -176,6 +164,20 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
     </div>
   );
 }
