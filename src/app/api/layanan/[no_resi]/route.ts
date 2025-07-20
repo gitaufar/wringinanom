@@ -7,21 +7,31 @@ type Params = {
   };
 };
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(_request: Request, { params }: Params) {
   const { no_resi } = params;
+  console.log("Menerima no_resi:", no_resi);
 
   try {
     const riwayatLayanan = await prisma.riwayatLayanan.findUnique({
       where: { no_resi },
+      include: {
+        penduduk: true,
+      },
     });
 
     if (!riwayatLayanan) {
-      return NextResponse.json({ error: "Riwayat layanan tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Riwayat layanan tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(riwayatLayanan);
+    return NextResponse.json({ data: riwayatLayanan });
   } catch (error) {
     console.error("Gagal mengambil data riwayat layanan:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Terjadi kesalahan server" },
+      { status: 500 }
+    );
   }
 }

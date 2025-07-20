@@ -1,71 +1,112 @@
-'use client';
+"use client";
 
-// Di dalam TabelPermohonan.tsx dan TabelRiwayatPermohonan.tsx
-import StatusCard from '../../components/card/StatusCard'; // Pastikan path-nya sesuai
-import { FaEye, FaTrashAlt } from 'react-icons/fa';
+import { useEffect, useState } from "react";
+import StatusCard from "../../components/card/StatusCard";
+import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 type DataRiwayat = {
-  noResi: string;
-  nama: string;
-  tanggal: string;
-  jenisSurat: string;
-  status: 'Selesai' | 'Dibatalkan';
+  no_resi: string;
+  penduduk: {
+    nama_lengkap: string;
+  };
+  date: string;
+  keterangan: string;
+  status: "Menunggu" | "Selesai" | "Dibatalkan";
+  permohonan?: {
+    jenis_surat: string;
+  };
 };
 
-const dummyDataRiwayat: DataRiwayat[] = [
-  {
-    noResi: '00001',
-    nama: 'Hulin',
-    tanggal: '04 Sep 2019',
-    jenisSurat: 'Surat Beda Identitas',
-    status: 'Selesai',
-  },
-  {
-    noResi: '00002',
-    nama: 'Junaid',
-    tanggal: '05 Sep 2019',
-    jenisSurat: 'Surat Kehilangan',
-    status: 'Dibatalkan',
-  },
-];
+type TabelRiwayatPermohonanProps = {
+  change: boolean;
+};
 
-const TabelRiwayatPermohonan = () => {
+const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
+  const [dataRiwayat, setDataRiwayat] = useState<DataRiwayat[]>([]);
+
+  useEffect(() => {
+    const fetchRiwayat = async () => {
+      try {
+        const res = await fetch("/api/layanan");
+        const json = await res.json();
+
+        if (Array.isArray(json)) {
+          const filtered = json.filter(
+            (item: any) => item.status?.toLowerCase() !== "menunggu"
+          );
+
+          const mappedData: DataRiwayat[] = filtered.map((item: any) => ({
+            no_resi: item.no_resi,
+            penduduk: {
+              nama_lengkap: item.penduduk?.nama_lengkap ?? "Tidak diketahui",
+            },
+            date: item.date,
+            keterangan: item.keterangan ?? "-",
+            status: item.status,
+            permohonan: {
+              jenis_surat: item.permohonan?.jenis_surat ?? "-",
+            },
+          }));
+
+          setDataRiwayat(mappedData);
+        } else {
+          console.error("Response bukan array:", json);
+        }
+      } catch (error) {
+        console.error("Gagal fetch data dari /api/layanan:", error);
+      }
+    };
+
+    fetchRiwayat();
+  }, [change]);
+
   return (
     <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead className="text-left bg-[#F9FAFB] border-b">
-          <tr>
-            <th className="px-6 py-3 font-semibold">NO RESI</th>
-            <th className="px-6 py-3 font-semibold">NAMA</th>
-            <th className="px-6 py-3 font-semibold">TANGGAL PERMINTAAN</th>
-            <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
-            <th className="px-6 py-3 font-semibold">ACTION</th>
-            <th className="px-6 py-3 font-semibold">STATUS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dummyDataRiwayat.map((row, index) => (
-            <tr key={index} className="border-b hover:bg-gray-50">
-              <td className="px-6 py-4">{row.noResi}</td>
-              <td className="px-6 py-4">{row.nama}</td>
-              <td className="px-6 py-4">{row.tanggal}</td>
-              <td className="px-6 py-4">{row.jenisSurat}</td>
-              <td className="px-6 py-4 flex items-center gap-3">
-                {/* Preview icon (mata) */}
-<button className=" hover:text-blue-700">
-  <FaEye size={16} />
-</button>
-                <button className="text-red-500 hover:text-red-700">
-                  <FaTrashAlt size={16} />
-                </button>
-              </td>
-              <td className="px-6 py-4">
-                <StatusCard status={row.status} />
-              </td>
+      {dataRiwayat.length === 0 ? (
+        <p className="text-center text-gray-500 py-8">
+          Belum ada riwayat permohonan surat.
+        </p>
+      ) : (
+        <table className="min-w-full text-sm">
+          <thead className="text-left bg-[#F9FAFB] border-b">
+            <tr>
+              <th className="px-6 py-3 font-semibold">NO RESI</th>
+              <th className="px-6 py-3 font-semibold">NAMA</th>
+              <th className="px-6 py-3 font-semibold">TANGGAL PERMINTAAN</th>
+              <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
+              <th className="px-6 py-3 font-semibold">ACTION</th>
+              <th className="px-6 py-3 font-semibold">STATUS</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {dataRiwayat.map((row, index) => (
+              <tr key={index} className="border-b hover:bg-gray-50">
+                <td className="px-6 py-4">{row.no_resi}</td>
+                <td className="px-6 py-4">{row.penduduk?.nama_lengkap}</td>
+                <td className="px-6 py-4">
+                  {new Date(row.date).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td className="px-6 py-4">{row.permohonan?.jenis_surat}</td>
+                <td className="px-6 py-4 flex items-center gap-3">
+                  <button className="hover:text-blue-700">
+                    <FaEye size={16} />
+                  </button>
+                  <button className="text-red-500 hover:text-red-700">
+                    <FaTrashAlt size={16} />
+                  </button>
+                </td>
+                <td className="px-6 py-4">
+                  <StatusCard status={row.status} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

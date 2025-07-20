@@ -30,7 +30,8 @@ const Receipt = () => {
     const fetchData = async () => {
       if (!no_resi) return;
       try {
-        const res = await fetch(`/api/permohonan?no_resi=${no_resi}`);
+        console.log(no_resi);
+        const res = await fetch(`/api/layanan/${no_resi}`);
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Gagal memuat data");
@@ -42,8 +43,8 @@ const Receipt = () => {
           applicantName: permohonan.penduduk.nama_lengkap,
           applicantNIK: permohonan.nik,
           letterType: permohonan.jenis_surat,
-          submissionDate: permohonan.tanggal,
-          creationDate: new Date(permohonan.tanggal).toLocaleDateString(
+          submissionDate: permohonan.date,
+          creationDate: new Date(permohonan.date).toLocaleDateString(
             "id-ID"
           ),
           status: permohonan.status, // 🆕 status ditambahkan di sini

@@ -1,4 +1,4 @@
-// src/app/api/penduduk/route.ts
+// src/app/api/layanan/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -46,4 +46,32 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Terjadi kesalahan, gagal membuat pengajuan layanan silahkan coba lagi" }, { status: 500 });
   }
 }
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const noResi = searchParams.get("no_resi");
+
+    if (!noResi) {
+      return NextResponse.json({ error: "no_resi wajib disertakan" }, { status: 400 });
+    }
+
+    const existing = await prisma.riwayatLayanan.findUnique({
+      where: { no_resi: noResi },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
+    }
+
+    await prisma.riwayatLayanan.delete({
+      where: { no_resi: noResi },
+    });
+
+    return NextResponse.json({ message: "Riwayat layanan berhasil dihapus" });
+  } catch (error) {
+    console.error("Gagal hapus riwayat:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan saat menghapus data" }, { status: 500 });
+  }
+}
+
 

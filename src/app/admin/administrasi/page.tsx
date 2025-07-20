@@ -10,11 +10,10 @@ import { Search } from 'lucide-react';
 
 const AdminPage = () => {
   const [search, setSearch] = useState('');
+  const [change, setChange] = useState(false);
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 bg-[#f7f8fc] p-6">
@@ -57,13 +56,13 @@ const AdminPage = () => {
         <FilterPenduduk />
 
         {/* Tabel Permohonan */}
-        <TabelPermohonan search={search} />
+        <TabelPermohonan search={search} setChange={setChange} change={change} />
 
         {/* Title for History Table */}
         <h2 className="text-xl font-semibold mt-8 mb-4">Riwayat Permohonan</h2>
 
         {/* Tabel Riwayat Permohonan */}
-        <TabelRiwayatPermohonan />
+        <TabelRiwayatPermohonan change={change} />
       </div>
     </div>
   );

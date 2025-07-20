@@ -17,7 +17,7 @@ export async function POST(
     case "anak_kandung":
       pathFile = "A.01.01_Surat_Keterangan_Anak_Kandung_(FINAL).docx";
       break;
-    case "beda_identitas":
+    case "Beda Identitas":
       pathFile = "A.01.03_Surat_Keterangan_Beda_Identitas_Formal_(FINAL).docx";
       break;
     case "belum_nikah":
@@ -101,6 +101,7 @@ export async function POST(
       console.log("❌ Tipe surat tidak dikenali");
   }
 
+  
   try {
     const body = await req.json();
 
@@ -145,9 +146,9 @@ export async function POST(
           Tanggal_Surat: tanggalSurat,
         });
         break;
-      case "beda_identitas":
+      case "Beda Identitas":
         doc.setData({
-          Nama_Sekarang: body.nama,
+          Nama_Sekarang: body.namaSekarang,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
           Jenis_Kelamin: body.jenisKelamin,

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { FaFilter, FaRedo } from 'react-icons/fa';
+import { FaFilter, FaRedo } from "react-icons/fa";
 
 const FilterPenduduk = () => {
   return (
@@ -12,23 +12,19 @@ const FilterPenduduk = () => {
       </div>
 
       {/* Dropdown Waktu */}
-      <DropdownSelect
-        label="Waktu"
-        options={['Waktu']}
-        name="waktu"
-      />
+      <DropdownSelect label="Waktu" options={["Waktu"]} name="waktu" />
 
       {/* Dropdown Jenis Surat */}
       <DropdownSelect
         label="Jenis Surat"
-        options={['Surat Beda Identitas', 'Surat Domisili', 'Surat Kehilangan']}
+        options={["Surat Beda Identitas", "Surat Domisili", "Surat Kehilangan"]}
         name="jenis"
       />
 
       {/* Dropdown Status */}
       <DropdownSelect
         label="Status Order"
-        options={['Selesai', 'Diproses', 'Dibatalkan']}
+        options={["Selesai", "Diproses", "Dibatalkan"]}
         name="status"
       />
 
@@ -55,9 +51,10 @@ const DropdownSelect = ({
     <div className="relative">
       <select
         name={name}
+        defaultValue=""
         className="appearance-none bg-white px-4 py-2 text-sm font-semibold border border-gray-200 rounded-md pr-8 text-black focus:outline-none"
       >
-        <option disabled hidden selected>
+        <option value="" disabled hidden>
           {label}
         </option>
         {options.map((opt, idx) => (
@@ -66,7 +63,6 @@ const DropdownSelect = ({
           </option>
         ))}
       </select>
-      
     </div>
   );
 };
