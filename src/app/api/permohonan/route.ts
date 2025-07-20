@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         no_resi: noResi,
         nik,
         date: new Date(),
-        keterangan: keterangan || `Pengajuan surat ${jenis_surat}`,
+        keterangan: `${jenis_surat}`,
         status: "Menunggu",
       },
     });
@@ -113,63 +113,32 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/* contouh penggunaan post permohonan
-const handleSubmit = async () => {
-    setLoading(true);
-    setResponse(null);
-    setError(null);
+// Tambahkan di bawah export GET(...)
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const noResi = searchParams.get("no_resi");
 
-    try {
-      const res = await fetch("/api/permohonan", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nik,
-          jenis_surat: jenisSurat,
-          keterangan,
-          data_dinamis: {
-            nama_dipakai: namaDipakai,
-            nama_alias: namaAlias,b
-          },
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Gagal membuat permohonan");
-      }
-
-      setResponse(`✅ Berhasil: Resi = ${data.permohonan.no_resi}`);
-    } catch (err: any) {
-      setError(`❌ Error: ${err.message}`);
-    } finally {
-      setLoading(false);
+    if (!noResi) {
+      return NextResponse.json(
+        { error: "no_resi wajib disertakan" },
+        { status: 400 }
+      );
     }
-  };
-  */
+    
+    const deletedPermohonan = await prisma.permohonanSurat.delete({
+      where: { no_resi: noResi },
+    });
 
-/** contoh pemakaian get
-   * const handleFetch = async () => {
-    setLoading(true);
-    setError(null);
-    setData([]);
-
-    try {
-      const res = await fetch(`/api/permohonan?jenis=${encodeURIComponent(jenisSurat)}`);
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.error || "Gagal mengambil data permohonan");
-      }
-
-      setData(result.data);
-    } catch (err: any) {
-      setError(`❌ Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-   */
+    return NextResponse.json({
+      message: `Permohonan dan riwayat dengan resi ${noResi} berhasil dihapus`,
+      deleted: deletedPermohonan,
+    });
+  } catch (error: any) {
+    console.error("❌ Gagal menghapus permohonan:", error);
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
