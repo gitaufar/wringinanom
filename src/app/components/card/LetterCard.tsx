@@ -1,16 +1,15 @@
-"use client"; // Diperlukan karena menggunakan useRouter
+"use client"; 
 
 import { Button } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react'; 
 
-// 1. Perbarui interface: Hapus 'color' & 'icon', tambahkan 'imageUrl'
 interface LetterCardProps {
   title: string;
   description: string;
   topic: string;
   link?: string;
-  imageUrl: string; // Properti baru untuk gambar preview
+  imageUrl: string;
 }
 
 const LetterCard: React.FC<LetterCardProps> = ({
@@ -18,23 +17,33 @@ const LetterCard: React.FC<LetterCardProps> = ({
   description,
   topic,
   link,
-  imageUrl, // Gunakan properti baru ini
+  imageUrl,
 }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // State untuk loading
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // opsional delay agar efek loading terlihat
+      router.push(`/surat/${link}`);
+    } catch (error) {
+      console.error("Gagal redirect:", error);
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 overflow-hidden flex flex-col bg-white">
       
-      {/* 2. Ganti bagian atas dengan preview gambar */}
       <div className="relative h-48 w-full bg-gray-100 flex items-center justify-center overflow-auto">
         <img 
           src={imageUrl} 
           alt={`Preview untuk ${title}`} 
-          className="h-full w-full object-cover object-top pb-2" // 'object-contain' agar gambar pas dan tidak terpotong
+          className="h-full w-full object-cover object-top pb-2"
         />
       </div>
 
-      {/* Bagian bawah tetap sama */}
       <div className="p-4 flex flex-col flex-grow">
         <h3 className="font-semibold text-gray-900 text-lg mb-2 line-clamp-2 min-h-[2.8rem]">
           {title}
@@ -43,7 +52,6 @@ const LetterCard: React.FC<LetterCardProps> = ({
           {description}
         </p>
 
-        {/* Wrapper untuk mendorong button ke bawah */}
         <div className="mt-auto pt-2">
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
@@ -51,13 +59,13 @@ const LetterCard: React.FC<LetterCardProps> = ({
             </span>
           </div>
           
-          {/* 3. Fungsionalitas tombol navigasi dipertahankan */}
           <Button
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg"
             size="sm"
-            onClick={() => router.push(`/surat/${link}`)}
+            onClick={handleClick}
+            disabled={loading}
           >
-            Ajukan Surat
+            {loading ? "Memuat..." : "Ajukan Surat"}
           </Button>
         </div>
       </div>
