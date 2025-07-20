@@ -1,21 +1,41 @@
 "use client";
-import React from 'react'
-import HeroSection from '../section/HeroSection'
-import LayananSection from '../section/LayananSection'
-import TutorialSection from '../section/TutorialSection'
-import InformationSection from '../section/InformationSection'
-import Footer from '../section/Footer'
+
+import React from 'react';
+import HeroSection from '../section/HeroSection';
+import LayananSection from '../section/LayananSection';
+import TutorialSection from '../section/TutorialSection';
+import InformationSection from '../section/InformationSection';
+import Footer from '../section/Footer';
 
 const LandingPage = () => {
   return (
-    <main>
+    <main className="flex flex-col items-center justify-center w-full overflow-hidden">
+      {/* Hero Section */}
+      <section className="w-full">
         <HeroSection />
-        <LayananSection />
-        <TutorialSection />
-        <InformationSection />
-        <Footer />
-    </main>
-  )
-}
+      </section>
 
-export default LandingPage
+      {/* Layanan Section */}
+      <section className="">
+        <LayananSection />
+      </section>
+
+      {/* Tutorial Section */}
+      <section className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 py-10 max-w-[1440px] mx-auto">
+        <TutorialSection />
+      </section>
+
+      {/* Informasi Section */}
+      <section className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 py-10 max-w-[1440px] mx-auto">
+        <InformationSection />
+      </section>
+
+      {/* Footer */}
+      <section className="w-full">
+        <Footer />
+      </section>
+    </main>
+  );
+};
+
+export default LandingPage;
