@@ -1,133 +1,136 @@
-"use client";
-import { useEffect, useState } from "react";
-import ButtonAction from "../button/ButtonAction";
-import { format } from "date-fns";
-import { Penduduk } from "@prisma/client";
-import { useRouter } from "next/navigation";
+// components/tabel/TabelKependudukan.tsx
+'use client'
 
-const LIMIT = 10;
+import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns'
+import { Penduduk } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiEdit,
+  FiTrash2,
+} from 'react-icons/fi'
 
-const TabelKependudukan = () => {
-  const router = useRouter();
+const LIMIT = 10
 
-  const [dataPenduduk, setDataPenduduk] = useState<Penduduk[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalData, setTotalData] = useState(0);
+export default function TabelKependudukan() {
+  const router = useRouter()
+  const [data, setData] = useState<Penduduk[]>([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalData, setTotalData] = useState(0)
 
-  const fetchPenduduk = async (page: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/penduduk?page=${page}&limit=${LIMIT}`);
-      const json = await res.json();
-      setDataPenduduk(json.data);
-      setTotalPages(json.totalPages);
-      setTotalData(json.totalData);
-    } catch (err) {
-      console.error("Gagal fetch penduduk:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (nik: string) => {
-    const confirmed = window.confirm("Yakin ingin menghapus penduduk ini?");
-    if (!confirmed) return;
-
-    try {
-      await fetch(`/api/penduduk/${nik}`, { method: "DELETE" });
-      fetchPenduduk(page);
-    } catch (err) {
-      console.error("Gagal menghapus penduduk:", err);
-    }
-  };
+  const fetchPage = async (p: number) => {
+    setLoading(true)
+    const res = await fetch(`/api/penduduk?page=${p}&limit=${LIMIT}`)
+    const json = await res.json()
+    setData(json.data)
+    setTotalPages(json.totalPages)
+    setTotalData(json.totalData)
+    setLoading(false)
+  }
 
   useEffect(() => {
-    fetchPenduduk(page);
-  }, [page]);
+    fetchPage(page)
+  }, [page])
+
+  const handleDelete = async (nik: string) => {
+    if (!confirm('Yakin ingin menghapus?')) return
+    await fetch(`/api/penduduk/${nik}`, { method: 'DELETE' })
+    fetchPage(page)
+  }
 
   return (
-    <div className="bg-white rounded-xl border px-5 py-4 mt-0">
-      <table className="w-full text-sm text-left">
-        <thead className="text-gray-500 border-b">
-          <tr>
-            <th className="py-3 px-4">NIK</th>
-            <th className="py-3 px-4">NAMA</th>
-            <th className="py-3 px-4">JENIS KELAMIN</th>
-            <th className="py-3 px-4">TANGGAL LAHIR</th>
-            <th className="py-3 px-4">ALAMAT</th>
-            <th className="py-3 px-4">ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
+    <div className="overflow-x-auto">
+      <div className="min-w-[800px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
-              <td colSpan={6} className="py-4 px-4 text-center">
-                Loading...
-              </td>
+              {['NIK','Nama','Jenis Kelamin','Tanggal Lahir','Alamat','Action'].map((h) => (
+                <th
+                  key={h}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
-          ) : dataPenduduk.length === 0 ? (
-            <tr>
-              <td colSpan={6} className="py-4 px-4 text-center">
-                Tidak ada data penduduk
-              </td>
-            </tr>
-          ) : (
-            dataPenduduk.map((item, index) => (
-              <tr key={index} className="border-b">
-                <td className="py-4 px-4 align-middle">{item.nik}</td>
-                <td className="py-4 px-4 align-middle">{item.nama_lengkap}</td>
-                <td className="py-4 px-4 align-middle">{item.jenis_kelamin}</td>
-                <td className="py-4 px-4 align-middle">
-                  {format(new Date(item.tanggal_lahir), "dd-MM-yyyy")}
-                </td>
-                <td className="py-4 px-4 align-middle">{item.alamat}</td>
-                <td className="py-4 px-4 align-middle">
-                  <ButtonAction
-                    editData={() => {
-                      router.push(`/admin/kependudukan/edit/${item.nik}`);
-                    }}
-                    deleteData={() => handleDelete(item.nik)}
-                  />
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-100">
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="py-6 text-center text-gray-500">
+                  Loading…
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-6 text-center text-gray-500">
+                  Data kosong
+                </td>
+              </tr>
+            ) : (
+              data.map((d) => (
+                <tr key={d.nik} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.nik}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.nama_lengkap}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.jenis_kelamin}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    {format(new Date(d.tanggal_lahir), 'dd-MM-yyyy')}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.alamat}</td>
+                  <td className="px-6 py-4 flex space-x-2">
+                    <button
+                      onClick={() => router.push(`/admin/kependudukan/edit/${d.nik}`)}
+                      className="p-2 rounded hover:bg-gray-100"
+                      title="Edit"
+                    >
+                      <FiEdit className="text-gray-600" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(d.nik)}
+                      className="p-2 rounded hover:bg-red-50"
+                      title="Hapus"
+                    >
+                      <FiTrash2 className="text-red-500" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
 
-      {/* Info jumlah dan navigasi halaman */}
-      {!loading && (
-        <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-          <div>
-            Menampilkan {(page - 1) * LIMIT + 1} -{" "}
-            {(page - 1) * LIMIT + dataPenduduk.length} dari {totalData}
+        {/* Pagination */}
+        {!loading && data.length > 0 && (
+          <div className="px-6 py-4 flex items-center justify-between text-sm text-gray-600">
+            <div>
+              Menampilkan {(page - 1) * LIMIT + 1}–{(page - 1) * LIMIT + data.length} dari {totalData}
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                disabled={page === 1}
+                className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+              >
+                <FiChevronLeft />
+              </button>
+              <span>
+                Halaman <strong>{page}</strong>/{totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                disabled={page === totalPages}
+                className="p-2 rounded hover:bg-gray-100 disabled:opacity-50"
+              >
+                <FiChevronRight />
+              </button>
+            </div>
           </div>
-
-          <div className="space-x-2">
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}
-              className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-            >
-              ⬅️ Sebelumnya
-            </button>
-            <span>
-              Halaman {page} dari {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={page === totalPages}
-              className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-            >
-              Berikutnya ➡️
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
-  );
-};
-
-export default TabelKependudukan;
+  )
+}

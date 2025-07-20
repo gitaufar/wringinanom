@@ -1,56 +1,92 @@
-"use client";
-import ButtonAction from "../button/ButtonAction";
+// components/tabel/TabelKonfirmasi.tsx
+'use client'
 
-const dataKonfirmasi = [
-  {
-    nik: "6403050303040001",
-    nama: "Regasari Rekyan Permatasari",
-    jenisKelamin: "Laki-laki",
-    tanggalLahir: "20-22-2020",
-    alamat: "Dusun Besuki RT 028 RW 006",
-    keterangan: "Kematian",
-  },
-  {
-    nik: "6403050303040001",
-    nama: "Regasari Rekyan Permatasari",
-    jenisKelamin: "Laki-laki",
-    tanggalLahir: "20-22-2020",
-    alamat: "Dusun Besuki RT 028 RW 006",
-    keterangan: "Kelahiran",
-  },
-];
+import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns'
+import { Penduduk } from '@prisma/client'
+import { FiEdit, FiTrash2 } from 'react-icons/fi'
+import { useRouter } from 'next/navigation'
 
-const TabelKonfirmasi = () => {
+export default function TabelKonfirmasi() {
+  const router = useRouter()
+  const [data, setData] = useState<Penduduk[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/penduduk?status=pending')
+      .then((r) => r.json())
+      .then((json) => setData(json.data))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleDelete = async (nik: string) => {
+    if (!confirm('Yakin ingin menghapus?')) return
+    await fetch(`/api/penduduk/${nik}`, { method: 'DELETE' })
+    setData((d) => d.filter((x) => x.nik !== nik))
+  }
+
   return (
-    <div className="bg-white rounded-xl border px-5 py-4 mt-0">
-      <table className="w-full text-sm text-left">
-        <thead className="text-gray-500 border-b">
-          <tr>
-            <th className="py-3 px-4">NIK</th>
-            <th className="py-3 px-4">NAMA</th>
-            <th className="py-3 px-4">JENIS KELAMIN</th>
-            <th className="py-3 px-4">TANGGAL LAHIR</th>
-            <th className="py-3 px-4">ALAMAT</th>
-            <th className="py-3 px-4">KETERANGAN</th>
-            <th className="py-3 px-4">ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataKonfirmasi.map((item, index) => (
-            <tr key={index} className="border-b">
-              <td className="py-4 px-4 align-middle">{item.nik}</td>
-              <td className="py-4 px-4 align-middle">{item.nama}</td>
-              <td className="py-4 px-4 align-middle">{item.jenisKelamin}</td>
-              <td className="py-4 px-4 align-middle">{item.tanggalLahir}</td>
-              <td className="py-4 px-4 align-middle">{item.alamat}</td>
-              <td className="py-4 px-4 align-middle">{item.keterangan}</td>
-              <td className="py-4 px-4 align-middle"><ButtonAction editData={() => console.log("Edit")} deleteData={() => console.log("Delete")}/></td>
+    <div className="overflow-x-auto">
+      <div className="min-w-[800px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {['NIK','Nama','Jenis Kelamin','Tanggal Lahir','Alamat','Keterangan','Action'].map((h) => (
+                <th
+                  key={h}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-100">
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="py-6 text-center text-gray-500">
+                  Loading…
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="py-6 text-center text-gray-500">
+                  Tidak ada data
+                </td>
+              </tr>
+            ) : (
+              data.map((d) => (
+                <tr key={d.nik} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.nik}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.nama_lengkap}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.jenis_kelamin}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    {format(new Date(d.tanggal_lahir), 'dd-MM-yyyy')}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.alamat}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.keterangan}</td>
+                  <td className="px-6 py-4 flex space-x-2">
+                    <button
+                      onClick={() => router.push(`/admin/kependudukan/edit/${d.nik}`)}
+                      className="p-2 rounded hover:bg-gray-100"
+                      title="Edit"
+                    >
+                      <FiEdit className="text-gray-600" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(d.nik)}
+                      className="p-2 rounded hover:bg-red-50"
+                      title="Hapus"
+                    >
+                      <FiTrash2 className="text-red-500" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
-  );
-};
-
-export default TabelKonfirmasi;
+  )
+}

@@ -1,16 +1,17 @@
 // src/app/api/surat/[tipe]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
-import { useParams } from "next/navigation";
 import { terbilang } from "angka-menjadi-terbilang";
-import { ALargeSmall, Tangent } from "lucide-react";
-import { Kotta_One } from "next/font/google";
 
-export async function POST(req: NextRequest) {
-  const { tipe } = useParams();
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { tipe: string } }
+) {
+  const { tipe } = params;
   let pathFile = "";
   switch (tipe) {
     case "anak_kandung":
@@ -114,6 +115,12 @@ export async function POST(req: NextRequest) {
       linebreaks: true,
     });
 
+    const tanggalSurat = new Date().toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
     switch (tipe) {
       case "anak_kandung":
         doc.setData({
@@ -128,11 +135,14 @@ export async function POST(req: NextRequest) {
           Alamat_Ibu: body.alamatIbu,
           Angka_Num: body.angkaNum,
           Angka_Str: terbilang(body.angkaNum),
+          Angka_Num2: body.angkaNum2,
+          Angka_Str2: terbilang(body.angkaNum2),
           Nama_Ayah: body.namaAyah,
           Kota_Ayah: body.kotaAyah,
           Tanggal_Lahir_Ayah: body.tanggalLahirAyah,
           Pekerjaan_Ayah: body.pekerjaanAyah,
           Alamat_Ayah: body.alamatAyah,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "beda_identitas":
@@ -147,6 +157,7 @@ export async function POST(req: NextRequest) {
           NIK: body.nik,
           Alamat: body.alamat,
           Nama_Lama: body.namaLama,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "belum_nikah":
@@ -160,6 +171,7 @@ export async function POST(req: NextRequest) {
           Alamat: body.alamat,
           Negara: body.kepalaDesa,
           Jenis_Kelamin: body.jenisKelamin,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "biodata_penduduk":
@@ -188,6 +200,7 @@ export async function POST(req: NextRequest) {
           Tgl_Perkawinan: body.tglPerkawinan ?? "-",
           No_Akta_Perceraian: body.noAktaPerceraian ?? "-",
           Tgl_Perceraian: body.tglPerceraian ?? "-",
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "cerai_mati":
@@ -201,6 +214,7 @@ export async function POST(req: NextRequest) {
           Alamat: body.alamat,
           Status: body.jenisKelamin === "Laki-laki" ? "Duda" : "Janda",
           Tujuan: body.tujuan,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "ditinggal_pasangan":
@@ -217,6 +231,7 @@ export async function POST(req: NextRequest) {
           Status_Pasangan_2: body.statusPasangan1,
           Lama_Tahun: body.lamaTahun,
           Lama_Bulan: body.lamaBulan,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "duda_janda":
@@ -233,6 +248,7 @@ export async function POST(req: NextRequest) {
           Status_Perkawinan: body.statusPerkawinan,
           Negara: body.negara,
           Status: body.status,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "identitas":
@@ -248,6 +264,7 @@ export async function POST(req: NextRequest) {
           Dok_1: body.dok1,
           Dok_2: body.dok2,
           Nama_Dok2: body.namaDok2,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "kematian":
@@ -266,18 +283,20 @@ export async function POST(req: NextRequest) {
           Tempat_Kematian: body.tempatKematian,
           Penyebab_Kematian: body.penyebabKematian,
           Alamat_Kematian: body.alamatKematian,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "pindah_tempat":
         doc.setData({
-          Nama:body.nama,
-          Nama_Orangtua:body.namaOrangtua,
+          //pindah tempat skip dulu
+          Nama: body.nama,
+          Nama_Orangtua: body.namaOrangtua,
         });
         break;
       case "status":
         doc.setData({
           Nama: body.nama,
-          Nama_Orangtua: body.namaOrangtua, 
+          Nama_Orangtua: body.namaOrangtua,
           NIK: body.nik,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
@@ -288,17 +307,19 @@ export async function POST(req: NextRequest) {
           Alamat: body.alamat,
           Nama_Istri_Siri: body.namaIstriSiri,
           Nama_Orangtua_Istri_Siri: body.namaOrangtuaIstriSiri,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "tidak_diketahui":
         doc.setData({
-          Nama:body.nama,
-          NIK:body.nik,
-          NO_KK:body.noKK,
-          Jenis_Kelamin:body.jenisKelamin,
-          Umur:body.umur,
-          Pekerjaan:body.pekerjaan,
-          Alamat:body.alamat,
+          Nama: body.nama,
+          NIK: body.nik,
+          NO_KK: body.noKK,
+          Jenis_Kelamin: body.jenisKelamin,
+          Umur: body.umur,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "penambahan_anggota":
@@ -319,6 +340,7 @@ export async function POST(req: NextRequest) {
           Hubungan_Dalam_Keluarga: body.hubunganDalamKeluarga,
           Alamat_Anggota: body.alamatAnggota,
           Nama_Pembuat_Pernyataan: body.namaKepalaKeluarga,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "pernyataan_kelahiran":
@@ -346,6 +368,7 @@ export async function POST(req: NextRequest) {
           Pekerjaan_Ibu: body.pekerjaanIbu,
           Alamat_Ibu: body.alamatIbu,
           Nomor_KK: body.noKK,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "panggilan":
@@ -376,6 +399,7 @@ export async function POST(req: NextRequest) {
           Alamat_Tujuan: body.alamatTujuan,
           Orangtua: body.orangtua,
           Nama_Yang_Bersangkutan: body.nama,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "catatan_kepolisian":
@@ -392,6 +416,7 @@ export async function POST(req: NextRequest) {
           No_KK: body.noKK,
           Alamat: body.alamat,
           Tujuan_Pembuatan_Surat: body.tujuanPembuatanSurat,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "kehilangan_kepolisian":
@@ -406,6 +431,7 @@ export async function POST(req: NextRequest) {
           Lokasi_Kehilangan: body.lokasiKehilangan,
           Tanggal_Kehilangan: body.tanggalKehilangan,
           Jam_Kehilangan: body.jamKehilangan,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "pengantar":
@@ -422,6 +448,7 @@ export async function POST(req: NextRequest) {
           Alamat: body.alamat,
           Pengajuan: body.pengajuan,
           Tujuan: body.tujuan,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "tidak_mampu":
@@ -435,6 +462,7 @@ export async function POST(req: NextRequest) {
           Alamat: body.alamat,
           Dusun: body.dusun,
           Tujuan: body.tujuan,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "wali_nikah":
@@ -466,22 +494,77 @@ export async function POST(req: NextRequest) {
           Kelas_Romawi: body.kelasRomawi,
           Kelas_Huruf: body.kelasHuruf,
           Sekolah: body.sekolah,
+          Tanggal_Surat: tanggalSurat,
         });
         break;
       case "domisili":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Jenis_Kelamin: body.jenisKelamin,
+          Pekerjaan: body.pekerjaan,
+          Alamat: body.alamat,
+          Tanggal_Surat: tanggalSurat,
+        });
         break;
       case "kuasa":
-        doc.setData({});
+        doc.setData({
+          Nama_Pemberi: body.namaPemberi,
+          Kota_Pemberi: body.kotaPemberi,
+          Tanggal_Lahir_Pemberi: body.tanggalLahirPemberi,
+          Pekerjaan_Pemberi: body.pekerjaanPemberi,
+          NIK_Pemberi: body.nikPemberi,
+          Alamat_Pemberi: body.alamatPemberi,
+          Nama_Penerima: body.namaPenerima,
+          Kota_Penerima: body.kotaPenerima,
+          Tanggal_Lahir_Penerima: body.tanggalLahirPenerima,
+          Pekerjaan_Penerima: body.pekerjaanPenerima,
+          NIK_Penerima: body.nikPenerima,
+          Alamat_Penerima: body.alamatPenerima,
+          Hubungan: body.hubungan,
+          Keperluan: body.keperluan,
+          Tanggal_Surat: tanggalSurat,
+        });
         break;
       case "objek":
-        doc.setData({});
+        doc.setData({
+          Nama_Wajib_Pajak: body.namaWajibPajak,
+          NOP: body.nop,
+          Alamat_Objek_Pajak: body.alamatObjekPajak,
+          Alamat_Wajib_Pajak: body.alamatWajibPajak,
+          Luas: body.luas,
+          NJOP: body.njop,
+          Total_NJOP: body.totalNJOP,
+          Tahun_Data_PBB: body.tahunDataPBB,
+          Tahun_Belum_Terbit: body.tahunBelumTerbit,
+          Tujuan_Pengajuan: body.tujuanPengajuan,
+          Tanggal_Surat: tanggalSurat,
+        });
         break;
       case "penghasilan":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          Pekerjaan: body.pekerjaan,
+          NIK: body.nik,
+          Alamat: body.alamat,
+          Nama_Dusun: body.namaDusun,
+          Penghasilan: body.penghasilan,
+          Tanggal_Surat: tanggalSurat,
+        });
         break;
       case "usaha":
-        doc.setData({});
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          NIK: body.nik,
+          Jenis_Kelamin: body.jenisKelamin,
+          Agama: body.agama,
+          Status_Perkawinan: body.statusPerkawinan,
+          Alamat: body.alamat,
+          Tanggal_Surat: tanggalSurat,
+        });
         break;
       default:
         console.log("❌ Tipe surat tidak dikenali");
