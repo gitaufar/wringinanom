@@ -37,21 +37,21 @@ const HeroSection = () => {
         </div>
       </div>
       <p className="w-full text-base sm:text-lg md:text-xl lg:text-2xl text-center px-4">
-  Selamat Datang di Website Resmi Administrasi
-</p>
+        Selamat Datang di Website Resmi Administrasi
+      </p>
       <h1 className="w-full text-6xl sm:text-8xl md:text-10xl font-bold">
-  DESA WRINGINANOM
-</h1>
+        DESA WRINGINANOM
+      </h1>
       <p className="w-full text-2xl">
         Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom, Kec.
         Poncokusumo, Kab. Malang
       </p>
       <ButtonGeneral
-  className="mt-6 px-6 py-3 text-base sm:text-lg"
-  text="Mulai Sekarang"
-  icon="arrow"
-  onClick={() => {}}
-/>
+        className="mt-6 px-6 py-3 text-base sm:text-lg"
+        text="Mulai Sekarang"
+        icon="arrow"
+        onClick={() => {}}
+      />
     </section>
   );
 };
