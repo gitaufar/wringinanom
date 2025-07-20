@@ -16,7 +16,7 @@ type Order = {
   letterType: string;
   submissionDate: string;
   creationDate: string;
-  status: string; // 🆕 tambahkan status
+  status: string;
 };
 
 const Receipt = () => {

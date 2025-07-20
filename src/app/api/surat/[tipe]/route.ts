@@ -135,6 +135,8 @@ export async function POST(
           Alamat_Ibu: body.alamatIbu,
           Angka_Num: body.angkaNum,
           Angka_Str: terbilang(body.angkaNum),
+          Angka_Num2: body.angkaNum2,
+          Angka_Str2: terbilang(body.angkaNum2),
           Nama_Ayah: body.namaAyah,
           Kota_Ayah: body.kotaAyah,
           Tanggal_Lahir_Ayah: body.tanggalLahirAyah,
