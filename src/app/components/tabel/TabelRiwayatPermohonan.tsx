@@ -1,46 +1,37 @@
 'use client';
 
-import { FaEdit, FaCheck, FaTimes, FaEye } from 'react-icons/fa';
-import StatusCard from '../../components/card/StatusCard';
+// Di dalam TabelPermohonan.tsx dan TabelRiwayatPermohonan.tsx
+import StatusCard from '../../components/card/StatusCard'; // Pastikan path-nya sesuai
+import { FaEye, FaTrashAlt } from 'react-icons/fa';
 
-type DataPermintaan = {
+type DataRiwayat = {
   noResi: string;
   nama: string;
   tanggal: string;
   jenisSurat: string;
-  status: 'Menunggu' | 'Selesai' | 'Dibatalkan';
+  status: 'Selesai' | 'Dibatalkan';
 };
 
-const dummyData: DataPermintaan[] = [
+const dummyDataRiwayat: DataRiwayat[] = [
   {
     noResi: '00001',
     nama: 'Hulin',
     tanggal: '04 Sep 2019',
     jenisSurat: 'Surat Beda Identitas',
-    status: 'Menunggu',
+    status: 'Selesai',
   },
   {
     noResi: '00002',
     nama: 'Junaid',
     tanggal: '05 Sep 2019',
     jenisSurat: 'Surat Kehilangan',
-    status: 'Menunggu',
+    status: 'Dibatalkan',
   },
 ];
 
-// TabelPermohonan.tsx
-type TabelPermohonanProps = {
-  search: string;
-};
-
-const TabelPermohonan = ({ search }: TabelPermohonanProps) => {
-  const filteredData = dummyData.filter((item) =>
-    item.nama.toLowerCase().includes(search.toLowerCase())
-  );
-
+const TabelRiwayatPermohonan = () => {
   return (
     <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
-      {/* Tabel Data */}
       <table className="min-w-full text-sm">
         <thead className="text-left bg-[#F9FAFB] border-b">
           <tr>
@@ -53,29 +44,20 @@ const TabelPermohonan = ({ search }: TabelPermohonanProps) => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((row, index) => (
+          {dummyDataRiwayat.map((row, index) => (
             <tr key={index} className="border-b hover:bg-gray-50">
               <td className="px-6 py-4">{row.noResi}</td>
               <td className="px-6 py-4">{row.nama}</td>
               <td className="px-6 py-4">{row.tanggal}</td>
               <td className="px-6 py-4">{row.jenisSurat}</td>
               <td className="px-6 py-4 flex items-center gap-3">
-                {/* Edit icon */}
-                <button className="text-gray-600 hover:text-blue-600">
-                  <FaEdit size={16} />
-                </button>
-                {/* Accept icon */}
-                <button className="text-green-600 hover:text-green-700">
-                  <FaCheck size={16} />
-                </button>
-                {/* Reject icon - using FaTimes for a red X */}
-                <button className="text-red-500 hover:text-red-700">
-                  <FaTimes size={16} />
-                </button>
                 {/* Preview icon (mata) */}
 <button className=" hover:text-blue-700">
   <FaEye size={16} />
 </button>
+                <button className="text-red-500 hover:text-red-700">
+                  <FaTrashAlt size={16} />
+                </button>
               </td>
               <td className="px-6 py-4">
                 <StatusCard status={row.status} />
@@ -88,4 +70,4 @@ const TabelPermohonan = ({ search }: TabelPermohonanProps) => {
   );
 };
 
-export default TabelPermohonan;
+export default TabelRiwayatPermohonan;
