@@ -27,7 +27,7 @@ const FilterPenduduk = () => {
 
       {/* Dropdown Status */}
       <DropdownSelect
-        label="Status Order"
+        label="Status"
         options={['Selesai', 'Diproses', 'Dibatalkan']}
         name="status"
       />
@@ -55,7 +55,7 @@ const DropdownSelect = ({
     <div className="relative">
       <select
         name={name}
-        className="appearance-none bg-white px-4 py-2 text-sm font-semibold border border-gray-200 rounded-md pr-8 text-black focus:outline-none"
+        className="appearance-none min-w-25 bg-white px-4 py-2 text-sm font-semibold border border-gray-200 rounded-md pr-8 text-black focus:outline-none"
       >
         <option disabled hidden selected>
           {label}
