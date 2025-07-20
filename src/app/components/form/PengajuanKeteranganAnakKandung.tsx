@@ -8,7 +8,9 @@ type PengajuanKeteranganAnakKandungProps = {
   tipe: String;
 };
 
-export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKeteranganAnakKandungProps) {
+export default function PengajuanKeteranganAnakKandung({
+  tipe,
+}: PengajuanKeteranganAnakKandungProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -37,16 +39,26 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
     setEdit(false);
     setLoading(true);
 
+    const angkaNum = parseInt(form.anakKe || "0");
+    const angkaNum2 = parseInt(form.darixSaudara || "0");
+
     const data_dinamis = {
-      namaPengaju: form.namaPengaju,
-      namaLengkap: form.namaLengkap,
+      namaAnak: form.namaLengkap,
+      kotaAnak: form.kotaLahir,
+      tanggalLahirAnak: form.tanggalLahir,
       alamatAnak: form.alamatAnak,
-      anakKe: form.anakKe,
-      darixSaudara: form.darixSaudara,
-      kotaLahir: form.kotaLahir,
-      tanggalLahir: form.tanggalLahir,
-      ayah: form.ayah,
-      ibu: form.ibu,
+      namaIbu: form.ibu.nama,
+      kotaIbu: form.ibu.kotaLahir,
+      tanggalLahirIbu: form.ibu.tanggalLahir,
+      pekerjaanIbu: form.ibu.pekerjaan,
+      alamatIbu: form.ibu.alamat,
+      namaAyah: form.ayah.nama,
+      kotaAyah: form.ayah.kotaLahir,
+      tanggalLahirAyah: form.ayah.tanggalLahir,
+      pekerjaanAyah: form.ayah.pekerjaan,
+      alamatAyah: form.ayah.alamat,
+      angkaNum: angkaNum,
+      angkaNum2: angkaNum2,
     };
 
     try {

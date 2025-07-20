@@ -1,115 +1,176 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FaEdit, FaCheck, FaTimes, FaEye } from "react-icons/fa";
+import StatusCard from "../../components/card/StatusCard";
 
-type Permohonan = {
-  id: string;
+type DataPermintaan = {
   no_resi: string;
-  jenis_surat: string;
   penduduk: {
-    nama_lengkap: string;
+    nama: string;
   };
+  tanggal: string;
+  jenis_surat: string;
+  data_dinamis?: any;
   riwayat: {
-    status: string;
+    status: "Menunggu" | "Selesai" | "Dibatalkan";
   };
 };
 
-export const TabelPermohonan = () => {
-  const [data, setData] = useState<Permohonan[]>([]);
-  const [error, setError] = useState<string | null>(null);
+type TabelPermohonanProps = {
+  search: string;
+  setChange: (value: boolean) => void;
+  change: boolean;
+};
+
+const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProps) => {
+  const [Permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
   const [loading, setLoading] = useState(false);
-  const adminId = 1; // sementara hardcoded
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/permohonan");
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Gagal mengambil data");
-      setData(result.data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchPermohonan = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/permohonan");
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
 
-  const handleStatusChange = async (no_resi: string, status_baru: string) => {
+        const onlyMenunggu = (result.data || []).filter(
+          (x: DataPermintaan) => x.riwayat?.status === "Menunggu"
+        );
+
+        setPermohonan(onlyMenunggu);
+      } catch (err: any) {
+        setError(err.message || "Terjadi kesalahan");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPermohonan();
+  }, []);
+
+  const handleApprove = async (
+    noResi: string,
+    jenisSurat: string,
+    dataDinamis: any,
+    nama: string
+  ) => {
+    console.log(noResi, jenisSurat, dataDinamis);
     try {
-      const res = await fetch("/api/permohonan/status", {
+      // Unduh file
+      const fileRes = await fetch(`/api/surat/${jenisSurat}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataDinamis),
+      });
+      const blob = await fileRes.blob();
+
+      const fileURL = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.download = `${noResi}-${nama}.docx`; // atau .pdf jika file sudah dikonversi
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Ubah status jadi "Selesai"
+      const updateRes = await fetch("/api/permohonan/status", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          no_resi,
-          admin_id: adminId,
-          status_baru,
+          no_resi: noResi,
+          status_baru: "Selesai",
         }),
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Gagal mengubah status");
+      if (!updateRes.ok) {
+        throw new Error("Gagal mengubah status menjadi selesai");
+      }
 
-      alert(`✅ Status diubah menjadi "${status_baru}"`);
-      fetchData(); // Refresh data
+      // Hapus dari tabel saat ini
+      setPermohonan((prev) => prev.filter((item) => item.no_resi !== noResi));
+      setChange(!change);
     } catch (err: any) {
-      alert("❌ Gagal: " + err.message);
+      alert(err.message || "Terjadi kesalahan saat memproses permintaan.");
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  if (loading) return <p className="mt-4">Loading Permohonan...</p>;
+  if (error) return <p className="text-red-500 mt-4">❌ {error}</p>;
 
   return (
-    <div className="p-6 bg-white rounded shadow max-w-6xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Tabel Permohonan Surat</h2>
-
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-600">{error}</p>}
-
-      {!loading && data.length === 0 && <p>Tidak ada data ditemukan.</p>}
-
-      {!loading && data.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto border border-gray-300 text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border px-4 py-2">No Resi</th>
-                <th className="border px-4 py-2">Nama Pelapor</th>
-                <th className="border px-4 py-2">Jenis Surat</th>
-                <th className="border px-4 py-2">Status</th>
-                <th className="border px-4 py-2">Ubah Status</th>
+    <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
+      <table className="min-w-full text-sm">
+        <thead className="text-left bg-[#F9FAFB] border-b">
+          <tr>
+            <th className="px-6 py-3 font-semibold">NO RESI</th>
+            <th className="px-6 py-3 font-semibold">NAMA</th>
+            <th className="px-6 py-3 font-semibold">TANGGAL PERMINTAAN</th>
+            <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
+            <th className="px-6 py-3 font-semibold">ACTION</th>
+            <th className="px-6 py-3 font-semibold">STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Permohonan.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                Tidak ada Permohonan ditemukan.
+              </td>
+            </tr>
+          ) : (
+            Permohonan.map((row) => (
+              <tr key={row.no_resi} className="border-b hover:bg-gray-50">
+                <td className="px-6 py-4">{row.no_resi}</td>
+                <td className="px-6 py-4">{row.penduduk?.nama}</td>
+                <td className="px-6 py-4">
+                  {new Date(row.tanggal).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td className="px-6 py-4">{row.jenis_surat}</td>
+                <td className="px-6 py-4 flex items-center gap-3">
+                  <button className="text-gray-600 hover:text-blue-600">
+                    <FaEdit size={16} />
+                  </button>
+                  <button className="text-green-600 hover:text-green-700">
+                    <FaCheck
+                      size={16}
+                      onClick={() =>
+                        handleApprove(
+                          row.no_resi,
+                          row.jenis_surat,
+                          row.data_dinamis,
+                          row.penduduk.nama
+                        )
+                      }
+                    />
+                  </button>
+                  <button className="text-red-500 hover:text-red-700">
+                    <FaTimes size={16} />
+                  </button>
+                  <button className="hover:text-blue-700">
+                    <FaEye size={16} />
+                  </button>
+                </td>
+                <td className="px-6 py-4">
+                  <StatusCard status={row.riwayat?.status || "Menunggu"} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{item.no_resi}</td>
-                  <td className="border px-4 py-2">{item.penduduk?.nama_lengkap ?? "-"}</td>
-                  <td className="border px-4 py-2">{item.jenis_surat}</td>
-                  <td className="border px-4 py-2">{item.riwayat?.status ?? "-"}</td>
-                  <td className="border px-4 py-2 space-x-1">
-                    <button
-                      onClick={() => handleStatusChange(item.no_resi, "Selesai")}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange(item.no_resi, "Ditolak")}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                    >
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
+
+export default TabelPermohonan;

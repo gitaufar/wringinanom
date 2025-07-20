@@ -53,17 +53,16 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
           tipe,
           keterangan: `Permohonan Surat Beda Identitas oleh ${form.namaPengaju}`,
           data_dinamis: {
-            namaPengaju: form.namaPengaju,
             namaLama: form.namaLama,
-            namaBaru: form.namaBaru,
-            nikSubjek: form.nikAnak,
-            kotaLahir: form.kotaLahir,
+            namaSekarang: form.namaBaru,
+            nik: form.nikAnak,
+            kota: form.kotaLahir,
             tanggalLahir: form.tanggalLahir,
             jenisKelamin: form.jenisKelamin,
             alamat: form.alamat,
             agama: form.agama,
             pekerjaan: form.pekerjaan,
-            kewarganegaraan: form.kewarganegaraan,
+            negara: form.kewarganegaraan,
           },
         }),
       });
@@ -136,7 +135,7 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
             <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => setForm({ ...form, tanggalLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={form.jenisKelamin} setData={(val) => setForm({ ...form, jenisKelamin: val })} setEditData={setEdit} editData={edit} submited={submited} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={form.alamat} setData={(val) => setForm({ ...form, alamat: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Agama" inputPlaceholder="Agama" data={form.agama} setData={(val) => setForm({ ...form, agama: val })} setEditData={setEdit} editData={edit} submited={submited} />
+            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen","Katolik", "Hindu", "Buddha", "Konghucu"]} data={form.agama} setData={(val) => setForm({ ...form, agama: val })} setEditData={setEdit} editData={edit} submited={submited} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => setForm({ ...form, pekerjaan: val })} setEditData={setEdit} editData={edit} submited={submited} />
             <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={form.kewarganegaraan} setData={(val) => setForm({ ...form, kewarganegaraan: val })} setEditData={setEdit} editData={edit} submited={submited} />
           </div>

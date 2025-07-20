@@ -7,7 +7,7 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
 
 type SuratKeteranganBelumNikahProps = {
-  tipe: String;
+  tipe: string;
 };
 
 export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelumNikahProps) {
@@ -118,12 +118,14 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
         </div>
 
         <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
+          {/* Nama Pengaju */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Nama Pengaju</h2>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => setForm({ ...form, namaPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => setForm({ ...form, nikPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
           </div>
 
+          {/* Data Identitas */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Identitas</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={form.namaLengkap} setData={(val) => setForm({ ...form, namaLengkap: val })} setEditData={setEdit} editData={edit} submited={submited} />
