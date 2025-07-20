@@ -5,11 +5,16 @@ import StatusCard from "../../components/card/StatusCard";
 import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 type DataRiwayat = {
-  noResi: string;
-  nama: string;
-  tanggal: string;
-  jenisSurat: string;
+  no_resi: string;
+  penduduk: {
+    nama_lengkap: string;
+  };
+  date: string;
+  keterangan: string;
   status: "Menunggu" | "Selesai" | "Dibatalkan";
+  permohonan?: {
+    jenis_surat: string;
+  };
 };
 
 type TabelRiwayatPermohonanProps = {
@@ -31,15 +36,16 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
           );
 
           const mappedData: DataRiwayat[] = filtered.map((item: any) => ({
-            noResi: item.no_resi,
-            nama: item.penduduk?.nama_lengkap ?? "Tidak diketahui",
-            tanggal: new Date(item.date).toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            }),
-            jenisSurat: item.keterangan ?? "-",
+            no_resi: item.no_resi,
+            penduduk: {
+              nama_lengkap: item.penduduk?.nama_lengkap ?? "Tidak diketahui",
+            },
+            date: item.date,
+            keterangan: item.keterangan ?? "-",
             status: item.status,
+            permohonan: {
+              jenis_surat: item.permohonan?.jenis_surat ?? "-",
+            },
           }));
 
           setDataRiwayat(mappedData);
@@ -75,10 +81,16 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
           <tbody>
             {dataRiwayat.map((row, index) => (
               <tr key={index} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4">{row.noResi}</td>
-                <td className="px-6 py-4">{row.nama}</td>
-                <td className="px-6 py-4">{row.tanggal}</td>
-                <td className="px-6 py-4">{row.jenisSurat}</td>
+                <td className="px-6 py-4">{row.no_resi}</td>
+                <td className="px-6 py-4">{row.penduduk?.nama_lengkap}</td>
+                <td className="px-6 py-4">
+                  {new Date(row.date).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+                <td className="px-6 py-4">{row.permohonan?.jenis_surat}</td>
                 <td className="px-6 py-4 flex items-center gap-3">
                   <button className="hover:text-blue-700">
                     <FaEye size={16} />

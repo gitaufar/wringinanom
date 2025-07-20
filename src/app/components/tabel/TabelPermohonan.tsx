@@ -7,7 +7,7 @@ import StatusCard from "../../components/card/StatusCard";
 type DataPermintaan = {
   no_resi: string;
   penduduk: {
-    nama: string;
+    nama_lengkap: string;
   };
   tanggal: string;
   jenis_surat: string;
@@ -23,19 +23,25 @@ type TabelPermohonanProps = {
   change: boolean;
 };
 
-const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProps) => {
+const TabelPermohonan = ({
+  search = "",
+  setChange,
+  change,
+}: TabelPermohonanProps) => {
   const [Permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // buat error handling internal
+  const [firstLoading, setFirstLoading] = useState(true); // hanya true pertama kali buka
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPermohonan = async () => {
       try {
         setLoading(true);
+
         const res = await fetch("/api/permohonan");
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
-
+        console.log(result.data);
         const onlyMenunggu = (result.data || []).filter(
           (x: DataPermintaan) => x.riwayat?.status === "Menunggu"
         );
@@ -45,10 +51,14 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
         setError(err.message || "Terjadi kesalahan");
       } finally {
         setLoading(false);
+        setFirstLoading(false); // hanya false setelah fetch pertama selesai
       }
     };
 
-    fetchPermohonan();
+    fetchPermohonan(); // panggil pertama kali
+
+    const interval = setInterval(fetchPermohonan, 5000); // polling tiap 5 detik
+    return () => clearInterval(interval); // cleanup saat unmount
   }, []);
 
   const handleApprove = async (
@@ -57,7 +67,6 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
     dataDinamis: any,
     nama: string
   ) => {
-    console.log(noResi, jenisSurat, dataDinamis);
     try {
       // Unduh file
       const fileRes = await fetch(`/api/surat/${jenisSurat}`, {
@@ -72,7 +81,7 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
       const fileURL = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = fileURL;
-      link.download = `${noResi}-${nama}.docx`; // atau .pdf jika file sudah dikonversi
+      link.download = `${noResi}-${nama}.docx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -93,7 +102,12 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
         throw new Error("Gagal mengubah status menjadi selesai");
       }
 
-      // Hapus dari tabel saat ini
+      // Hapus permohonan dari database
+      await fetch(`/api/permohonan?no_resi=${noResi}`, {
+        method: "DELETE",
+      });
+
+      // Hapus dari state lokal
       setPermohonan((prev) => prev.filter((item) => item.no_resi !== noResi));
       setChange(!change);
     } catch (err: any) {
@@ -101,7 +115,7 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
     }
   };
 
-  if (loading) return <p className="mt-4">Loading Permohonan...</p>;
+  if (firstLoading) return <p className="mt-4">Loading Permohonan...</p>;
   if (error) return <p className="text-red-500 mt-4">❌ {error}</p>;
 
   return (
@@ -128,7 +142,7 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
             Permohonan.map((row) => (
               <tr key={row.no_resi} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4">{row.no_resi}</td>
-                <td className="px-6 py-4">{row.penduduk?.nama}</td>
+                <td className="px-6 py-4">{row.penduduk?.nama_lengkap}</td>
                 <td className="px-6 py-4">
                   {new Date(row.tanggal).toLocaleDateString("id-ID", {
                     day: "2-digit",
@@ -149,7 +163,7 @@ const TabelPermohonan = ({ search = "", setChange, change }: TabelPermohonanProp
                           row.no_resi,
                           row.jenis_surat,
                           row.data_dinamis,
-                          row.penduduk.nama
+                          row.penduduk.nama_lengkap
                         )
                       }
                     />
