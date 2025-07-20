@@ -29,15 +29,10 @@ const steps = [
 const TutorialSection = () => {
   return (
     <section
-      className="flex flex-col lg:flex-row items-start justify-between gap-10 px-6 py-10 bg-white font-['Plus_Jakarta_Sans'] w-full max-w-[1440px] mx-auto"
-      style={{
-        fontFamily: '"Plus Jakarta Sans", sans-serif',
-      }}
+      className="flex flex-col lg:flex-row items-start justify-between gap-10 px-4 sm:px-6 md:px-10 py-10 bg-white font-['Plus_Jakarta_Sans'] w-full max-w-[1440px] mx-auto"
     >
       {/* Kiri: Judul, deskripsi, tombol */}
-      <div
-        className="flex flex-col items-start gap-6 w-full lg:max-w-[573px]"
-      >
+      <div className="flex flex-col items-start gap-6 w-full lg:max-w-[573px]">
         <h2
           style={{
             color: "#020B23",
@@ -65,7 +60,7 @@ const TutorialSection = () => {
         <ButtonGeneral
           text="Lihat Tutorial"
           icon="arrow"
-          className="mt-4"
+          className="mt-2"
           onClick={() => {
             const tutorial = document.getElementById("tutorial-list");
             tutorial?.scrollIntoView({ behavior: "smooth" });
@@ -76,7 +71,7 @@ const TutorialSection = () => {
       {/* Kanan: Langkah-langkah */}
       <div
         id="tutorial-list"
-        className="flex flex-col border-l-2 border-black w-full padding-left [10px] lg:pl-20"
+        className="flex flex-col border-l-2 border-black w-full pl-4 sm:pl-6 md:pl-10 lg:pl-20"
         style={{ flex: 1 }}
       >
         {steps.map((step, index) => (
@@ -86,9 +81,9 @@ const TutorialSection = () => {
               index !== steps.length - 1 ? "border-b border-black" : ""
             }`}
           >
-            {/* Nomor langkah (di luar garis) */}
+            {/* Nomor langkah (hanya di desktop) */}
             <div
-              className="absolute -left-6 sm:-left-[50px] hidden md:block"
+              className="absolute -left-6 sm:-left-[50px] hidden md:flex items-center"
               style={{
                 width: "83.012px",
                 height: "67px",
@@ -96,8 +91,6 @@ const TutorialSection = () => {
                 fontWeight: 400,
                 color: "#020B23",
                 textTransform: "capitalize",
-                display: "flex",
-                alignItems: "center",
               }}
             >
               {step.number}
@@ -122,7 +115,6 @@ const TutorialSection = () => {
                   fontWeight: 700,
                   color: "#020B23",
                   textTransform: "capitalize",
-                  height: "auto",
                 }}
               >
                 {step.title}
