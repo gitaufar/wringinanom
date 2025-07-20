@@ -113,69 +113,68 @@ export default function PengajuanKeteranganAnakKandung({ tipe }: PengajuanKetera
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          {/* Nama Pengaju */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => setForm({ ...form, namaPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => setForm({ ...form, nikPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-          </div>
+        {/* Form Wrapper */}
+<div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
+  {/* Nama Pengaju */}
+  <div className="space-y-3">
+    <h2 className="text-xl font-bold">Nama Pengaju</h2>
+    <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => setForm({ ...form, namaPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => setForm({ ...form, nikPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
+  </div>
 
-          {/* Data Anak */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold">Data Anak</h2>
-            <InputField inputLabel="Nama Anak" inputPlaceholder="Nama Lengkap" data={form.namaLengkap} setData={(val) => setForm({ ...form, namaLengkap: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => setForm({ ...form, kotaLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => setForm({ ...form, tanggalLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat Anak" inputPlaceholder="Alamat Anak" data={form.alamatAnak} setData={(val) => setForm({ ...form, alamatAnak: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Adalah anak ke-" inputPlaceholder="Contoh 1" data={form.anakKe} setData={(val) => setForm({ ...form, anakKe: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Dari x Saudara" inputPlaceholder="Contoh 3" data={form.darixSaudara} setData={(val) => setForm({ ...form, darixSaudara: val })} setEditData={setEdit} editData={edit} submited={submited} />
-          </div>
+  {/* Data Anak */}
+  <div className="space-y-3">
+    <h2 className="text-xl font-bold">Data Anak</h2>
+    <InputField inputLabel="Nama Anak" inputPlaceholder="Nama Lengkap" data={form.namaLengkap} setData={(val) => setForm({ ...form, namaLengkap: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => setForm({ ...form, kotaLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => setForm({ ...form, tanggalLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Alamat Anak" inputPlaceholder="Alamat Anak" data={form.alamatAnak} setData={(val) => setForm({ ...form, alamatAnak: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Adalah anak ke-" inputPlaceholder="Contoh 1" data={form.anakKe} setData={(val) => setForm({ ...form, anakKe: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Dari x Saudara" inputPlaceholder="Contoh 3" data={form.darixSaudara} setData={(val) => setForm({ ...form, darixSaudara: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  </div>
 
-          {/* Data Ayah */}
-          <div className="space-y-3">
-  <h2 className="text-xl font-bold">Data Ayah</h2>
-  <InputField inputLabel="Nama Ayah" inputPlaceholder="Nama Lengkap" data={form.namaAyah} setData={(val) => setForm({ ...form, namaAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Kota/Kabupaten Lahir Ayah" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirAyah} setData={(val) => setForm({ ...form, kotaLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputFieldDate inputLabel="Tanggal Lahir Ayah" data={form.tanggalLahirAyah} setData={(val) => setForm({ ...form, tanggalLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Alamat Ayah" inputPlaceholder="Alamat Lengkap" data={form.alamatAyah} setData={(val) => setForm({ ...form, alamatAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Pekerjaan Ayah" inputPlaceholder="Pekerjaan" data={form.pekerjaanAyah} setData={(val) => setForm({ ...form, pekerjaanAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  {/* Data Ayah */}
+  <div className="space-y-3">
+    <h2 className="text-xl font-bold">Data Ayah</h2>
+    <InputField inputLabel="Nama Ayah" inputPlaceholder="Nama Lengkap" data={form.namaAyah} setData={(val) => setForm({ ...form, namaAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Kota/Kabupaten Lahir Ayah" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirAyah} setData={(val) => setForm({ ...form, kotaLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputFieldDate inputLabel="Tanggal Lahir Ayah" data={form.tanggalLahirAyah} setData={(val) => setForm({ ...form, tanggalLahirAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Alamat Ayah" inputPlaceholder="Alamat Lengkap" data={form.alamatAyah} setData={(val) => setForm({ ...form, alamatAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Pekerjaan Ayah" inputPlaceholder="Pekerjaan" data={form.pekerjaanAyah} setData={(val) => setForm({ ...form, pekerjaanAyah: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  </div>
+
+  {/* Data Ibu */}
+  <div className="space-y-3">
+    <h2 className="text-xl font-bold">Data Ibu</h2>
+    <InputField inputLabel="Nama Ibu" inputPlaceholder="Nama Lengkap" data={form.namaIbu} setData={(val) => setForm({ ...form, namaIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Kota/Kabupaten Lahir Ibu" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirIbu} setData={(val) => setForm({ ...form, kotaLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputFieldDate inputLabel="Tanggal Lahir Ibu" data={form.tanggalLahirIbu} setData={(val) => setForm({ ...form, tanggalLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Alamat Ibu" inputPlaceholder="Alamat Lengkap" data={form.alamatIbu} setData={(val) => setForm({ ...form, alamatIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+    <InputField inputLabel="Pekerjaan Ibu" inputPlaceholder="Pekerjaan" data={form.pekerjaanIbu} setData={(val) => setForm({ ...form, pekerjaanIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
+  </div>
+
+  {/* Button Group */}
+  <div className="flex gap-4 pt-4">
+    <button
+      onClick={handleSubmit}
+      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
+    >
+      Submit
+    </button>
+    <button
+      type="button"
+      onClick={handleReset}
+      className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md"
+    >
+      Reset
+    </button>
+  </div>
 </div>
-
-          </div>
-
-          {/* Data Ibu */}
-          <div className="space-y-3">
-  <h2 className="text-xl font-bold">Data Ibu</h2>
-  <InputField inputLabel="Nama Ibu" inputPlaceholder="Nama Lengkap" data={form.namaIbu} setData={(val) => setForm({ ...form, namaIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Kota/Kabupaten Lahir Ibu" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahirIbu} setData={(val) => setForm({ ...form, kotaLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputFieldDate inputLabel="Tanggal Lahir Ibu" data={form.tanggalLahirIbu} setData={(val) => setForm({ ...form, tanggalLahirIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Alamat Ibu" inputPlaceholder="Alamat Lengkap" data={form.alamatIbu} setData={(val) => setForm({ ...form, alamatIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
-  <InputField inputLabel="Pekerjaan Ibu" inputPlaceholder="Pekerjaan" data={form.pekerjaanIbu} setData={(val) => setForm({ ...form, pekerjaanIbu: val })} setEditData={setEdit} editData={edit} submited={submited} />
-</div>
-
-
-          {/* Button Group */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
-            >
-              Submit
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
 
         <div className="py-10 text-center text-sm text-neutral-500">
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+    </div>
   );
 }
