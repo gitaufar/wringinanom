@@ -424,6 +424,8 @@ export async function POST(
         doc.setData({
           Nama: body.nama,
           Kota: body.kota,
+          NIK: body.nik,
+          No_KK: body.nomorKK,
           Tanggal_Lahir: body.tanggalLahir,
           Jenis_Kelamin: body.jenisKelamin,
           Agama: body.agama,

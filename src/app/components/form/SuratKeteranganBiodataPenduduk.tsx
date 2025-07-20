@@ -75,14 +75,14 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     }
   };
 
-  // BARU: Fungsi validasi yang mengecualikan field opsional
+  
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     
     Object.keys(formData).forEach(keyStr => {
       const key = keyStr as keyof typeof formData;
 
-      // Lewati validasi jika field termasuk dalam daftar opsional
+      
       if (optionalFields.includes(key)) {
         return; 
       }
@@ -94,7 +94,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
       }
     });
 
-    // Contoh validasi kondisional (lebih advanced)
+    
     if (formData.statusperkawinan === 'Menikah' && !formData.NomorAktaPerkawinan) {
         newErrors.NomorAktaPerkawinan = 'Wajib diisi jika status Menikah';
     }
@@ -217,12 +217,10 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
           <form
             onSubmit={handleSubmit}
-            noValidate // Mencegah validasi bawaan browser
+            noValidate 
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            {/* DIUBAH: Semua InputField sekarang menggunakan handleInputChange
-              dan menerima prop 'error' untuk menampilkan pesan validasi.
-            */}
+            
 
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               Nama Pengaju
