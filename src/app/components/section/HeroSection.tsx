@@ -21,7 +21,6 @@ const HeroSection = () => {
         className="absolute h-screen md:w-screen object-cover -z-20"
       />
       <div className="size-full bg-black absolute opacity-50 -z-10"></div>
-
       <div className="w-full flex justify-center absolute inset-0 mt-10 py-3.5 px-4 sm:px-6 md:px-10">
         <div className="bg-white w-full max-w-xl h-fit px-5 py-3.5 rounded-2xl justify-between flex flex-row items-center">
           <input
@@ -34,28 +33,25 @@ const HeroSection = () => {
               if (e.key === "Enter") handleSearch();
             }}
           />
-          <button onClick={handleSearch}>
-            <SearchIcon />
-          </button>
+          <SearchIcon />
         </div>
       </div>
-
-      <p className="w-full text-2xl">
-        Selamat Datang di Website Resmi Administrasi
-      </p>
+      <p className="w-full text-base sm:text-lg md:text-xl lg:text-2xl text-center px-4">
+  Selamat Datang di Website Resmi Administrasi
+</p>
       <h1 className="w-full text-6xl sm:text-8xl md:text-10xl font-bold">
-        DESA WRINGINANOM
-      </h1>
+  DESA WRINGINANOM
+</h1>
       <p className="w-full text-2xl">
         Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom, Kec.
         Poncokusumo, Kab. Malang
       </p>
       <ButtonGeneral
-        className="mt-4"
-        text="Mulai Sekarang"
-        icon="arrow"
-        onClick={() => {}}
-      />
+  className="mt-6 px-6 py-3 text-base sm:text-lg"
+  text="Mulai Sekarang"
+  icon="arrow"
+  onClick={() => {}}
+/>
     </section>
   );
 };
