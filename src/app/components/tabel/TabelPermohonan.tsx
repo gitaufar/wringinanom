@@ -112,6 +112,14 @@ const TabelPermohonan = ({
         }),
       });
 
+      await fetch(`/api/layanan/${selectedItem.no_resi}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          keterangan: "Permohonan dibatalkan karena tidak memenuhi persyaratan",
+        }),
+      });
+
       await fetch(`/api/permohonan?no_resi=${selectedItem.no_resi}`, {
         method: "DELETE",
       });
