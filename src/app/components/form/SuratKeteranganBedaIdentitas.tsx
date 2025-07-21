@@ -10,6 +10,11 @@ type SuratKeteranganBedaIdentitasProps = {
   tipe: String;
 };
 
+type FormErrors = {
+  [key: string]: string | undefined;
+};
+
+
 export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBedaIdentitasProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
@@ -34,14 +39,41 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
   };
 
   const [form, setForm] = useState(initialState);
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const handleSubmit = () => {
+  const handleInputChange = (field: keyof typeof initialState, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    Object.keys(form).forEach(keyStr => {
+      const key = keyStr as keyof typeof initialState;
+      if (!form[key] || !form[key].trim()) {
+        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        newErrors[key] = `${fieldName} wajib diisi.`;
+      }
+    });
+    return newErrors;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return; // Hentikan jika ada error
+    }
+    setErrors({}); // Bersihkan error jika valid
     setShowConfirmModal(true);
   };
 
   const handleConfirm = async () => {
     try {
-      setSubmited("submit");
+      setSubmited("");
       setLoading(true);
 
       const res = await fetch("/api/permohonan", {
@@ -84,6 +116,7 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
 
   const handleReset = () => {
     setForm(initialState);
+    setErrors({});
     setEdit(true);
     setSubmited("");
   };
@@ -117,39 +150,41 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
         </div>
 
         {/* Form */}
-        <div className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          {/* Nama Pengaju */}
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
+        >
+          {/* DIUBAH: Semua komponen input sekarang terhubung ke sistem validasi */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => setForm({ ...form, namaPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => setForm({ ...form, nikPengaju: val })} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
+            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaPengaju} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikPengaju} />
           </div>
 
-          {/* Data Anak */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Identitas</h2>
-            <InputField inputLabel="Nama Lama" inputPlaceholder="Nama Lama" data={form.namaLama} setData={(val) => setForm({ ...form, namaLama: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Nama Baru" inputPlaceholder="Nama Baru" data={form.namaBaru} setData={(val) => setForm({ ...form, namaBaru: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikAnak} setData={(val) => setForm({ ...form, nikAnak: val })} setEditData={setEdit} editData={edit} submited={submited} numberOnly />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => setForm({ ...form, kotaLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => setForm({ ...form, tanggalLahir: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={form.jenisKelamin} setData={(val) => setForm({ ...form, jenisKelamin: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={form.alamat} setData={(val) => setForm({ ...form, alamat: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen","Katolik", "Hindu", "Buddha", "Konghucu"]} data={form.agama} setData={(val) => setForm({ ...form, agama: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => setForm({ ...form, pekerjaan: val })} setEditData={setEdit} editData={edit} submited={submited} />
-            <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={form.kewarganegaraan} setData={(val) => setForm({ ...form, kewarganegaraan: val })} setEditData={setEdit} editData={edit} submited={submited} />
+            <InputField inputLabel="Nama Lama" inputPlaceholder="Nama Lama" data={form.namaLama} setData={(val) => handleInputChange("namaLama", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaLama} />
+            <InputField inputLabel="Nama Baru" inputPlaceholder="Nama Baru" data={form.namaBaru} setData={(val) => handleInputChange("namaBaru", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaBaru} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikAnak} setData={(val) => handleInputChange("nikAnak", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikAnak} />
+            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.kotaLahir} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.tanggalLahir} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={form.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.jenisKelamin} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={form.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.alamat} />
+            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen","Katolik", "Hindu", "Buddha", "Konghucu"]} data={form.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.agama} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.pekerjaan} />
+            <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={form.kewarganegaraan} setData={(val) => handleInputChange("kewarganegaraan", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.kewarganegaraan} />
           </div>
 
-          {/* Tombol Aksi */}
           <div className="flex gap-4">
-            <button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors">
               Submit
             </button>
-            <button onClick={handleReset} className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md">
+            <button type="button" onClick={handleReset} className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md transition-colors">
               Reset
             </button>
           </div>
-        </div>
+        </form>
 
         {/* Footer */}
         <div className="py-10 text-center text-sm text-neutral-500">

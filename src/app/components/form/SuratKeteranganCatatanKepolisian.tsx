@@ -22,7 +22,6 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
     tanggalLahir: "",
     jenisKelamin: "",
     statusPerkawinan: "",
-    kewarganegaraan: "Indonesia", // Anda bisa set default jika perlu
     agama: "",
     pekerjaan: "",
     pendidikanTerakhir: "",
@@ -89,16 +88,15 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
   const handleConfirm = async () => {
     setLoading(true);
     const data_dinamis = {
-      nama_lengkap: formData.namaLengkap,
-      kota_lahir: formData.kotaLahir,
-      tanggal_lahir: formData.tanggalLahir,
-      jenis_kelamin: formData.jenisKelamin,
-      status_perkawinan: formData.statusPerkawinan,
-      kewarganegaraan: formData.kewarganegaraan,
+      nama: formData.namaLengkap,
+      kota: formData.kotaLahir,
+      tanggalLahir: formData.tanggalLahir,
+      jenisKelamin: formData.jenisKelamin,
+      statusPerkawinan: formData.statusPerkawinan,
       agama: formData.agama,
       pekerjaan: formData.pekerjaan,
-      pendidikan_terakhir: formData.pendidikanTerakhir,
-      nomor_kk: formData.nomorKK,
+      pendidikanTerakhir: formData.pendidikanTerakhir,
+      noKK: formData.nomorKK,
       alamat: formData.alamat,
     };
 
@@ -108,7 +106,7 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nik: formData.nik,
-          jenis_surat: "SKCK",
+          jenis_surat: "catatan_kepolisian",
           tipe,
           keterangan: `Pengajuan Surat Keterangan Catatan Kepolisian (SKCK) atas nama ${formData.namaLengkap}`,
           data_dinamis,
@@ -178,13 +176,13 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
             <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Kawin", "Kawin"]} data={formData.statusPerkawinan} setData={(val) => handleInputChange("statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.statusPerkawinan} />
-            <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={formData.kewarganegaraan} setData={(val) => handleInputChange("kewarganegaraan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kewarganegaraan} />
             <InputField inputLabel="Agama" inputPlaceholder="Agama" data={formData.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.agama} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
             <InputField inputLabel="Pendidikan Terakhir" inputPlaceholder="Pendidikan Terakhir" data={formData.pendidikanTerakhir} setData={(val) => handleInputChange("pendidikanTerakhir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pendidikanTerakhir} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />
             <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor KK" data={formData.nomorKK} setData={(val) => handleInputChange("nomorKK", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nomorKK} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
+
 
             <div className="flex gap-4">
               <button type="submit" className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors">

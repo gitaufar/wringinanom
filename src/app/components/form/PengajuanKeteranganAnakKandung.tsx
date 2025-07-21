@@ -85,29 +85,30 @@ export default function PengajuanKeteranganAnakKandung({
   };
 
   const handleConfirm = async () => {
+    setSubmited("");
     setLoading(true);
 
     const angkaNum = parseInt(form.anakKe || "0");
     const angkaNum2 = parseInt(form.darixSaudara || "0");
 
-    const data_dinamis = {
-      namaAnak: form.namaLengkap,
-      kotaAnak: form.kotaLahir,
-      tanggalLahirAnak: form.tanggalLahir,
-      alamatAnak: form.alamatAnak,
-      namaIbu: form.ibu.nama,
-      kotaIbu: form.ibu.kotaLahir,
-      tanggalLahirIbu: form.ibu.tanggalLahir,
-      pekerjaanIbu: form.ibu.pekerjaan,
-      alamatIbu: form.ibu.alamat,
-      namaAyah: form.ayah.nama,
-      kotaAyah: form.ayah.kotaLahir,
-      tanggalLahirAyah: form.ayah.tanggalLahir,
-      pekerjaanAyah: form.ayah.pekerjaan,
-      alamatAyah: form.ayah.alamat,
-      angkaNum: angkaNum,
-      angkaNum2: angkaNum2,
-    };
+    // const data_dinamis = {
+    //   namaAnak: form.namaLengkap,
+    //   kotaAnak: form.kotaLahir,
+    //   tanggalLahirAnak: form.tanggalLahir,
+    //   alamatAnak: form.alamatAnak,
+    //   namaIbu: form.ibu.nama,
+    //   kotaIbu: form.ibu.kotaLahir,
+    //   tanggalLahirIbu: form.ibu.tanggalLahir,
+    //   pekerjaanIbu: form.ibu.pekerjaan,
+    //   alamatIbu: form.ibu.alamat,
+    //   namaAyah: form.ayah.nama,
+    //   kotaAyah: form.ayah.kotaLahir,
+    //   tanggalLahirAyah: form.ayah.tanggalLahir,
+    //   pekerjaanAyah: form.ayah.pekerjaan,
+    //   alamatAyah: form.ayah.alamat,
+    //   angkaNum: angkaNum,
+    //   angkaNum2: angkaNum2,
+    // };
 
     try {
       const res = await fetch("/api/permohonan", {
@@ -118,7 +119,24 @@ export default function PengajuanKeteranganAnakKandung({
           jenis_surat: "SK Anak Kandung",
           tipe,
           keterangan: `Pengajuan Surat Keterangan Anak Kandung oleh ${form.namaPengaju}`,
-          data_dinamis,
+          data_dinamis:{
+            namaAnak: form.namaLengkap,
+            kotaAnak: form.kotaLahir,
+            tanggalLahirAnak: form.tanggalLahir,
+            alamatAnak: form.alamatAnak,
+            namaIbu: form.ibu.nama,
+            kotaIbu: form.ibu.kotaLahir,
+            tanggalLahirIbu: form.ibu.tanggalLahir,
+            pekerjaanIbu: form.ibu.pekerjaan,
+            alamatIbu: form.ibu.alamat,
+            namaAyah: form.ayah.nama,
+            kotaAyah: form.ayah.kotaLahir,
+            tanggalLahirAyah: form.ayah.tanggalLahir,
+            pekerjaanAyah: form.ayah.pekerjaan,
+            alamatAyah: form.ayah.alamat,
+            angkaNum: angkaNum,
+            angkaNum2: angkaNum2,
+          },
         }),
       });
 

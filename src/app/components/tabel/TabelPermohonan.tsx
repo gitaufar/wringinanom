@@ -67,6 +67,7 @@ const TabelPermohonan = ({
     dataDinamis: any,
     nama: string
   ) => {
+    console.log(jenisSurat)
     try {
       // Unduh file
       const fileRes = await fetch(`/api/surat/${jenisSurat}`, {
@@ -87,25 +88,25 @@ const TabelPermohonan = ({
       document.body.removeChild(link);
 
       // Ubah status jadi "Selesai"
-      const updateRes = await fetch("/api/permohonan/status", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          no_resi: noResi,
-          status_baru: "Selesai",
-        }),
-      });
+      // const updateRes = await fetch("/api/permohonan/status", {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     no_resi: noResi,
+      //     status_baru: "Selesai",
+      //   }),
+      // });
 
-      if (!updateRes.ok) {
-        throw new Error("Gagal mengubah status menjadi selesai");
-      }
+      // if (!updateRes.ok) {
+      //   throw new Error("Gagal mengubah status menjadi selesai");
+      // }
 
-      // Hapus permohonan dari database
-      await fetch(`/api/permohonan?no_resi=${noResi}`, {
-        method: "DELETE",
-      });
+      // // Hapus permohonan dari database
+      // await fetch(`/api/permohonan?no_resi=${noResi}`, {
+      //   method: "DELETE",
+      // });
 
       // Hapus dari state lokal
       setPermohonan((prev) => prev.filter((item) => item.no_resi !== noResi));

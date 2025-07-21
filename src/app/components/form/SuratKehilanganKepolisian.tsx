@@ -19,18 +19,18 @@ type FormErrors = {
 export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepolisianProps) {
   const initialData = {
     nama: "",
-    tanggalLahir: "",
+    kota: "",
     nik: "",
     nomorKK: "",
+    tanggalLahir: "",
     jenisKelamin: "",
     agama: "",
-    pekerjaan: "",
     alamat: "",
     namaBarang: "",
+    pekerjaan: "",
     lokasiKehilangan: "",
     tanggalKehilangan: "",
     jamKehilangan: "",
-    kota: "",
   };
 
   const [formData, setFormData] = useState(initialData);
@@ -91,7 +91,7 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
         },
         body: JSON.stringify({
           nik: formData.nik,
-          jenis_surat: "SK Kehilangan Kepolisian",
+          jenis_surat: "kehilangan_kepolisian",
           tipe: tipe,
           keterangan: `Pengajuan Surat Kehilangan oleh ${formData.nama}`,
           data_dinamis,

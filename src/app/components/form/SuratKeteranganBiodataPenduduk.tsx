@@ -20,7 +20,6 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     NamaPengaju: "",
     NIKPengaju: "",
     namaLengkap: "",
-    Kabupaten: "",
     nomorKK: "",
     kotaLahir: "",
     tanggalLahir: "",
@@ -38,7 +37,6 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     alamatsebelum: "",
     alamatsetelah: "",
     kewarganegaraan: "",
-    Nomorkartukeluarga: "",
     Nomorpaspor: "",
     TanggalKadaluarsaPaspor: "",
     NomorAktakelahiran: "",
@@ -75,14 +73,14 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     }
   };
 
-  
+  // BARU: Fungsi validasi yang mengecualikan field opsional
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     
     Object.keys(formData).forEach(keyStr => {
       const key = keyStr as keyof typeof formData;
 
-      
+      // Lewati validasi jika field termasuk dalam daftar opsional
       if (optionalFields.includes(key)) {
         return; 
       }
@@ -94,13 +92,13 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
       }
     });
 
-    
-    if (formData.statusperkawinan === 'Menikah' && !formData.NomorAktaPerkawinan) {
-        newErrors.NomorAktaPerkawinan = 'Wajib diisi jika status Menikah';
-    }
-    if (formData.statusperkawinan === 'Cerai' && !formData.NomorAktaPerceraian) {
-        newErrors.NomorAktaPerceraian = 'Wajib diisi jika status Cerai';
-    }
+    // Contoh validasi kondisional (lebih advanced)
+    // if (formData.statusperkawinan === 'Menikah' && !formData.NomorAktaPerkawinan) {
+    //     newErrors.NomorAktaPerkawinan = 'Wajib diisi jika status Menikah';
+    // }
+    // if (formData.statusperkawinan === 'Cerai' && !formData.NomorAktaPerceraian) {
+    //     newErrors.NomorAktaPerceraian = 'Wajib diisi jika status Cerai';
+    // }
 
     return newErrors;
   };
@@ -109,31 +107,47 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formErrors = validateForm();
+     console.log("HASIL VALIDASI:", formErrors);
     if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
         return;
     }
-    setSubmited("");
-    setEditData(false);
+    console.log("VALIDASI BERHASIL, MENAMPILKAN MODAL..."); 
+    setErrors({});
     setShowConfirmModal(true);
   };
 
   const handleConfirm = async () => {
     setLoading(true);
     setSubmited("");
-    setEditData(false);
 
     const data_dinamis = {
-      namaPengaju: formData.NamaPengaju,
-      namaLengkap: formData.namaLengkap,
-      alamatAnak: formData.alamatsetelah,
-      anakKe: "",
-      darixSaudara: "",
-      kotaLahir: formData.kotaLahir,
-      tanggalLahir: formData.tanggalLahir,
-      ayah: formData.namaayah,
-      ibu: formData.namaibu,
-    };
+    nama: formData.namaLengkap,
+    kota: formData.kotaLahir,
+    tanggalLahir: formData.tanggalLahir,
+    jenisKelamin: formData.jenisKelamin,
+    golDarah: formData.goldarah,
+    agama: formData.agama,
+    statusPerkawinan: formData.statusperkawinan,
+    pekerjaan: formData.pekerjaan,
+    pendidikan: formData.pendidikan,
+    statusKeluarga: formData.statuskeluarga,
+    nikIbu: formData.nikibu,
+    namaIbu: formData.namaibu,
+    nikAyah: formData.nikayah,
+    namaAyah: formData.namaayah,
+    alamaLlama: formData.alamatsebelum,
+    alamatBaru: formData.alamatsetelah,
+    noKK: formData.nomorKK,
+    Nopaspor: formData.Nomorpaspor ,
+    tglBerakhirPaspor: formData.TanggalKadaluarsaPaspor ,
+    noAktaKelahiran: formData.NomorAktakelahiran,
+    noAktaPerkawinan: formData.NomorAktaPerkawinan,
+    tglPerkawinan: formData.TanggalPerkawinan,
+    noAktaPerceraian: formData.NomorAktaPerceraian ,
+    tglPerceraian: formData.TanggalPerceraian ,
+};
+
 
     try {
       const res = await fetch("/api/permohonan", {
@@ -143,9 +157,9 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
         },
         body: JSON.stringify({
           nik: formData.NIKPengaju,
-          jenis_surat: "SK Anak Kandung",
+          jenis_surat: "biodata_penduduk",
           tipe,
-          keterangan: `Pengajuan Surat Keterangan Anak Kandung oleh ${formData.NamaPengaju}`,
+          keterangan: `Pengajuan Surat Keterangan Biodata Penduduk oleh ${formData.NamaPengaju}`,
           data_dinamis,
         }),
       });
@@ -217,10 +231,12 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
           <form
             onSubmit={handleSubmit}
-            noValidate 
+            noValidate // Mencegah validasi bawaan browser
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            
+            {/* DIUBAH: Semua InputField sekarang menggunakan handleInputChange
+              dan menerima prop 'error' untuk menampilkan pesan validasi.
+            */}
 
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               Nama Pengaju
@@ -447,12 +463,12 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   <InputField
     inputLabel="Nomor Kartu Keluarga"
     inputPlaceholder="Nomor Kartu Keluarga"
-    data={formData.Nomorkartukeluarga}
-    setData={(val) => handleInputChange("Nomorkartukeluarga", val)}
+    data={formData.nomorKK}
+    setData={(val) => handleInputChange("nomorKK", val)}
     setEditData={setEditData}
     editData={editData}
     submited={submited}
-    error={errors.Nomorkartukeluarga}
+    error={errors.nomorKK}
   />
 
   <InputField
