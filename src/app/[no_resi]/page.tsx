@@ -7,7 +7,8 @@ import {
   FaFacebook,
   FaTelegram,
   FaClipboard,
-} from "react-icons/fa";
+} from "react-icons/fa"; // pastikan path sesuai
+import StatusCard from "../components/card/StatusCard";
 
 type Order = {
   receiptNumber: string;
@@ -16,7 +17,8 @@ type Order = {
   letterType: string;
   submissionDate: string;
   creationDate: string;
-  status: string;
+  status: "Selesai" | "Menunggu" | "Dibatalkan" | "Diproses";
+  description?: string;
 };
 
 const Receipt = () => {
@@ -30,7 +32,6 @@ const Receipt = () => {
     const fetchData = async () => {
       if (!no_resi) return;
       try {
-        console.log(no_resi);
         const res = await fetch(`/api/layanan/${no_resi}`);
         const data = await res.json();
 
@@ -44,10 +45,9 @@ const Receipt = () => {
           applicantNIK: permohonan.nik,
           letterType: permohonan.jenis_surat,
           submissionDate: permohonan.date,
-          creationDate: new Date(permohonan.date).toLocaleDateString(
-            "id-ID"
-          ),
-          status: permohonan.status, // 🆕 status ditambahkan di sini
+          creationDate: new Date(permohonan.date).toLocaleDateString("id-ID"),
+          status: permohonan.status,
+          description: permohonan.keterangan || "", // tambahkan keterangan
         });
       } catch (err: any) {
         setError(err.message);
@@ -73,115 +73,57 @@ const Receipt = () => {
     return <div style={{ textAlign: "center" }}>Data tidak ditemukan</div>;
 
   return (
-    <div
-      style={{
-        fontFamily: "Jakarta Sans, sans-serif",
-        backgroundColor: "#f4f4f4",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        padding: "20px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "800px",
-          padding: "20px",
-          backgroundColor: "white",
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "30px" }}>
-          <h1
-            style={{ fontSize: "2rem", color: "#007bff", fontWeight: "bold" }}
-          >
+    <div className="bg-[#f4f4f4] flex justify-center items-center min-h-screen p-5">
+      <div className="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-blue-600">
             {order.letterType}
           </h1>
-          <p style={{ margin: "5px 0", fontSize: "1.2rem" }}>
-            #{order.receiptNumber}
-          </p>
+          <p className="mt-1 text-lg">#{order.receiptNumber}</p>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            margin: "20px 0",
-          }}
-        >
-          <h2
-            style={{ fontSize: "3rem", fontWeight: "bold", color: "#007bff" }}
-          >
+        <div className="flex justify-center my-6">
+          <h2 className="text-4xl font-bold text-blue-600">
             # {order.receiptNumber}
           </h2>
         </div>
 
-        <div
-          style={{
-            marginTop: "20px",
-            fontSize: "1rem",
-            backgroundColor: "#f9f9f9",
-            padding: "20px",
-            borderRadius: "8px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            <span style={{ fontWeight: "bold" }}>Nama Pengaju</span>
+        <div className="mt-5 text-base bg-[#f9f9f9] p-5 rounded-lg">
+          <div className="flex justify-between mb-3">
+            <span className="font-semibold">Nama Pengaju</span>
             <span>{order.applicantName}</span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            <span style={{ fontWeight: "bold" }}>NIK</span>
+          <div className="flex justify-between mb-3">
+            <span className="font-semibold">NIK</span>
             <span>{order.applicantNIK}</span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            <span style={{ fontWeight: "bold" }}>Tanggal Pembuatan</span>
+          <div className="flex justify-between mb-3">
+            <span className="font-semibold">Tanggal Pembuatan</span>
             <span>{order.creationDate}</span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            <span style={{ fontWeight: "bold" }}>Status</span>
-            <span>{order.status}</span>
+          <div className="flex justify-between mb-3 items-center">
+            <span className="font-semibold">Status</span>
+            <StatusCard status={order.status} />
           </div>
+
+          {order.status === "Dibatalkan" && order.description && (
+            <div className="mt-4 p-4 bg-red-50 text-red-800 border border-red-200 rounded-md">
+              <p className="font-semibold mb-1">Keterangan Pembatalan:</p>
+              <p>{order.description}</p>
+            </div>
+          )}
         </div>
 
-        <div style={{ borderTop: "2px solid #ddd", margin: "30px 0" }}></div>
+        <div className="border-t-2 border-gray-200 my-8"></div>
 
-        <div
-          style={{ marginTop: "30px", textAlign: "center", fontSize: "1rem" }}
-        >
+        <div className="text-center text-base mt-6">
           <p>
             Jika ada pertanyaan, Anda bisa langsung lapor ke kantor desa melalui{" "}
             <a
               href="https://maps.app.goo.gl/sMrfivxHfNmi5taK6"
               target="_blank"
               rel="noreferrer"
-              style={{ color: "#007bff", textDecoration: "underline" }}
+              className="text-blue-600 underline"
             >
               Lokasi Kantor Desa
             </a>
@@ -189,30 +131,12 @@ const Receipt = () => {
           </p>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            marginTop: "30px",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex justify-center flex-wrap gap-5 mt-8">
           <button
             onClick={handleCopy}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontSize: "1rem",
-              display: "flex",
-              alignItems: "center",
-            }}
+            className="px-5 py-2 bg-green-600 text-white rounded-md flex items-center text-base hover:bg-green-700"
           >
-            <FaClipboard style={{ marginRight: "8px" }} />
+            <FaClipboard className="mr-2" />
             {copied ? "Disalin!" : "Salin Resi"}
           </button>
 
@@ -220,79 +144,30 @@ const Receipt = () => {
             href={`https://wa.me?text=${order.receiptNumber}`}
             target="_blank"
           >
-            <button
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#25D366",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "1rem",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <FaWhatsapp style={{ marginRight: "8px" }} /> WhatsApp
+            <button className="px-5 py-2 bg-[#25D366] text-white rounded-md flex items-center text-base hover:bg-green-500">
+              <FaWhatsapp className="mr-2" />
+              WhatsApp
             </button>
           </Link>
 
           <Link href="https://facebook.com" target="_blank">
-            <button
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#4267B2",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "1rem",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <FaFacebook style={{ marginRight: "8px" }} /> Facebook
+            <button className="px-5 py-2 bg-[#4267B2] text-white rounded-md flex items-center text-base hover:bg-blue-700">
+              <FaFacebook className="mr-2" />
+              Facebook
             </button>
           </Link>
 
           <Link href="https://telegram.org" target="_blank">
-            <button
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#0088cc",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "1rem",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <FaTelegram style={{ marginRight: "8px" }} /> Telegram
+            <button className="px-5 py-2 bg-[#0088cc] text-white rounded-md flex items-center text-base hover:bg-blue-500">
+              <FaTelegram className="mr-2" />
+              Telegram
             </button>
           </Link>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "30px",
-          }}
-        >
+        <div className="flex justify-center mt-8">
           <Link href="/">
-            <button
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "1rem",
-              }}
-            >
+            <button className="px-5 py-2 bg-blue-600 text-white rounded-md text-base hover:bg-blue-700">
               Kembali ke Halaman Utama
             </button>
           </Link>

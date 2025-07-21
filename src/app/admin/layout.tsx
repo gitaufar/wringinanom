@@ -17,7 +17,7 @@ const menus = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   // Jalankan usePathname di dalam komponen client
   return (
-    <div className="flex flex-row bg-[#F5F6FA] min-h-screen">
+    <div className="flex flex-row pl-64 bg-[#F5F6FA] min-h-screen">
       {/* Navbar */}
       <nav className="bg-white fixed top-0 w-screen px-10 py-2 flex justify-end z-10">
         <ButtonLogout />

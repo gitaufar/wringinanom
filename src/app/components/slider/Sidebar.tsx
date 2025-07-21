@@ -12,9 +12,7 @@ interface Menu {
 
 const menus: Menu[] = [
   { label: 'Dashboard',     path: '/admin/dashboard' },
-  { label: 'Notifikasi',    path: '/admin/notifikasi' },
   { label: 'Administrasi',  path: '/admin/administrasi' },
-  { label: 'Laporan',       path: '/admin/laporan' },
   { label: 'Kependudukan',  path: '/admin/kependudukan' },
 ]
 
@@ -22,11 +20,8 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-64 bg-white shadow-md min-h-screen flex flex-col p-6 justify-between">
+    <aside className="w-64 bg-white shadow-md min-h-screen flex flex-col p-6 pt-20 fixed inset-0 justify-between">
       <div>
-        <h1 className="text-2xl font-bold text-blue-600 mb-8">
-          Dash<span className="text-black">Stack</span>
-        </h1>
         <nav className="space-y-2">
           {menus.map((menu) => {
             const active = pathname === menu.path
@@ -47,9 +42,6 @@ export default function Sidebar() {
           })}
         </nav>
       </div>
-      <button className="text-red-500 text-sm hover:underline">
-        Logout
-      </button>
     </aside>
   )
 }

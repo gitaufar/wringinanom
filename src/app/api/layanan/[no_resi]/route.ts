@@ -55,3 +55,37 @@ export async function DELETE(_req: Request, { params }: Params) {
     );
   }
 }
+
+export async function PUT(request: Request, { params }: Params) {
+  const { no_resi } = params;
+
+  try {
+    const body = await request.json();
+    const { keterangan } = body;
+
+    if (!keterangan) {
+      return NextResponse.json(
+        { error: "Keterangan wajib diisi" },
+        { status: 400 }
+      );
+    }
+
+    const updatedRiwayat = await prisma.riwayatlayanan.update({
+      where: { no_resi },
+      data: {
+        keterangan,
+      },
+    });
+
+    return NextResponse.json({
+      message: "Keterangan berhasil diperbarui",
+      data: updatedRiwayat,
+    });
+  } catch (error) {
+    console.error("Gagal memperbarui keterangan:", error);
+    return NextResponse.json(
+      { error: "Terjadi kesalahan saat memperbarui keterangan" },
+      { status: 500 }
+    );
+  }
+}

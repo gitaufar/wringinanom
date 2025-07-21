@@ -6,14 +6,12 @@ import { FaEye, FaTrashAlt } from "react-icons/fa";
 
 type DataRiwayat = {
   no_resi: string;
-  penduduk: {
-    nama_lengkap: string;
-  };
   date: string;
+  tipe: string;
   keterangan: string;
   status: "Menunggu" | "Selesai" | "Dibatalkan";
-  permohonan?: {
-    jenis_surat: string;
+  penduduk: {
+    nama_lengkap: string;
   };
 };
 
@@ -37,14 +35,12 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
 
           const mappedData: DataRiwayat[] = filtered.map((item: any) => ({
             no_resi: item.no_resi,
+            date: item.date,
+            tipe: item.tipe,
+            keterangan: item.keterangan,
+            status: item.status,
             penduduk: {
               nama_lengkap: item.penduduk?.nama_lengkap ?? "Tidak diketahui",
-            },
-            date: item.date,
-            keterangan: item.keterangan ?? "-",
-            status: item.status,
-            permohonan: {
-              jenis_surat: item.permohonan?.jenis_surat ?? "-",
             },
           }));
 
@@ -74,7 +70,6 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
         throw new Error(err.error || "Gagal menghapus riwayat");
       }
 
-      // Hapus data dari state agar langsung hilang dari UI
       setDataRiwayat((prev) => prev.filter((item) => item.no_resi !== noResi));
     } catch (error) {
       alert("Terjadi kesalahan saat menghapus riwayat.");
@@ -112,7 +107,7 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
                     year: "numeric",
                   })}
                 </td>
-                <td className="px-6 py-4">{row.permohonan?.jenis_surat}</td>
+                <td className="px-6 py-4">{row.tipe}</td>
                 <td className="px-6 py-4 flex items-center gap-3">
                   <button className="hover:text-blue-700">
                     <FaEye size={16} />

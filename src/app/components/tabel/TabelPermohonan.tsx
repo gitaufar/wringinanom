@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaCheck, FaTimes, FaEye } from "react-icons/fa";
 import StatusCard from "../../components/card/StatusCard";
 import * as mammoth from "mammoth";
+import ConfirmationModal from "@/app/components/modal/ConfirmationModal";
 
 type DataPermintaan = {
   no_resi: string;
@@ -30,19 +31,22 @@ const TabelPermohonan = ({
   change,
 }: TabelPermohonanProps) => {
   const [Permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
-  const [loading, setLoading] = useState(false); // buat error handling internal
-  const [firstLoading, setFirstLoading] = useState(true); // hanya true pertama kali buka
+  const [loading, setLoading] = useState(false);
+  const [firstLoading, setFirstLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [modalApproveOpen, setModalApproveOpen] = useState(false);
+  const [modalRejectOpen, setModalRejectOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<DataPermintaan | null>(null);
 
   useEffect(() => {
     const fetchPermohonan = async () => {
       try {
         setLoading(true);
-
         const res = await fetch("/api/permohonan");
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
-        console.log(result.data);
+
         const onlyMenunggu = (result.data || []).filter(
           (x: DataPermintaan) => x.riwayatlayanan?.status === "Menunggu"
         );
@@ -52,67 +56,73 @@ const TabelPermohonan = ({
         setError(err.message || "Terjadi kesalahan");
       } finally {
         setLoading(false);
-        setFirstLoading(false); // hanya false setelah fetch pertama selesai
+        setFirstLoading(false);
       }
     };
 
-    fetchPermohonan(); // panggil pertama kali
-
-    const interval = setInterval(fetchPermohonan, 5000); // polling tiap 5 detik
-    return () => clearInterval(interval); // cleanup saat unmount
+    fetchPermohonan();
+    const interval = setInterval(fetchPermohonan, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleApprove = async (
-    noResi: string,
-    jenisSurat: string,
-    dataDinamis: any,
-    nama: string
-  ) => {
+  const handleApprove = async () => {
+    if (!selectedItem) return;
+    const { no_resi, jenis_surat, data_dinamis, penduduk } = selectedItem;
     try {
-      // Unduh file
-      const fileRes = await fetch(`/api/surat/${jenisSurat}`, {
+      const fileRes = await fetch(`/api/surat/${jenis_surat}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataDinamis),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data_dinamis),
       });
-      const blob = await fileRes.blob();
 
+      const blob = await fileRes.blob();
       const fileURL = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = fileURL;
-      link.download = `${noResi}-${nama}.docx`;
+      link.download = `${no_resi}-${penduduk.nama_lengkap}.docx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Ubah status jadi "Selesai"
-      const updateRes = await fetch("/api/permohonan/status", {
+      await fetch("/api/permohonan/status", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ no_resi, status_baru: "Selesai" }),
+      });
+
+      await fetch(`/api/permohonan?no_resi=${no_resi}`, { method: "DELETE" });
+
+      setPermohonan((prev) => prev.filter((item) => item.no_resi !== no_resi));
+      setChange(!change);
+      setModalApproveOpen(false);
+    } catch (err: any) {
+      alert(err.message || "Terjadi kesalahan saat menyetujui.");
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedItem) return;
+    try {
+      await fetch("/api/permohonan/status", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          no_resi: noResi,
-          status_baru: "Selesai",
+          no_resi: selectedItem.no_resi,
+          status_baru: "Dibatalkan",
         }),
       });
 
-      if (!updateRes.ok) {
-        throw new Error("Gagal mengubah status menjadi selesai");
-      }
-
-      // Hapus permohonan dari database
-      await fetch(`/api/permohonan?no_resi=${noResi}`, {
+      await fetch(`/api/permohonan?no_resi=${selectedItem.no_resi}`, {
         method: "DELETE",
       });
 
-      // Hapus dari state lokal
-      setPermohonan((prev) => prev.filter((item) => item.no_resi !== noResi));
+      setPermohonan((prev) =>
+        prev.filter((item) => item.no_resi !== selectedItem.no_resi)
+      );
       setChange(!change);
+      setModalRejectOpen(false);
     } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan saat memproses permintaan.");
+      alert("Gagal membatalkan permohonan");
     }
   };
 
@@ -120,46 +130,21 @@ const TabelPermohonan = ({
     try {
       const res = await fetch(`/api/surat/${jenisSurat}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataDinamis),
       });
 
       if (!res.ok) throw new Error("Gagal ambil dokumen");
-
       const blob = await res.blob();
       const arrayBuffer = await blob.arrayBuffer();
-
       const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
 
-      // Buka jendela baru dan tulis HTML ke sana
       const printWindow = window.open("", "_blank", "width=800,height=600");
       if (printWindow) {
         printWindow.document.write(`
-        <html>
-          <head>
-            <title>Preview Dokumen</title>
-            <style>
-              body { font-family: sans-serif; padding: 20px; }
-              h1,h2,h3,h4,h5,h6 { margin-top: 1rem; }
-              table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-              td, th { border: 1px solid #ccc; padding: 8px; }
-            </style>
-          </head>
-          <body>
-            ${html}
-            <script>
-              window.onload = function() {
-                window.print();
-              }
-            </script>
-          </body>
-        </html>
-      `);
+          <html><head><title>Preview</title></head><body>${html}</body></html>
+        `);
         printWindow.document.close();
-      } else {
-        alert("Popup diblokir. Izinkan popup dari situs ini.");
       }
     } catch (err: any) {
       alert("Gagal preview dokumen: " + err.message);
@@ -176,7 +161,7 @@ const TabelPermohonan = ({
           <tr>
             <th className="px-6 py-3 font-semibold">NO RESI</th>
             <th className="px-6 py-3 font-semibold">NAMA</th>
-            <th className="px-6 py-3 font-semibold">TANGGAL PERMINTAAN</th>
+            <th className="px-6 py-3 font-semibold">TANGGAL</th>
             <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
             <th className="px-6 py-3 font-semibold">ACTION</th>
             <th className="px-6 py-3 font-semibold">STATUS</th>
@@ -206,20 +191,22 @@ const TabelPermohonan = ({
                   <button className="text-gray-600 hover:text-blue-600">
                     <FaEdit size={16} />
                   </button>
-                  <button className="text-green-600 hover:text-green-700">
-                    <FaCheck
-                      size={16}
-                      onClick={() =>
-                        handleApprove(
-                          row.no_resi,
-                          row.jenis_surat,
-                          row.data_dinamis,
-                          row.penduduk.nama_lengkap
-                        )
-                      }
-                    />
+                  <button
+                    className="text-green-600 hover:text-green-700"
+                    onClick={() => {
+                      setSelectedItem(row);
+                      setModalApproveOpen(true);
+                    }}
+                  >
+                    <FaCheck size={16} />
                   </button>
-                  <button className="text-red-500 hover:text-red-700">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => {
+                      setSelectedItem(row);
+                      setModalRejectOpen(true);
+                    }}
+                  >
                     <FaTimes size={16} />
                   </button>
                   <button
@@ -232,13 +219,33 @@ const TabelPermohonan = ({
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <StatusCard status={row.riwayatlayanan?.status || "Menunggu"} />
+                  <StatusCard
+                    status={row.riwayatlayanan?.status || "Menunggu"}
+                  />
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+
+      {/* MODAL APPROVE */}
+      <ConfirmationModal
+        isOpen={modalApproveOpen}
+        onClose={() => setModalApproveOpen(false)}
+        onConfirm={handleApprove}
+        title="Setujui Permohonan?"
+        message={`Apakah Anda yakin ingin menyetujui permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
+      />
+
+      {/* MODAL REJECT */}
+      <ConfirmationModal
+        isOpen={modalRejectOpen}
+        onClose={() => setModalRejectOpen(false)}
+        onConfirm={handleReject}
+        title="Batalkan Permohonan?"
+        message={`Apakah Anda yakin ingin membatalkan permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
+      />
     </div>
   );
 };

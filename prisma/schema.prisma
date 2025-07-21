@@ -51,14 +51,13 @@ model penduduk {
   riwayatlayanan     riwayatlayanan[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model permohonansurat {
   id             String         @id @default(cuid())
   nik            String
   jenis_surat    String
   tanggal        DateTime       @default(now())
   status         String         @default("Menunggu")
-  data_dinamis   String?        @db.LongText
+  data_dinamis   Json?
   no_resi        String         @unique(map: "PermohonanSurat_no_resi_key")
   tipe           String
   penduduk       penduduk       @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "PermohonanSurat_nik_fkey")
@@ -71,8 +70,10 @@ model riwayatlayanan {
   no_resi            String               @id
   nik                String
   date               DateTime
+  tipe               String
   keterangan         String
   status             String
+  data_dinamis       Json?
   logperubahanstatus logperubahanstatus[]
   permohonansurat    permohonansurat?
   penduduk           penduduk             @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "RiwayatLayanan_nik_fkey")

@@ -47,14 +47,7 @@ export async function PUT(req: NextRequest) {
       data: { status: status_baru },
     });
 
-    // ✅ Update juga status di permohonanSurat
-    const updatePermohonan = await prisma.permohonansurat.update({
-      where: { no_resi },
-      data: { status: status_baru },
-    });
-
     console.log("✅ Status riwayat diperbarui:", updateRiwayat);
-    console.log("✅ Status permohonan diperbarui:", updatePermohonan);
 
     const log = await prisma.logperubahanstatus.create({
       data: {

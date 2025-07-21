@@ -38,8 +38,10 @@ export async function POST(req: NextRequest) {
         no_resi: noResi,
         nik,
         date: new Date(),
-        keterangan: `${jenis_surat}`,
+        tipe: jenis_surat,
+        keterangan: "Menunggu diproses",
         status: "Menunggu",
+        data_dinamis: data_dinamis, // opsional
       },
     });
 
