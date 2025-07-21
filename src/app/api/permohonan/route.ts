@@ -9,7 +9,7 @@ const generateResi = () => {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, jenis_surat, tipe, keterangan, data_dinamis } = body;
+    const { nik, jenis_surat, tipe, data_dinamis } = body;
 
     if (!nik || !jenis_surat || !tipe) {
       return NextResponse.json(
@@ -125,7 +125,7 @@ export async function DELETE(req: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     const deletedPermohonan = await prisma.permohonanSurat.delete({
       where: { no_resi: noResi },
     });

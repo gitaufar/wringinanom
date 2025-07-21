@@ -35,3 +35,23 @@ export async function GET(_request: Request, { params }: Params) {
     );
   }
 }
+
+export async function DELETE(_req: Request, { params }: Params) {
+  const { no_resi } = params;
+
+  console.log("No Resi yang diterima:", no_resi);
+
+  try {
+    await prisma.riwayatLayanan.delete({
+      where: { no_resi },
+    });
+
+    return NextResponse.json({ message: "Riwayat berhasil dihapus" });
+  } catch (error) {
+    console.error("Gagal menghapus riwayat:", error);
+    return NextResponse.json(
+      { error: "Gagal menghapus riwayat layanan" },
+      { status: 500 }
+    );
+  }
+}

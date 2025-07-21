@@ -60,6 +60,28 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
     fetchRiwayat();
   }, [change]);
 
+  const handleDelete = async (noResi: string) => {
+    const konfirmasi = confirm(`Yakin ingin menghapus riwayat #${noResi}?`);
+    if (!konfirmasi) return;
+
+    try {
+      const res = await fetch(`/api/layanan/${noResi}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Gagal menghapus riwayat");
+      }
+
+      // Hapus data dari state agar langsung hilang dari UI
+      setDataRiwayat((prev) => prev.filter((item) => item.no_resi !== noResi));
+    } catch (error) {
+      alert("Terjadi kesalahan saat menghapus riwayat.");
+      console.error("Gagal hapus riwayat:", error);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
       {dataRiwayat.length === 0 ? (
@@ -95,7 +117,10 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
                   <button className="hover:text-blue-700">
                     <FaEye size={16} />
                   </button>
-                  <button className="text-red-500 hover:text-red-700">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDelete(row.no_resi)}
+                  >
                     <FaTrashAlt size={16} />
                   </button>
                 </td>

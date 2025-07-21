@@ -85,7 +85,7 @@ model LogPerubahanStatus {
   status_baru      String
   waktu_perubahan  DateTime
 
-  riwayatLayanan   RiwayatLayanan @relation(fields: [no_resi], references: [no_resi])
+  riwayatLayanan   RiwayatLayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade)
   admin            Admin          @relation(fields: [admin_id], references: [id])
 
   @@index([no_resi])
