@@ -1,8 +1,7 @@
-// app/components/modal/ConfirmationModal.tsx (Diperbarui)
-
 "use client";
 
 import { CheckCircle2 } from "lucide-react";
+import { ReactNode } from "react";
 
 type ConfirmationModalProps = {
   isOpen: boolean;
@@ -11,8 +10,8 @@ type ConfirmationModalProps = {
   isLoading?: boolean;
   title: string;
   message: string;
-  // Prop baru untuk menampilkan info sukses
   successInfo?: { title: string; resi: string } | null;
+  children?: ReactNode;
 };
 
 export default function ConfirmationModal({
@@ -22,7 +21,8 @@ export default function ConfirmationModal({
   isLoading = false,
   title,
   message,
-  successInfo = null, // Default null
+  successInfo = null,
+  children,
 }: ConfirmationModalProps) {
   if (!isOpen) {
     return null;
@@ -36,7 +36,9 @@ export default function ConfirmationModal({
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <CheckCircle2 className="h-6 w-6 text-green-600" />
           </div>
-          <h3 className="mt-4 text-xl font-bold text-gray-900">{successInfo.title}</h3>
+          <h3 className="mt-4 text-xl font-bold text-gray-900">
+            {successInfo.title}
+          </h3>
           <p className="mt-2 text-sm text-gray-600">
             Nomor resi pengajuan Anda adalah:
           </p>
@@ -58,7 +60,7 @@ export default function ConfirmationModal({
     );
   }
 
-  // Tampilan Konfirmasi (Default)
+  // Tampilan Konfirmasi
   return (
     <div
       className="fixed inset-0 bg-black/50 h-full w-full flex justify-center items-center z-50"
@@ -70,6 +72,10 @@ export default function ConfirmationModal({
       >
         <h3 className="text-xl font-bold text-gray-900">{title}</h3>
         <p className="mt-2 text-sm text-gray-600">{message}</p>
+
+        {/* Slot untuk children */}
+        {children && <div className="mt-4">{children}</div>}
+
         <div className="mt-6 flex justify-end gap-4">
           <button
             type="button"
@@ -89,13 +95,21 @@ export default function ConfirmationModal({
           </button>
         </div>
       </div>
+
       <style jsx>{`
-        /* Animasi sederhana untuk pop-up */
         @keyframes fade-in-scale {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-        .animate-fade-in-scale { animation: fade-in-scale 0.2s ease-out forwards; }
+        .animate-fade-in-scale {
+          animation: fade-in-scale 0.2s ease-out forwards;
+        }
       `}</style>
     </div>
   );

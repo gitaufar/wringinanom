@@ -39,6 +39,8 @@ const TabelPermohonan = ({
   const [modalRejectOpen, setModalRejectOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DataPermintaan | null>(null);
 
+  const [alasan, setAlasan] = useState("");
+
   useEffect(() => {
     const fetchPermohonan = async () => {
       try {
@@ -116,7 +118,7 @@ const TabelPermohonan = ({
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          keterangan: "Permohonan dibatalkan karena tidak memenuhi persyaratan",
+          keterangan: alasan || "Permohonan dibatalkan",
         }),
       });
 
@@ -127,6 +129,7 @@ const TabelPermohonan = ({
       setPermohonan((prev) =>
         prev.filter((item) => item.no_resi !== selectedItem.no_resi)
       );
+      setAlasan(""); // Reset input
       setChange(!change);
       setModalRejectOpen(false);
     } catch (err: any) {
@@ -249,11 +252,22 @@ const TabelPermohonan = ({
       {/* MODAL REJECT */}
       <ConfirmationModal
         isOpen={modalRejectOpen}
-        onClose={() => setModalRejectOpen(false)}
+        onClose={() => {
+          setModalRejectOpen(false);
+          setAlasan("");
+        }}
         onConfirm={handleReject}
         title="Batalkan Permohonan?"
         message={`Apakah Anda yakin ingin membatalkan permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
-      />
+      >
+        <textarea
+          value={alasan}
+          onChange={(e) => setAlasan(e.target.value)}
+          placeholder="Masukkan alasan pembatalan"
+          className="mt-4 w-full border border-gray-300 rounded-md p-2 text-sm"
+          rows={3}
+        />
+      </ConfirmationModal>
     </div>
   );
 };
