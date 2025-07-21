@@ -1,3 +1,5 @@
+// app/components/field/InputFieldDropdown.tsx
+
 import { PencilIcon } from "lucide-react";
 
 type InputFieldDropdownProps = {
@@ -9,6 +11,7 @@ type InputFieldDropdownProps = {
   setEditData: (value: boolean) => void;
   editData: boolean;
   submited: string | null;
+  error?: string; // BARU: Tambahkan prop error
 };
 
 export default function InputFieldDropdown({
@@ -20,9 +23,10 @@ export default function InputFieldDropdown({
   setEditData,
   editData,
   submited,
+  error, // BARU: Ambil prop error
 }: InputFieldDropdownProps) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2"> {/* DIUBAH: Mengurangi gap */}
       {inputLabel && (
         <label className="text-base font-normal text-neutral-600">{inputLabel}</label>
       )}
@@ -31,13 +35,20 @@ export default function InputFieldDropdown({
           disabled={!editData}
           value={data}
           onChange={(e) => setData(e.target.value)}
-          className={`w-full text-xs sm:text-base font-normal border ${
-            editData
-              ? "bg-transparent border-[#D5D5D5]"
-              : "bg-[#F5F6FA] border-transparent"
-          } px-[12px] py-[8px] rounded-[4px] outline-none ${
-            data === "" ? "text-neutral-400" : "text-black"
-          }`}
+          // DIUBAH: Logika className diperbarui untuk menangani state error
+          className={`
+            w-full text-xs sm:text-base font-normal border rounded-[4px]
+            px-[12px] py-[8px] outline-none transition-colors
+            focus:ring-2
+            ${data === "" ? "text-neutral-400" : "text-black"}
+            ${editData ? "bg-transparent" : "bg-[#F5F6FA]"}
+            ${error
+              ? "border-red-500 focus:ring-red-500" // Style saat ada error
+              : editData
+                ? "border-[#D5D5D5] focus:ring-blue-500" // Style saat bisa diedit
+                : "border-transparent" // Style saat tidak bisa diedit
+            }
+          `}
         >
           <option value="" disabled hidden>
             {inputPlaceholder}
@@ -58,6 +69,8 @@ export default function InputFieldDropdown({
           </div>
         )}
       </div>
+      {/* BARU: Tampilkan pesan error jika ada */}
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );
 }

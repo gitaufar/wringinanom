@@ -4,9 +4,14 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganDomisiliProps = {
   tipe: String;
+};
+
+type FormErrors = {
+  [key: string]: string | undefined;
 };
 
 export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisiliProps) {
@@ -16,7 +21,7 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
     NIKPengaju: "", // NIK ditambahkan di sini
     jeniskel: "",
     alamat: "",
-    perkerjaan: "",
+    pekerjaan: "",
     
   };
 
@@ -24,28 +29,60 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
+  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    Object.keys(formData).forEach(keyStr => {
+      const key = keyStr as keyof typeof initialData;
+      if (!formData[key]?.trim()) {
+        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        newErrors[key] = `${fieldName} wajib diisi.`;
+      }
+    });
+    return newErrors;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setErrors({});
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirm = async () => {
+    setLoading(true);
     setEditData(false);
 
     const data_dinamis = {
-      nama_pengaju: formData.NamaPengaju,
-      jenis_kelamin: formData.jeniskel,
+      nama: formData.NamaPengaju,
+      jenisKelamin: formData.jeniskel,
       alamat: formData.alamat,
-      pekerjaan: formData.perkerjaan,
-      
+      pekerjaan: formData.pekerjaan,
     };
 
     try {
       const res = await fetch("/api/permohonan", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nik: formData.NIKPengaju,
-          jenis_surat: "Surat Keterangan Domisili",
+          jenis_surat: "domisili",
           tipe: tipe,
           keterangan: `Pengajuan Surat Keterangan Domisili oleh ${formData.NamaPengaju}`,
           data_dinamis,
@@ -53,22 +90,20 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
       });
 
       const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      if (!res.ok) {
-        throw new Error(result.error || "Gagal mengirim permohonan");
-      }
-
-      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
-      window.location.href = "/";
-
+      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
     } catch (err: any) {
-      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       setEditData(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleReset = () => {
     setFormData(initialData);
+    setErrors({});
     setSubmited(null);
     setEditData(true);
   };
@@ -119,77 +154,24 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
           <form
             onSubmit={handleSubmit}
+            noValidate
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
+            {/* DIUBAH: Semua komponen input sekarang terhubung ke sistem validasi */}
             <h1 className="text-black text-xl lg:text-[24px] font-bold">
               Data Pengaju
             </h1>
+            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.NamaPengaju} setData={(val) => handleInputChange("NamaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.NamaPengaju} />
+            <InputField inputLabel="NIK Pengaju" inputPlaceholder="Masukkan NIK Pengaju" data={formData.NIKPengaju} setData={(val) => handleInputChange("NIKPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.NIKPengaju} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jeniskel} setData={(val) => handleInputChange("jeniskel", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jeniskel} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
 
-            <InputField
-              inputLabel="Nama Pengaju"
-              inputPlaceholder="Nama Pengaju"
-              data={formData.NamaPengaju}
-              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-
-            {/* --- PERUBAHAN 2: InputField untuk NIK ditambahkan di sini --- */}
-            <InputField
-              inputLabel="NIK Pengaju"
-              inputPlaceholder="Masukkan NIK Pengaju"
-              data={formData.NIKPengaju}
-              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
-              numberOnly
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-
-            <InputFieldDropdown
-              inputLabel="Jenis Kelamin"
-              options={["Laki-laki", "Perempuan"]}
-              data={formData.jeniskel}
-              setData={(val) => setFormData({ ...formData, jeniskel: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={formData.alamat}
-              setData={(val) => setFormData({ ...formData, alamat: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Pekerjaan"
-              inputPlaceholder="Pekerjaan"
-              data={formData.perkerjaan}
-              setData={(val) => setFormData({ ...formData, perkerjaan: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            
-
-            {/* Button Group */}
             <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={!editData}
-                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed"
-              >
+              <button type="submit" disabled={!editData} className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed">
                 Submit
               </button>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
-              >
+              <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">
                 Reset
               </button>
             </div>
@@ -201,6 +183,19 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+       <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
     </div>
   );
 }

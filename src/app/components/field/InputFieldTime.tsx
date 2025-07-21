@@ -9,6 +9,7 @@ interface InputFieldTimeProps {
   editData: boolean;
   setEditData: (val: boolean) => void;
   submited: string | null;
+  error?: string; // BARU: Tambahkan prop untuk pesan error
 }
 
 export default function InputFieldTime({
@@ -18,23 +19,27 @@ export default function InputFieldTime({
   editData,
   setEditData,
   submited,
+  error, // BARU: Ambil prop error dari props
 }: InputFieldTimeProps) {
   return (
     <div className="flex flex-col gap-2 w-full">
       <label className="text-base font-medium text-black">{inputLabel}</label>
       <input
         type="time"
-        className={`w-full px-4 py-2 text-sm border ${
-          submited && !data ? "border-red-500" : "border-gray-300"
-        } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+        // DIUBAH: Logika className sekarang bergantung pada prop 'error'
+        className={`w-full px-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+          error
+            ? "border-red-500 focus:ring-red-500" // Style saat ada error
+            : "border-gray-300 focus:ring-blue-500" // Style normal
+        }`}
         value={data}
         onChange={(e) => setData(e.target.value)}
         disabled={!editData}
-        placeholder="HH:MM"
+        placeholder="00:00"
+        step="60" // Menampilkan menit saja, tanpa detik
       />
-      {submited && !data && (
-        <p className="text-red-500 text-xs">Wajib diisi</p>
-      )}
+      {/* DIUBAH: Tampilkan pesan error dari prop 'error' */}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }

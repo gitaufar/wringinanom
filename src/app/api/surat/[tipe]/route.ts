@@ -8,16 +8,19 @@ import Docxtemplater from "docxtemplater";
 import { terbilang } from "angka-menjadi-terbilang";
 
 export async function POST(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: { tipe: string } }
 ) {
+  console.log("masuk1")
   const { tipe } = params;
   let pathFile = "";
   switch (tipe) {
-    case "anak_kandung":
+    case "SK Anak Kandung":
+      console.log("masuk2");
       pathFile = "A.01.01_Surat_Keterangan_Anak_Kandung_(FINAL).docx";
       break;
     case "Beda Identitas":
+      console.log("masuk2");
       pathFile = "A.01.03_Surat_Keterangan_Beda_Identitas_Formal_(FINAL).docx";
       break;
     case "belum_nikah":
@@ -103,7 +106,7 @@ export async function POST(
 
   
   try {
-    const body = await req.json();
+    const body = await _req.json();
 
     // Path ke template .docx
     const templatePath = path.join(process.cwd(), "templates", pathFile);
@@ -123,7 +126,8 @@ export async function POST(
     });
 
     switch (tipe) {
-      case "anak_kandung":
+      case "SK Anak Kandung":
+        console.log("masuk3");
         doc.setData({
           Nama_Anak: body.namaAnak,
           Kota_Anak: body.kotaAnak,
@@ -147,6 +151,7 @@ export async function POST(
         });
         break;
       case "Beda Identitas":
+        console.log("masuk3");
         doc.setData({
           Nama_Sekarang: body.namaSekarang,
           Kota: body.kota,
@@ -164,13 +169,13 @@ export async function POST(
       case "belum_nikah":
         doc.setData({
           Nama: body.nama,
+          NIK: body.nik,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
           No_KK: body.noKK,
           Agama: body.agama,
-          NIK: body.nik,
           Alamat: body.alamat,
-          Negara: body.kepalaDesa,
+          Negara: body.kewarganegaraan,
           Jenis_Kelamin: body.jenisKelamin,
           Tanggal_Surat: tanggalSurat,
         });
@@ -224,12 +229,12 @@ export async function POST(
           Umur_1: body.umur1,
           Pekerjaan_1: body.pekerjaan1,
           Alamat_1: body.alamat1,
-          Status_Pasangan_1: body.statusPasangan1,
+          Status_Pasangan_1: body.statusPasangan2 === "Istri" ? "Suami" : "Istri",
           Nama_2: body.nama2,
           Umur_2: body.umur2,
           Pekerjaan_2: body.pekerjaan2,
           Alamat_2: body.alamat2,
-          Status_Pasangan_2: body.statusPasangan1,
+          Status_Pasangan_2: body.statusPasangan2,
           Lama_Tahun: body.lamaTahun,
           Lama_Bulan: body.lamaBulan,
           Tanggal_Surat: tanggalSurat,
@@ -246,7 +251,6 @@ export async function POST(
           Agama: body.agama,
           Pekerjaan: body.pekerjaan,
           Alamat: body.alamat,
-          Status_Perkawinan: body.statusPerkawinan,
           Negara: body.negara,
           Status: body.status,
           Tanggal_Surat: tanggalSurat,
@@ -264,6 +268,7 @@ export async function POST(
           Alamat: body.alamat,
           Dok_1: body.dok1,
           Dok_2: body.dok2,
+          Status: body.status,
           Nama_Dok2: body.namaDok2,
           Tanggal_Surat: tanggalSurat,
         });
@@ -416,7 +421,6 @@ export async function POST(
           NIK: body.nik,
           No_KK: body.noKK,
           Alamat: body.alamat,
-          Tujuan_Pembuatan_Surat: body.tujuanPembuatanSurat,
           Tanggal_Surat: tanggalSurat,
         });
         break;
@@ -424,10 +428,13 @@ export async function POST(
         doc.setData({
           Nama: body.nama,
           Kota: body.kota,
+          NIK: body.nik,
+          No_KK: body.nomorKK,
           Tanggal_Lahir: body.tanggalLahir,
           Jenis_Kelamin: body.jenisKelamin,
           Agama: body.agama,
           Alamat: body.alamat,
+          Pekerjaan: body.pekerjaan,
           Nama_Barang: body.namaBarang,
           Lokasi_Kehilangan: body.lokasiKehilangan,
           Tanggal_Kehilangan: body.tanggalKehilangan,
