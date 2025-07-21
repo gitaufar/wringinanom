@@ -1,6 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import HeroSection from '../section/HeroSection';
 import LayananSection from '../section/LayananSection';
 import TutorialSection from '../section/TutorialSection';
@@ -8,32 +10,47 @@ import InformationSection from '../section/InformationSection';
 import Footer from '../section/Footer';
 
 const LandingPage = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
+
   return (
-    <main className="flex flex-col items-center justify-center w-full overflow-hidden">
+    <main className="flex flex-col w-full overflow-hidden">
+      
       {/* Hero Section */}
-      <section className="w-full">
+      <section className="w-full" data-aos="fade-up">
         <HeroSection />
       </section>
 
       {/* Layanan Section */}
-      <section className="">
+      <div data-aos="fade-up">
         <LayananSection />
-      </section>
+      </div>
 
       {/* Tutorial Section */}
-      <section className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 py-10 max-w-[1440px] mx-auto">
+      <section
+        className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 max-w-[1440px] mx-auto"
+        data-aos="fade-up"
+      >
         <TutorialSection />
       </section>
 
       {/* Informasi Section */}
-      <section className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 py-10 max-w-[1440px] mx-auto">
+      <section
+        className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 max-w-[1440px] mx-auto"
+        data-aos="fade-up"
+      >
         <InformationSection />
       </section>
 
       {/* Footer */}
-      <section className="w-full">
+      <section className="w-full" data-aos="fade-up">
         <Footer />
       </section>
+
     </main>
   );
 };
