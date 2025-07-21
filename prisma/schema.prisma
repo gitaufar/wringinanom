@@ -1,11 +1,3 @@
- // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// schema.prisma
- 
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,83 +7,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Penduduk {
-  nik                 String   @id
-  no_kk               String
-  nama_lengkap        String?
-  nama_ibu            String?
-  nama_ayah           String?
-  jenis_kelamin       String
-  tempat_lahir        String
-  tanggal_lahir       DateTime
-  agama               String
-  pendidikan          String
-  pekerjaan           String?
-  status_perkawinan   String
-  tanggal_perkawinan  DateTime?
-  status_keluarga     String
-  alamat              String
-  rt                  Int
-  rw                  Int
-
-  riwayatLayanan   RiwayatLayanan[]     @relation("PendudukRiwayat")
-  permohonanSurat  PermohonanSurat[]    @relation("PendudukPermohonan")
+model admin {
+  id                 Int                  @id @default(autoincrement())
+  nama               String
+  email              String               @unique(map: "Admin_email_key")
+  password           String
+  logperubahanstatus logperubahanstatus[]
 }
 
-model RiwayatLayanan {
-  no_resi     String      @id
-  nik         String
-  date        DateTime
-  keterangan  String
-  status      String      // Menunggu | Diproses | Ditolak | Selesai
+model logperubahanstatus {
+  id              Int            @id @default(autoincrement())
+  no_resi         String
+  admin_id        Int
+  status_lama     String
+  status_baru     String
+  waktu_perubahan DateTime
+  admin           admin          @relation(fields: [admin_id], references: [id], onDelete: NoAction, map: "LogPerubahanStatus_admin_id_fkey")
+  riwayatlayanan  riwayatlayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade, map: "LogPerubahanStatus_no_resi_fkey")
 
-  penduduk    Penduduk     @relation("PendudukRiwayat", fields: [nik], references: [nik])
-  logStatus   LogPerubahanStatus[]
-  permohonan  PermohonanSurat?
-
-  @@index([nik])
+  @@index([admin_id], map: "LogPerubahanStatus_admin_id_idx")
+  @@index([no_resi], map: "LogPerubahanStatus_no_resi_idx")
 }
 
-model PermohonanSurat {
-  id             String   @id @default(cuid())
+model penduduk {
+  nik                String            @id
+  no_kk              String
+  nama_lengkap       String?
+  nama_ibu           String?
+  nama_ayah          String?
+  jenis_kelamin      String
+  tempat_lahir       String
+  tanggal_lahir      DateTime
+  alamat             String
+  rt                 Int
+  rw                 Int
+  pekerjaan          String?
+  agama              String
+  pendidikan         String
+  status_keluarga    String
+  status_perkawinan  String
+  tanggal_perkawinan DateTime?
+  permohonansurat    permohonansurat[]
+  riwayatlayanan     riwayatlayanan[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model permohonansurat {
+  id             String         @id @default(cuid())
   nik            String
+  jenis_surat    String
+  tanggal        DateTime       @default(now())
+  status         String         @default("Menunggu")
+  data_dinamis   String?        @db.LongText
+  no_resi        String         @unique(map: "PermohonanSurat_no_resi_key")
   tipe           String
-  jenis_surat    String   // contoh: "Beda Identitas", "Domisili", "Permohonan KTP"
-  tanggal        DateTime @default(now())
-  status         String   @default("Menunggu") // Menunggu, Diproses, Selesai
-  data_dinamis   Json?    // data variatif sesuai jenis surat
-  no_resi        String   @unique
+  penduduk       penduduk       @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "PermohonanSurat_nik_fkey")
+  riwayatlayanan riwayatlayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade, map: "PermohonanSurat_no_resi_fkey")
 
-  penduduk       Penduduk       @relation("PendudukPermohonan", fields: [nik], references: [nik])
-  riwayat        RiwayatLayanan @relation(fields: [no_resi], references: [no_resi])
-
-  @@index([nik])
+  @@index([nik], map: "PermohonanSurat_nik_idx")
 }
 
-model Admin {
-  id       Int     @id @default(autoincrement())
-  nama     String
-  email    String   @unique
-  password String
+model riwayatlayanan {
+  no_resi            String               @id
+  nik                String
+  date               DateTime
+  keterangan         String
+  status             String
+  logperubahanstatus logperubahanstatus[]
+  permohonansurat    permohonansurat?
+  penduduk           penduduk             @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "RiwayatLayanan_nik_fkey")
 
-  logStatus LogPerubahanStatus[]
+  @@index([nik], map: "RiwayatLayanan_nik_idx")
 }
-
-model LogPerubahanStatus {
-  id               Int              @id @default(autoincrement())
-  no_resi          String
-  admin_id         Int
-  status_lama      String
-  status_baru      String
-  waktu_perubahan  DateTime
-
-  riwayatLayanan   RiwayatLayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade)
-  admin            Admin          @relation(fields: [admin_id], references: [id])
-
-  @@index([no_resi])
-  @@index([admin_id])
-}
-
-
-
-

@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const riwayatLayanan = await prisma.riwayatLayanan.findMany();
-    return NextResponse.json(riwayatLayanan);
+    const riwayatlayanan = await prisma.riwayatlayanan.findMany();
+    return NextResponse.json(riwayatlayanan);
   } catch (error) {
     console.error("Failed to fetch penduduk:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     const noResi = `RWS-${Date.now()}`;
 
-    const riwayat = await prisma.riwayatLayanan.create({
+    const riwayat = await prisma.riwayatlayanan.create({
       data: {
         no_resi: noResi,
         nik,
@@ -55,7 +55,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "no_resi wajib disertakan" }, { status: 400 });
     }
 
-    const existing = await prisma.riwayatLayanan.findUnique({
+    const existing = await prisma.riwayatlayanan.findUnique({
       where: { no_resi: noResi },
     });
 
@@ -63,7 +63,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
     }
 
-    await prisma.riwayatLayanan.delete({
+    await prisma.riwayatlayanan.delete({
       where: { no_resi: noResi },
     });
 

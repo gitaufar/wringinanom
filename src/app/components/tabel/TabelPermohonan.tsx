@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FaEdit, FaCheck, FaTimes, FaEye } from "react-icons/fa";
 import StatusCard from "../../components/card/StatusCard";
+import * as mammoth from "mammoth";
 
 type DataPermintaan = {
   no_resi: string;
@@ -12,7 +13,7 @@ type DataPermintaan = {
   tanggal: string;
   jenis_surat: string;
   data_dinamis?: any;
-  riwayat: {
+  riwayatlayanan: {
     status: "Menunggu" | "Selesai" | "Dibatalkan";
   };
 };
@@ -43,7 +44,7 @@ const TabelPermohonan = ({
         if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
         console.log(result.data);
         const onlyMenunggu = (result.data || []).filter(
-          (x: DataPermintaan) => x.riwayat?.status === "Menunggu"
+          (x: DataPermintaan) => x.riwayatlayanan?.status === "Menunggu"
         );
 
         setPermohonan(onlyMenunggu);
@@ -115,6 +116,56 @@ const TabelPermohonan = ({
     }
   };
 
+  const handlePreview = async (jenisSurat: string, dataDinamis: any) => {
+    try {
+      const res = await fetch(`/api/surat/${jenisSurat}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataDinamis),
+      });
+
+      if (!res.ok) throw new Error("Gagal ambil dokumen");
+
+      const blob = await res.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+
+      const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
+
+      // Buka jendela baru dan tulis HTML ke sana
+      const printWindow = window.open("", "_blank", "width=800,height=600");
+      if (printWindow) {
+        printWindow.document.write(`
+        <html>
+          <head>
+            <title>Preview Dokumen</title>
+            <style>
+              body { font-family: sans-serif; padding: 20px; }
+              h1,h2,h3,h4,h5,h6 { margin-top: 1rem; }
+              table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+              td, th { border: 1px solid #ccc; padding: 8px; }
+            </style>
+          </head>
+          <body>
+            ${html}
+            <script>
+              window.onload = function() {
+                window.print();
+              }
+            </script>
+          </body>
+        </html>
+      `);
+        printWindow.document.close();
+      } else {
+        alert("Popup diblokir. Izinkan popup dari situs ini.");
+      }
+    } catch (err: any) {
+      alert("Gagal preview dokumen: " + err.message);
+    }
+  };
+
   if (firstLoading) return <p className="mt-4">Loading Permohonan...</p>;
   if (error) return <p className="text-red-500 mt-4">❌ {error}</p>;
 
@@ -171,12 +222,17 @@ const TabelPermohonan = ({
                   <button className="text-red-500 hover:text-red-700">
                     <FaTimes size={16} />
                   </button>
-                  <button className="hover:text-blue-700">
+                  <button
+                    className="hover:text-blue-700"
+                    onClick={() =>
+                      handlePreview(row.jenis_surat, row.data_dinamis)
+                    }
+                  >
                     <FaEye size={16} />
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <StatusCard status={row.riwayat?.status || "Menunggu"} />
+                  <StatusCard status={row.riwayatlayanan?.status || "Menunggu"} />
                 </td>
               </tr>
             ))

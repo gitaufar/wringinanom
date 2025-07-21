@@ -594,35 +594,3 @@ export async function POST(
     );
   }
 }
-
-/* contoh pemakaian 
-const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/surat/beda_identitas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error("Gagal mengunduh surat.");
-
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "Surat_Keterangan_Beda_Identitas.docx";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-*/

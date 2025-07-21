@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest) {
 
     const admin_id = Number(decoded.id);
 
-    const riwayat = await prisma.riwayatLayanan.findUnique({
+    const riwayat = await prisma.riwayatlayanan.findUnique({
       where: { no_resi },
     });
 
@@ -41,14 +41,14 @@ export async function PUT(req: NextRequest) {
 
     const status_lama = riwayat.status;
 
-    // ✅ Update status di riwayatLayanan
-    const updateRiwayat = await prisma.riwayatLayanan.update({
+    // ✅ Update status di riwayatlayanan
+    const updateRiwayat = await prisma.riwayatlayanan.update({
       where: { no_resi },
       data: { status: status_baru },
     });
 
     // ✅ Update juga status di permohonanSurat
-    const updatePermohonan = await prisma.permohonanSurat.update({
+    const updatePermohonan = await prisma.permohonansurat.update({
       where: { no_resi },
       data: { status: status_baru },
     });
@@ -56,7 +56,7 @@ export async function PUT(req: NextRequest) {
     console.log("✅ Status riwayat diperbarui:", updateRiwayat);
     console.log("✅ Status permohonan diperbarui:", updatePermohonan);
 
-    const log = await prisma.logPerubahanStatus.create({
+    const log = await prisma.logperubahanstatus.create({
       data: {
         no_resi,
         admin_id,
@@ -85,7 +85,7 @@ export async function PUT(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const data = await prisma.permohonanSurat.findMany({
+    const data = await prisma.permohonansurat.findMany({
       include: {
         penduduk: true,
       },

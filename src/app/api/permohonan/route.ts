@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const noResi = generateResi();
 
     // Buat entri RiwayatLayanan
-    await prisma.riwayatLayanan.create({
+    await prisma.riwayatlayanan.create({
       data: {
         no_resi: noResi,
         nik,
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Buat entri PermohonanSurat
-    const permohonan = await prisma.permohonanSurat.create({
+    const permohonan = await prisma.permohonansurat.create({
       data: {
         nik,
         jenis_surat,
@@ -74,11 +74,11 @@ export async function GET(req: NextRequest) {
     const jenis = searchParams.get("jenis");
 
     if (noResi) {
-      const permohonan = await prisma.permohonanSurat.findUnique({
+      const permohonan = await prisma.permohonansurat.findUnique({
         where: { no_resi: noResi },
         include: {
           penduduk: true,
-          riwayat: true,
+          riwayatlayanan: true,
         },
       });
 
@@ -94,11 +94,11 @@ export async function GET(req: NextRequest) {
 
     const filter = jenis ? { jenis_surat: { equals: jenis } } : undefined;
 
-    const allPermohonan = await prisma.permohonanSurat.findMany({
+    const allPermohonan = await prisma.permohonansurat.findMany({
       where: filter,
       include: {
         penduduk: true,
-        riwayat: true,
+        riwayatlayanan: true,
       },
       orderBy: { tanggal: "desc" },
     });
@@ -126,7 +126,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const deletedPermohonan = await prisma.permohonanSurat.delete({
+    const deletedPermohonan = await prisma.permohonansurat.delete({
       where: { no_resi: noResi },
     });
 

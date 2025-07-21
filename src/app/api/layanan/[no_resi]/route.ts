@@ -12,21 +12,21 @@ export async function GET(_request: Request, { params }: Params) {
   console.log("Menerima no_resi:", no_resi);
 
   try {
-    const riwayatLayanan = await prisma.riwayatLayanan.findUnique({
+    const riwayatlayanan = await prisma.riwayatlayanan.findUnique({
       where: { no_resi },
       include: {
         penduduk: true,
       },
     });
 
-    if (!riwayatLayanan) {
+    if (!riwayatlayanan) {
       return NextResponse.json(
         { error: "Riwayat layanan tidak ditemukan" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ data: riwayatLayanan });
+    return NextResponse.json({ data: riwayatlayanan });
   } catch (error) {
     console.error("Gagal mengambil data riwayat layanan:", error);
     return NextResponse.json(
@@ -42,7 +42,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   console.log("No Resi yang diterima:", no_resi);
 
   try {
-    await prisma.riwayatLayanan.delete({
+    await prisma.riwayatlayanan.delete({
       where: { no_resi },
     });
 
