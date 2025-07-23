@@ -4,9 +4,14 @@ import { useState } from "react";
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganTidakDiketahuiKeberadaannyaProps = {
   tipe: String;
+};
+
+type FormErrors = {
+  [key: string]: string | undefined;
 };
 
 export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: SuratKeteranganTidakDiketahuiKeberadaannyaProps) {
@@ -21,69 +26,96 @@ export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: Sur
     tanggalLahir: "",
     alamat: "",
     pekerjaan: "",
-    tanggalMulaiTidakDiketahui: "",
+    tanggalHilang:"",
+    bulanHilang:"",
+    tahunHilang:"",
   };
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
+  
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  // 1. Mencegah refresh halaman
-  e.preventDefault();
-
-  // 2. Mengumpulkan semua data spesifik untuk surat ini
-  const data_dinamis = {
-    nama_pengaju: formData.namaPengaju,
-    nik_pengaju: formData.nikPengaju,
-    nama_bersangkutan: formData.namaBersangkutan,
-    nik_bersangkutan: formData.nikBersangkutan,
-    nomor_kk: formData.nomorKK,
-    jenis_kelamin: formData.jenisKelamin,
-    umur: formData.umur,
-    tanggal_lahir: formData.tanggalLahir,
-    alamat: formData.alamat,
-    pekerjaan: formData.pekerjaan,
-    tanggal_mulai_tidak_diketahui: formData.tanggalMulaiTidakDiketahui,
+  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
-  try {
-    // 3. Mengirim data ke endpoint API
-    const res = await fetch("/api/permohonan", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // Data utama yang dibutuhkan oleh API
-        nik: formData.nikPengaju, // NIK dari orang yang mengajukan
-        jenis_surat: "Surat Keterangan Tidak Diketahui Keberadaannya",
-        tipe: tipe,
-        keterangan: `Pengajuan surat untuk ${formData.namaBersangkutan} oleh ${formData.namaPengaju}`,
-        data_dinamis, // Semua data tambahan
-      }),
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    Object.keys(formData).forEach((keyStr) => {
+      const key = keyStr as keyof typeof initialData;
+      if (!formData[key]?.trim()) {
+        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+        newErrors[key] = `${fieldName} wajib diisi.`;
+      }
     });
+    return newErrors;
+  };
 
-    const result = await res.json();
-
-    // 4. Memeriksa jika ada error dari server
-    if (!res.ok) {
-      throw new Error(result.error || "Gagal mengirim permohonan");
+ const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
     }
+    setErrors({});
+    setShowConfirmModal(true);
+  };
 
-    // 5. Jika berhasil, tampilkan notifikasi dan redirect
-    alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
-    window.location.href = "/"; // Arahkan ke halaman utama
+const handleConfirm = async () => {
+    setLoading(true);
+    setEditData(false);
 
-  } catch (err: any) {
-    // 6. Jika terjadi kesalahan, tampilkan notifikasi error
-    alert(`❌ Terjadi kesalahan: ${err.message}`);
-  }
-};
+    const data_dinamis = {
+      nama: formData.namaBersangkutan,
+      nik: formData.nikBersangkutan,
+      noKK: formData.nomorKK,
+      jenisKelamin: formData.jenisKelamin,
+      umur: formData.umur,
+      pekerjaan: formData.pekerjaan,
+      alamat: formData.alamat,
+      tanggalHilang: formData.tanggalHilang,
+      bulanHilang: formData.bulanHilang,
+      tahunHilang: formData.tahunHilang,
+    };
 
+    try {
+      const res = await fetch("/api/permohonan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nik: formData.nikPengaju,
+          jenis_surat: "tidak_diketahui",
+          tipe: tipe,
+          keterangan: `Pengajuan surat untuk ${formData.namaBersangkutan} oleh ${formData.namaPengaju}`,
+          data_dinamis,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
+
+      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
+    } catch (err: any) {
+      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      setEditData(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleReset = () => {
     setFormData(initialData);
+    setErrors({});
     setSubmited(null);
     setEditData(true);
   };
@@ -132,131 +164,36 @@ export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: Sur
 
         <form
           onSubmit={handleSubmit}
+          noValidate
           className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
         >
-          {/* Nama Pengaju */}
+          {/* DIUBAH: Semua input disesuaikan dengan sistem validasi */}
           <div className="space-y-3">
-            <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField
-              inputLabel="Nama Pengaju"
-              inputPlaceholder="Nama Pengaju"
-              data={formData.namaPengaju}
-              setData={(val) => setFormData({ ...formData, namaPengaju: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="NIK"
-              inputPlaceholder="NIK"
-              data={formData.nikPengaju}
-              setData={(val) => setFormData({ ...formData, nikPengaju: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-              numberOnly
-            />
+            <h2 className="text-xl font-bold">Data Pengaju</h2>
+            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nikPengaju} />
           </div>
 
-          {/* Nama yang Bersangkutan */}
           <div className="space-y-3">
-            <h2 className="text-xl font-bold">Nama yang Bersangkutan</h2>
-            <InputField
-              inputLabel="Nama Lengkap"
-              inputPlaceholder="Nama Lengkap"
-              data={formData.namaBersangkutan}
-              setData={(val) => setFormData({ ...formData, namaBersangkutan: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="NIK"
-              inputPlaceholder="NIK"
-              data={formData.nikBersangkutan}
-              setData={(val) => setFormData({ ...formData, nikBersangkutan: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-              numberOnly
-            />
-            <InputField
-              inputLabel="Nomor Kartu Keluarga"
-              inputPlaceholder="Nomor KK"
-              data={formData.nomorKK}
-              setData={(val) => setFormData({ ...formData, nomorKK: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputFieldDropdown
-  inputLabel="Jenis Kelamin"
-  inputPlaceholder="Pilih jenis kelamin"
-  options={["Laki-laki", "Perempuan"]}
-  setData={(val) => setFormData({ ...formData, jenisKelamin: val })}
-  setEditData={setEditData}
-  editData={editData}
-  submited={submited}
-/>
-            <InputField
-              inputLabel="Umur"
-              inputPlaceholder="Umur"
-              data={formData.umur}
-              setData={(val) => setFormData({ ...formData, umur: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-              numberOnly
-            />
-            <InputFieldDate
-              inputLabel="Tanggal Lahir"
-              data={formData.tanggalLahir}
-              setData={(val) => setFormData({ ...formData, tanggalLahir: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={formData.alamat}
-              setData={(val) => setFormData({ ...formData, alamat: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Pekerjaan"
-              inputPlaceholder="Pekerjaan"
-              data={formData.pekerjaan}
-              setData={(val) => setFormData({ ...formData, pekerjaan: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputFieldDate
-              inputLabel="Tanggal Mulai Tidak Diketahui"
-              data={formData.tanggalMulaiTidakDiketahui}
-              setData={(val) => setFormData({ ...formData, tanggalMulaiTidakDiketahui: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
+            <h2 className="text-xl font-bold">Data Orang yang Bersangkutan</h2>
+            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaBersangkutan} setData={(val) => handleInputChange("namaBersangkutan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaBersangkutan} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nikBersangkutan} setData={(val) => handleInputChange("nikBersangkutan", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nikBersangkutan} />
+            <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor KK" data={formData.nomorKK} setData={(val) => handleInputChange("nomorKK", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nomorKK} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" inputPlaceholder="Pilih jenis kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
+            <InputField inputLabel="Umur" inputPlaceholder="Umur" data={formData.umur} setData={(val) => handleInputChange("umur", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.umur} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
+            <InputField inputLabel="Tanggal Mulai Tidak Diketahui" inputPlaceholder="Tanggal Hilang" data={formData.tanggalHilang} setData={(val) => handleInputChange("tanggalHilang", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.tanggalHilang} />
+            <InputField inputLabel="Bulan Mulai Tidak Diketahui" inputPlaceholder="Cth: Januari, Maret, Mei dll" data={formData.bulanHilang} setData={(val) => handleInputChange("bulanHilang", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.bulanHilang} />
+            <InputField inputLabel="Tahun Mulai Tidak Diketahui" inputPlaceholder="Tahun Hilang" data={formData.tahunHilang} setData={(val) => handleInputChange("tahunHilang", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tahunHilanglHilang} />
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-4">
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
-            >
+            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
               Submit
             </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md"
-            >
+            <button type="button" onClick={handleReset} className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md">
               Reset
             </button>
           </div>
@@ -267,6 +204,19 @@ export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: Sur
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+       <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
     </div>
   );
 }

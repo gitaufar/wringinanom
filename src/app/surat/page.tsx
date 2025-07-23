@@ -38,7 +38,7 @@ const baseLetters = [
     { id: 12, title: "Surat Keterangan Tidak Diketahui Keberadaannnya", description: "Surat yang menyatakan seseorang tidak diketahui keberadaannya.", topic: "Pemerintahan", link:"tidak_diketahui" },
     { id: 13, title: "Surat Penambahan Anggota Keluarga", description: "Surat keterangan penambahan anggota dalam kartu keluarga.", topic: "Pemerintahan", link:"penambahan_anggota" },
     { id: 14, title: "Surat Pernyataan Kelahiran", description: "Surat pernyataan resmi tentang kelahiran anak.", topic: "Pemerintahan", link:"pernyataan_kelahiran" },
-    { id: 15, title: "Surat Keterangan Panggilan", description: "Surat keterangan resmi mengenai panggilan pihak tertentu.", topic: "Pemerintahan", link:"panggilan" },
+    // { id: 15, title: "Surat Keterangan Panggilan", description: "Surat keterangan resmi mengenai panggilan pihak tertentu.", topic: "Pemerintahan", link:"panggilan" },
     { id: 16, title: "Surat Keterangan Tidak Keberatan", description: "Surat pernyataan tidak keberatan terhadap suatu hal.", topic: "Pemerintahan", link:"tidak_keberatan" },
     { id: 17, title: "Surat Keterangan Catatan Kepolisian", description: "Surat keterangan catatan kepolisian", topic: "Pemerintahan", link:"catatan_kepolisian" },
     { id: 18, title: "Surat Keterangan Kehilangan Kepolisian", description: "Surat keterangan kehilangan yang diterbitkan untuk kepolisian.", topic: "Pemerintahan", link:"kehilangan_kepolisian" },

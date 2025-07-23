@@ -4,88 +4,134 @@ import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganKuasaProps = {
   tipe: String;
+};
+
+type FormErrors = {
+  [key: string]: string | undefined;
 };
 
 export default function SuratKeteranganKuasa({
   tipe,
 }: SuratKeteranganKuasaProps) {
   const initialData = {
-    // Data Pemberi Kuasa
-    NamaPengaju: "",
-    Kotalahir: "",
-    TanggalLahir: "",
-    NIK1: "",
-    Perkerjaan: "",
-    Alamat: "",
+  pemberiKuasa: {
+    nama: "",
+    kotaLahir: "",
+    tanggalLahir: "",
+    nik: "",
+    pekerjaan: "",
+    alamat: ""
+  },
+  penerimaKuasa: {
+    nama: "",
+    kotaLahir: "",
+    tanggalLahir: "",
+    nik: "",
+    pekerjaan: "",
+    alamat: "",
+    hubungan: ""
+  },
+  keperluan: ""
+};
 
-    // Data Penerima Kuasa
-    Nama2: "",
-    Kotakab2: "",
-    TanggalLahir2: "",
-    NIK2: "",
-    perkerjaan2: "",
-    Alamat2: "",
-    HubunganDenganPengaju: "",
-  };
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
-  // --- FUNGSI HANDLE SUBMIT YANG TELAH DISESUAIKAN ---
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+  
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    const { pemberiKuasa: pemberi, penerimaKuasa: penerima } = formData;
+
+    // Validasi Pemberi Kuasa
+    if (!pemberi.nama?.trim()) newErrors.pemberi_nama = "Nama Pemberi Kuasa wajib diisi.";
+    if (!pemberi.kotaLahir?.trim()) newErrors.pemberi_kotaLahir = "Kota Lahir wajib diisi.";
+    if (!pemberi.tanggalLahir?.trim()) newErrors.pemberi_tanggalLahir = "Tanggal Lahir wajib diisi.";
+    if (!pemberi.nik?.trim()) newErrors.pemberi_nik = "NIK wajib diisi.";
+    if (!pemberi.pekerjaan?.trim()) newErrors.pemberi_pekerjaan = "Pekerjaan wajib diisi.";
+    if (!pemberi.alamat?.trim()) newErrors.pemberi_alamat = "Alamat wajib diisi.";
+    
+    // Validasi Penerima Kuasa
+    if (!penerima.nama?.trim()) newErrors.penerima_nama = "Nama Penerima Kuasa wajib diisi.";
+    if (!penerima.kotaLahir?.trim()) newErrors.penerima_kotaLahir = "Kota Lahir wajib diisi.";
+    if (!penerima.tanggalLahir?.trim()) newErrors.penerima_tanggalLahir = "Tanggal Lahir wajib diisi.";
+    if (!penerima.nik?.trim()) newErrors.penerima_nik = "NIK wajib diisi.";
+    if (!penerima.pekerjaan?.trim()) newErrors.penerima_pekerjaan = "Pekerjaan wajib diisi.";
+    if (!penerima.alamat?.trim()) newErrors.penerima_alamat = "Alamat wajib diisi.";
+    if (!penerima.hubungan?.trim()) newErrors.penerima_hubungan = "Hubungan wajib diisi.";
+     if (!formData.keperluan?.trim()) newErrors.keperluan = "Keperluan wajib diisi.";
+
+    return newErrors;
+  };
+
+   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setErrors({});
+    setShowConfirmModal(true);
+  };
+
+  // DIUBAH: Ganti seluruh fungsi ini dengan versi baru
+  const handleConfirm = async () => {
+    setLoading(true);
     setEditData(false);
 
+    // Memetakan dari state frontend ke format backend yang baru
     const data_dinamis = {
-      pemberi_kuasa: {
-        nama: formData.NamaPengaju,
-        kota_lahir: formData.Kotalahir,
-        tanggal_lahir: formData.TanggalLahir,
-        nik: formData.NIK1,
-        pekerjaan: formData.Perkerjaan,
-        alamat: formData.Alamat,
-      },
-      penerima_kuasa: {
-        nama: formData.Nama2,
-        kota_lahir: formData.Kotakab2,
-        tanggal_lahir: formData.TanggalLahir2,
-        nik: formData.NIK2,
-        pekerjaan: formData.perkerjaan2,
-        alamat: formData.Alamat2,
-        hubungan_dengan_pemberi_kuasa: formData.HubunganDenganPengaju,
-      },
+      namaPemberi: formData.pemberiKuasa.nama,
+      kotaPemberi: formData.pemberiKuasa.kotaLahir,
+      tanggalLahirPemberi: formData.pemberiKuasa.tanggalLahir,
+      pekerjaanPemberi: formData.pemberiKuasa.pekerjaan,
+      nikPemberi: formData.pemberiKuasa.nik,
+      alamatPemberi: formData.pemberiKuasa.alamat,
+      
+      namaPenerima: formData.penerimaKuasa.nama,
+      kotaPenerima: formData.penerimaKuasa.kotaLahir,
+      tanggalLahirPenerima: formData.penerimaKuasa.tanggalLahir,
+      pekerjaanPenerima: formData.penerimaKuasa.pekerjaan,
+      nikPenerima: formData.penerimaKuasa.nik,
+      alamatPenerima: formData.penerimaKuasa.alamat,
+
+      hubungan: formData.penerimaKuasa.hubungan,
+      keperluan: formData.keperluan,
     };
 
     try {
       const res = await fetch("/api/permohonan", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nik: formData.NIK1, // NIK dari pemberi kuasa sebagai penanggung jawab
-          jenis_surat: "Surat Keterangan Kuasa",
+          nik: formData.pemberiKuasa.nik,
+          jenis_surat: "kuasa",
           tipe: tipe,
-          keterangan: `Pengajuan Surat Keterangan Kuasa oleh ${formData.NamaPengaju}`,
+          keterangan: `Pengajuan Surat Keterangan Kuasa oleh ${formData.pemberiKuasa.nama}`,
           data_dinamis,
         }),
       });
 
       const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.error || "Gagal mengirim permohonan");
-      }
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
-      window.location.href = "/";
-
+      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
     } catch (err: any) {
-      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       setEditData(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,8 +139,22 @@ export default function SuratKeteranganKuasa({
     setFormData(initialData);
     setSubmited(null);
     setEditData(true);
+    setErrors({});
   };
 
+   const handlePemberiChange = (field: keyof typeof initialData.pemberiKuasa, value: string) => {
+    setFormData(prev => ({ ...prev, pemberiKuasa: { ...prev.pemberiKuasa, [field]: value } }));
+    const errorKey = `pemberi_${field}`;
+    if (errors[errorKey]) setErrors(prev => ({ ...prev, [errorKey]: undefined }));
+  };
+  
+  const handlePenerimaChange = (field: keyof typeof initialData.penerimaKuasa, value: string) => {
+    setFormData(prev => ({ ...prev, penerimaKuasa: { ...prev.penerimaKuasa, [field]: value } }));
+    const errorKey = `penerima_${field}`;
+    if (errors[errorKey]) setErrors(prev => ({ ...prev, [errorKey]: undefined }));
+  };
+
+  
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
       {/* Header */}
@@ -141,151 +201,42 @@ export default function SuratKeteranganKuasa({
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] pb-10">
           <form
             onSubmit={handleSubmit}
+            noValidate
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            <h1 className="text-black text-xl lg:text-[24px] font-bold">
-              Data Pemberi Kuasa
-            </h1>
-            <InputField
-              inputLabel="Nama Pemberi Kuasa"
-              inputPlaceholder="Nama Pemberi Kuasa"
-              data={formData.NamaPengaju}
-              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Kota Lahir"
-              inputPlaceholder="Kota Lahir"
-              data={formData.Kotalahir}
-              setData={(val) => setFormData({ ...formData, Kotalahir: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputFieldDate
-              inputLabel="Tanggal Lahir"
-              data={formData.TanggalLahir}
-              setData={(val) => setFormData({ ...formData, TanggalLahir: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="NIK"
-              inputPlaceholder="NIK Pemberi Kuasa"
-              data={formData.NIK1}
-              setData={(val) => setFormData({ ...formData, NIK1: val })}
-              numberOnly
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Pekerjaan"
-              inputPlaceholder="Pekerjaan"
-              data={formData.Perkerjaan}
-              setData={(val) => setFormData({ ...formData, Perkerjaan: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={formData.Alamat}
-              setData={(val) => setFormData({ ...formData, Alamat: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
+            {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
+            <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pemberi Kuasa</h1>
+            <InputField inputLabel="Nama Pemberi Kuasa" inputPlaceholder="Nama Pemberi Kuasa" data={formData.pemberiKuasa.nama} setData={(val) => handlePemberiChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_nama} />
+            <InputField inputLabel="Kota Lahir" inputPlaceholder="Kota Lahir" data={formData.pemberiKuasa.kotaLahir} setData={(val) => handlePemberiChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_kotaLahir} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.pemberiKuasa.tanggalLahir} setData={(val) => handlePemberiChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_tanggalLahir} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK Pemberi Kuasa" data={formData.pemberiKuasa.nik} setData={(val) => handlePemberiChange("nik", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_nik} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pemberiKuasa.pekerjaan} setData={(val) => handlePemberiChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_pekerjaan} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.pemberiKuasa.alamat} setData={(val) => handlePemberiChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberi_alamat} />
+
+            <h1 className="text-black text-xl lg:text-[24px] font-bold mt-6">Data Penerima Kuasa</h1>
+            <InputField inputLabel="Nama Penerima Kuasa" inputPlaceholder="Nama Penerima Kuasa" data={formData.penerimaKuasa.nama} setData={(val) => handlePenerimaChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_nama} />
+            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.penerimaKuasa.kotaLahir} setData={(val) => handlePenerimaChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_kotaLahir} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.penerimaKuasa.tanggalLahir} setData={(val) => handlePenerimaChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_tanggalLahir} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK Penerima Kuasa" data={formData.penerimaKuasa.nik} setData={(val) => handlePenerimaChange("nik", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_nik} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.penerimaKuasa.pekerjaan} setData={(val) => handlePenerimaChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_pekerjaan} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.penerimaKuasa.alamat} setData={(val) => handlePenerimaChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_alamat} />
+            <InputField inputLabel="Hubungan dengan Pemberi Kuasa" inputPlaceholder="Contoh: Anak, Istri, Kerabat" data={formData.penerimaKuasa.hubungan} setData={(val) => handlePenerimaChange("hubungan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.penerima_hubungan} />
+            <InputField inputLabel="Keperluan" inputPlaceholder="Contoh: Mengambil BPKB di Kantor Leasing" data={formData.keperluan} 
+              setData={(val) => {
+                setFormData({ ...formData, keperluan: val });
+                if (errors.keperluan) setErrors(prev => ({ ...prev, keperluan: undefined }));
+              }}
+              setEditData={setEditData} 
+              editData={editData} 
+              submited={submited} 
+              error={errors.keperluan} 
             />
 
-            <h1 className="text-black text-xl lg:text-[24px] font-bold mt-6">
-              Data Penerima Kuasa
-            </h1>
-            <InputField
-              inputLabel="Nama Penerima Kuasa"
-              inputPlaceholder="Nama Penerima Kuasa"
-              data={formData.Nama2}
-              setData={(val) => setFormData({ ...formData, Nama2: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Kota/Kabupaten Lahir"
-              inputPlaceholder="Kota/Kabupaten Lahir"
-              data={formData.Kotakab2}
-              setData={(val) => setFormData({ ...formData, Kotakab2: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputFieldDate
-              inputLabel="Tanggal Lahir"
-              data={formData.TanggalLahir2}
-              setData={(val) =>
-                setFormData({ ...formData, TanggalLahir2: val })
-              }
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="NIK"
-              inputPlaceholder="NIK Penerima Kuasa"
-              data={formData.NIK2}
-              setData={(val) => setFormData({ ...formData, NIK2: val })}
-              numberOnly
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Pekerjaan"
-              inputPlaceholder="Pekerjaan"
-              data={formData.perkerjaan2}
-              setData={(val) => setFormData({ ...formData, perkerjaan2: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Alamat"
-              inputPlaceholder="Alamat"
-              data={formData.Alamat2}
-              setData={(val) => setFormData({ ...formData, Alamat2: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Hubungan dengan Pemberi Kuasa"
-              inputPlaceholder="Contoh: Anak, Istri, Kerabat"
-              data={formData.HubunganDenganPengaju}
-              setData={(val) =>
-                setFormData({ ...formData, HubunganDenganPengaju: val })
-              }
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-
-            {/* Button Group */}
             <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={!editData}
-                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed"
-              >
+              <button type="submit" disabled={!editData} className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed">
                 Submit
               </button>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
-              >
+              <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">
                 Reset
               </button>
             </div>
@@ -297,6 +248,19 @@ export default function SuratKeteranganKuasa({
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
     </div>
   );
 }

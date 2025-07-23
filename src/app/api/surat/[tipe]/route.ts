@@ -277,6 +277,7 @@ export async function POST(
         doc.setData({
           Nama: body.nama,
           Nama_OrangTua: body.namaOrangTua,
+          NIK: body.nik,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
           Jenis_Kelamin: body.jenisKelamin,
@@ -325,7 +326,11 @@ export async function POST(
           Umur: body.umur,
           Pekerjaan: body.pekerjaan,
           Alamat: body.alamat,
+          Tanggal: body.tanggalHilang,
+          Bulan: body.bulanHilang,
+          Tahun: body.tahunHilang,
           Tanggal_Surat: tanggalSurat,
+          
         });
         break;
       case "penambahan_anggota":
@@ -493,6 +498,7 @@ export async function POST(
           Nama: body.nama,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
+          Jenis_Kelamin:body.jenisKelamin,
           Pekerjaan: body.pekerjaan,
           Alamat: body.alamat,
           Nama_Anak: body.namaAnak,
@@ -541,7 +547,7 @@ export async function POST(
           Alamat_Wajib_Pajak: body.alamatWajibPajak,
           Luas: body.luas,
           NJOP: body.njop,
-          Total_NJOP: body.totalNJOP,
+          Total_NJOP: `Rp. ${body.totalNJOP}`,
           Tahun_Data_PBB: body.tahunDataPBB,
           Tahun_Belum_Terbit: body.tahunBelumTerbit,
           Tujuan_Pengajuan: body.tujuanPengajuan,
