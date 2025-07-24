@@ -1,12 +1,15 @@
 "use client";
 
 import InputField from "../../components/field/InputField";
-import InputFieldDate from "../../components/field/InputFieldDate";
 import { useState } from "react";
-import InputFieldDropdown from "../field/InputFieldDropdown";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganObyekProps = {
   tipe: String;
+};
+
+type FormErrors = {
+  [key: string]: string | undefined;
 };
 
 export default function SuratKeteranganObyek({
@@ -14,69 +17,100 @@ export default function SuratKeteranganObyek({
 }: SuratKeteranganObyekProps) {
   // --- PERUBAHAN: Menambahkan NIKPengaju dan memperbaiki typo ---
   const initialData = {
-    NamaPengaju: "",
-    NIKPengaju: "", // NIK Pengaju ditambahkan di sini
-    NOP: "",
-    AlamatOP: "", // Typo 'AlaamatOP' diperbaiki
-    AlamatOPW: "",
-    Luas: "",
-    NJOP: "",
-    TotalNJOP: "",
-    PBB: "",
-    Tahunterbit: "",
-    TujuanPengajuan: "",
-  };
+  namaPengaju: "",
+  nikPengaju: "",
+  nop: "",
+  alamatOp: "",
+  alamatWp: "",
+  luas: "",
+  njop: "",
+  totalNjop: "",
+  tahunDataPbb: "", // Diubah dari Tahunterbit
+  tahunBelumTerbit: "", // Field baru ditambahkan
+  tujuanPengajuan: "",
+};
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
 
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+
+  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    Object.keys(formData).forEach((keyStr) => {
+      const key = keyStr as keyof typeof initialData;
+      if (!formData[key]?.trim()) {
+        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+        newErrors[key] = `${fieldName} wajib diisi.`;
+      }
+    });
+    return newErrors;
+  };
+
+
   // --- FUNGSI HANDLE SUBMIT YANG TELAH DISESUAIKAN ---
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setErrors({});
+    setShowConfirmModal(true);
+  };
 
+  const handleConfirm = async () => {
+    setLoading(true);
     setEditData(false);
-
+    
     const data_dinamis = {
-      nama_wajib_pajak: formData.NamaPengaju,
-      nik_wajib_pajak: formData.NIKPengaju,
-      nomor_objek_pajak: formData.NOP,
-      alamat_objek_pajak: formData.AlamatOP,
-      alamat_wajib_pajak: formData.AlamatOPW,
-      luas_objek_pajak: formData.Luas,
-      njop: formData.NJOP,
-      total_njop: formData.TotalNJOP,
-      pbb_terhutang: formData.PBB,
-      tahun_terbit_sppt: formData.Tahunterbit,
-      tujuan_pengajuan: formData.TujuanPengajuan,
+      namaWajibPajak: formData.namaPengaju,
+      nop: formData.nop,
+      alamatObjekPajak: formData.alamatOp,
+      alamatWajibPajak: formData.alamatWp,
+      luas: formData.luas,
+      njop: formData.njop,
+      totalNJOP: formData.totalNjop,
+      tahunDataPBB: formData.tahunDataPbb,
+      tahunBelumTerbit: formData.tahunBelumTerbit,
+      tujuanPengajuan: formData.tujuanPengajuan,
     };
 
     try {
       const res = await fetch("/api/permohonan", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nik: formData.NIKPengaju,
-          jenis_surat: "Surat Keterangan Objek Pajak",
+          nik: formData.nikPengaju,
+          jenis_surat: "objek",
           tipe: tipe,
-          keterangan: `Pengajuan Surat Keterangan Objek Pajak oleh ${formData.NamaPengaju}`,
+          keterangan: `Pengajuan Surat Keterangan Objek Pajak oleh ${formData.namaPengaju}`,
           data_dinamis,
         }),
       });
 
       const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.error || "Gagal mengirim permohonan");
-      }
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      alert(`✅ Berhasil! Nomor Resi Anda: ${result.permohonan.no_resi}`);
-      window.location.href = "/";
-
+      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
     } catch (err: any) {
-      alert(`❌ Terjadi kesalahan: ${err.message}`);
+      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       setEditData(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,6 +118,7 @@ export default function SuratKeteranganObyek({
     setFormData(initialData);
     setSubmited(null);
     setEditData(true);
+    setErrors({});
   };
 
   return (
@@ -132,132 +167,31 @@ export default function SuratKeteranganObyek({
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] pb-10">
           <form
             onSubmit={handleSubmit}
+            noValidate
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            <h1 className="text-black text-xl lg:text-[24px] font-bold">
-              Data Pengaju
-            </h1>
-            <InputField
-              inputLabel="Nama Wajib Pajak"
-              inputPlaceholder="Nama Wajib Pajak"
-              data={formData.NamaPengaju}
-              setData={(val) => setFormData({ ...formData, NamaPengaju: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            {/* --- PERUBAHAN: InputField untuk NIK ditambahkan di sini --- */}
-            <InputField
-              inputLabel="NIK Wajib Pajak"
-              inputPlaceholder="Masukkan NIK Wajib Pajak"
-              data={formData.NIKPengaju}
-              setData={(val) => setFormData({ ...formData, NIKPengaju: val })}
-              numberOnly
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <h1 className="text-black text-xl lg:text-[24px] font-bold pt-4">
-              Data Objek Pajak
-            </h1>
-            <InputField
-              inputLabel="Nomor Objek Pajak (NOP)"
-              inputPlaceholder="Nomor Objek Pajak"
-              data={formData.NOP}
-              setData={(val) => setFormData({ ...formData, NOP: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            {/* --- PERUBAHAN: Typo 'AlaamatOP' diperbaiki --- */}
-            <InputField
-              inputLabel="Alamat Objek Pajak"
-              inputPlaceholder="Alamat Objek Pajak"
-              data={formData.AlamatOP}
-              setData={(val) => setFormData({ ...formData, AlamatOP: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Alamat Wajib Pajak"
-              inputPlaceholder="Alamat Wajib Pajak"
-              data={formData.AlamatOPW}
-              setData={(val) => setFormData({ ...formData, AlamatOPW: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Luas Objek Pajak (m²)"
-              inputPlaceholder="Luas Objek Pajak"
-              data={formData.Luas}
-              setData={(val) => setFormData({ ...formData, Luas: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Nilai Jual Objek Pajak (NJOP)"
-              inputPlaceholder="Nilai Jual Objek Pajak"
-              data={formData.NJOP}
-              setData={(val) => setFormData({ ...formData, NJOP: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Total NJOP"
-              inputPlaceholder="Total NJOP"
-              data={formData.TotalNJOP}
-              setData={(val) => setFormData({ ...formData, TotalNJOP: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Pajak Bumi dan Bangunan (PBB)"
-              inputPlaceholder="Pajak Bumi dan Bangunan"
-              data={formData.PBB}
-              setData={(val) => setFormData({ ...formData, PBB: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Tahun Terbit SPPT"
-              inputPlaceholder="Tahun Terbit"
-              data={formData.Tahunterbit}
-              setData={(val) => setFormData({ ...formData, Tahunterbit: val })}
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            <InputField
-              inputLabel="Tujuan Pengajuan Surat"
-              inputPlaceholder="Tujuan Pengajuan"
-              data={formData.TujuanPengajuan}
-              setData={(val) =>
-                setFormData({ ...formData, TujuanPengajuan: val })
-              }
-              setEditData={setEditData}
-              editData={editData}
-              submited={submited}
-            />
-            {/* Button Group */}
+            {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
+            <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pengaju</h1>
+            <InputField inputLabel="Nama Wajib Pajak" inputPlaceholder="Nama Wajib Pajak" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
+            <InputField inputLabel="NIK Wajib Pajak" inputPlaceholder="Masukkan NIK Wajib Pajak" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nikPengaju} />
+            
+            <h1 className="text-black text-xl lg:text-[24px] font-bold pt-4">Data Objek Pajak</h1>
+            <InputField inputLabel="Nomor Objek Pajak (NOP)" inputPlaceholder="Nomor Objek Pajak" data={formData.nop} setData={(val) => handleInputChange("nop", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nop} />
+            <InputField inputLabel="Alamat Objek Pajak" inputPlaceholder="Alamat Objek Pajak" data={formData.alamatOp} setData={(val) => handleInputChange("alamatOp", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamatOp} />
+            <InputField inputLabel="Alamat Wajib Pajak" inputPlaceholder="Alamat Wajib Pajak" data={formData.alamatWp} setData={(val) => handleInputChange("alamatWp", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamatWp} />
+            <InputField inputLabel="Luas Objek Pajak (m²)" inputPlaceholder="Luas Objek Pajak" data={formData.luas} setData={(val) => handleInputChange("luas", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.luas} />
+            <InputField inputLabel="Nilai Jual Objek Pajak / M² (NJOP)" inputPlaceholder="Nilai Jual Objek Pajak (Rp)" data={formData.njop} setData={(val) => handleInputChange("njop", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.njop} />
+            <InputField inputLabel="Total NJOP" inputPlaceholder="Total NJOP (Rp)" data={formData.totalNjop} setData={(val) => handleInputChange("totalNjop", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.totalNjop} />
+            <InputField inputLabel="Tahun Data PBB" inputPlaceholder="Tahun Terbit SPPT" data={formData.tahunDataPbb} setData={(val) => handleInputChange("tahunDataPbb", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tahunDataPbb} />
+            {/* BARU: InputField ditambahkan */}
+            <InputField inputLabel="Tahun Belum Terbit" inputPlaceholder="Tahun Belum Terbit" data={formData.tahunBelumTerbit} setData={(val) => handleInputChange("tahunBelumTerbit", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tahunBelumTerbit} />
+            <InputField inputLabel="Tujuan Pengajuan Surat" inputPlaceholder="Tujuan Pengajuan" data={formData.tujuanPengajuan} setData={(val) => handleInputChange("tujuanPengajuan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tujuanPengajuan} />
+
             <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={!editData}
-                className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed"
-              >
+              <button type="submit" disabled={!editData} className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed">
                 Submit
               </button>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium"
-              >
+              <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">
                 Reset
               </button>
             </div>
@@ -269,6 +203,20 @@ export default function SuratKeteranganObyek({
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
+            <ConfirmationModal
+        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+          if (successInfo) window.location.href = "/";
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
+        successInfo={successInfo}
+      />
+
     </div>
   );
 }

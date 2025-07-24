@@ -89,7 +89,7 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
     setShowConfirmModal(true);
   };
 
-// DIUBAH: Ganti seluruh fungsi ini
+
   const handleConfirm = async () => {
     setLoading(true);
     setEditData(false);
