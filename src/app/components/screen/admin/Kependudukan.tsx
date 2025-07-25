@@ -2,7 +2,6 @@
 import TabelKependudukan from "../../../components/tabel/TabelKependudukan";
 import TabelKonfirmasi from "../../../components/tabel/TabelKonfirmasi";
 import ButtonTambahPenduduk from "../../../components/button/ButtonTambahPenduduk";
-import FilterPenduduk from "../../filter/FilterPenduduk";
 import { useRouter } from "next/navigation";
 
 
@@ -15,7 +14,7 @@ export default function KependudukanPage() {
 
       {/* Filter + Tombol */}
       <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-        <FilterPenduduk />
+
         <ButtonTambahPenduduk
           onClick={() => router.push('/admin/kependudukan/tambah')}
         />

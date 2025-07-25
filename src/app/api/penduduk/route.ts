@@ -4,35 +4,49 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
-
+    const searchParams = req.nextUrl.searchParams;
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
     const skip = (page - 1) * limit;
+
+    const tanggal = searchParams.get("date");
+
+    const whereClause = tanggal
+      ? {
+          createdAt: {
+            gte: new Date(`${tanggal}T00:00:00.000Z`),
+            lt: new Date(`${tanggal}T23:59:59.999Z`),
+          },
+        }
+      : {};
 
     const [data, total] = await Promise.all([
       prisma.penduduk.findMany({
+        where: whereClause,
         skip,
         take: limit,
-        orderBy: { nama_lengkap: "asc" }, // optional: urutkan berdasarkan nama
+        orderBy: { nama_lengkap: "asc" },
       }),
-      prisma.penduduk.count(),
+      prisma.penduduk.count({ where: whereClause }),
     ]);
 
+    const totalPages = Math.ceil(total / limit);
+
     return NextResponse.json({
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalData: total,
       data,
+      total,
+      totalPages,
+      currentPage: page,
     });
   } catch (error) {
-    console.error("Failed to fetch penduduk with pagination:", error);
+    console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
+
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();

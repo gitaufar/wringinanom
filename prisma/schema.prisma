@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model admin {
@@ -13,6 +14,8 @@ model admin {
   email              String               @unique(map: "Admin_email_key")
   password           String
   logperubahanstatus logperubahanstatus[]
+  createdAt DateTime @default(now())
+
 }
 
 model logperubahanstatus {
@@ -24,6 +27,7 @@ model logperubahanstatus {
   waktu_perubahan DateTime
   admin           admin          @relation(fields: [admin_id], references: [id], onDelete: NoAction, map: "LogPerubahanStatus_admin_id_fkey")
   riwayatlayanan  riwayatlayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade, map: "LogPerubahanStatus_no_resi_fkey")
+  createdAt DateTime @default(now())
 
   @@index([admin_id], map: "LogPerubahanStatus_admin_id_idx")
   @@index([no_resi], map: "LogPerubahanStatus_no_resi_idx")
@@ -49,6 +53,8 @@ model penduduk {
   tanggal_perkawinan DateTime?
   permohonansurat    permohonansurat[]
   riwayatlayanan     riwayatlayanan[]
+  createdAt DateTime @default(now())
+  
 }
 
 model permohonansurat {

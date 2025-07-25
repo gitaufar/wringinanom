@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { Penduduk } from '@prisma/client'
+import { penduduk } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import {
   FiChevronLeft,
@@ -16,7 +16,7 @@ const LIMIT = 10
 
 export default function TabelKependudukan() {
   const router = useRouter()
-  const [data, setData] = useState<Penduduk[]>([])
+  const [data, setData] = useState<penduduk[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
