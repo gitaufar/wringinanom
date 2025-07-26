@@ -16,17 +16,9 @@ type FormErrors = {
 
 export default function SuratKeteranganBedaIdentitas({
   tipe,
-}: SuratKeteranganBedaIdentitasProps) {
-  const [edit, setEdit] = useState(true);
-  const [submited, setSubmited] = useState<string | null>("");
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{
-    title: string;
-    resi: string;
-  } | null>(null);
-  const [errorInfo, setErrorInfo] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+}: 
 
+SuratKeteranganBedaIdentitasProps) {
   const initialState = {
     namaPengaju: "",
     nikPengaju: "",
@@ -42,8 +34,16 @@ export default function SuratKeteranganBedaIdentitas({
     kewarganegaraan: "",
   };
 
+  const [edit, setEdit] = useState(true);
+  const [submited, setSubmited] = useState<string | null>("");
   const [form, setForm] = useState(initialState);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  
+
 
   const handleInputChange = (
     field: keyof typeof initialState,
@@ -108,22 +108,20 @@ export default function SuratKeteranganBedaIdentitas({
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
 
-      setSuccessInfo({
-        title: "Pengajuan Berhasil!",
-        resi: data.permohonan.no_resi,
-      });
-    } catch (err: unknown) {
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
       if (err instanceof Error) {
-        setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       } else {
-        setErrorInfo(
-          "Gagal mengirim permohonan: Terjadi kesalahan tak terduga."
-        );
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEdit(true);
+      setEdit(true); // Izinkan edit kembali jika ada error
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -343,17 +341,15 @@ export default function SuratKeteranganBedaIdentitas({
       </div>
 
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+       isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

@@ -13,9 +13,8 @@ model admin {
   nama               String
   email              String               @unique(map: "Admin_email_key")
   password           String
+  createdAt          DateTime             @default(now())
   logperubahanstatus logperubahanstatus[]
-  createdAt DateTime @default(now())
-
 }
 
 model logperubahanstatus {
@@ -25,9 +24,9 @@ model logperubahanstatus {
   status_lama     String
   status_baru     String
   waktu_perubahan DateTime
+  createdAt       DateTime       @default(now())
   admin           admin          @relation(fields: [admin_id], references: [id], onDelete: NoAction, map: "LogPerubahanStatus_admin_id_fkey")
   riwayatlayanan  riwayatlayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade, map: "LogPerubahanStatus_no_resi_fkey")
-  createdAt DateTime @default(now())
 
   @@index([admin_id], map: "LogPerubahanStatus_admin_id_idx")
   @@index([no_resi], map: "LogPerubahanStatus_no_resi_idx")
@@ -41,7 +40,7 @@ model penduduk {
   nama_ayah          String?
   jenis_kelamin      String
   tempat_lahir       String
-  tanggal_lahir      DateTime
+  tanggal_lahir      DateTime?
   alamat             String
   rt                 Int
   rw                 Int
@@ -51,10 +50,9 @@ model penduduk {
   status_keluarga    String
   status_perkawinan  String
   tanggal_perkawinan DateTime?
+  createdAt          DateTime          @default(now())
   permohonansurat    permohonansurat[]
   riwayatlayanan     riwayatlayanan[]
-  createdAt DateTime @default(now())
-  
 }
 
 model permohonansurat {

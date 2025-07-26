@@ -38,19 +38,17 @@ const baseLetters = [
     { id: 12, title: "Surat Keterangan Tidak Diketahui Keberadaannnya", description: "Surat yang menyatakan seseorang tidak diketahui keberadaannya.", topic: "Pemerintahan", link:"tidak_diketahui" },
     { id: 13, title: "Surat Penambahan Anggota Keluarga", description: "Surat keterangan penambahan anggota dalam kartu keluarga.", topic: "Pemerintahan", link:"penambahan_anggota" },
     { id: 14, title: "Surat Pernyataan Kelahiran", description: "Surat pernyataan resmi tentang kelahiran anak.", topic: "Pemerintahan", link:"pernyataan_kelahiran" },
-    // { id: 15, title: "Surat Keterangan Panggilan", description: "Surat keterangan resmi mengenai panggilan pihak tertentu.", topic: "Pemerintahan", link:"panggilan" },
-    { id: 16, title: "Surat Keterangan Tidak Keberatan", description: "Surat pernyataan tidak keberatan terhadap suatu hal.", topic: "Pemerintahan", link:"tidak_keberatan" },
-    { id: 17, title: "Surat Keterangan Catatan Kepolisian", description: "Surat keterangan catatan kepolisian", topic: "Pemerintahan", link:"catatan_kepolisian" },
-    { id: 18, title: "Surat Keterangan Kehilangan Kepolisian", description: "Surat keterangan kehilangan yang diterbitkan untuk kepolisian.", topic: "Pemerintahan", link:"kehilangan_kepolisian" },
-    { id: 19, title: "Surat Pengantar", description: "Surat pengantar untuk keperluan administrasi atau permohonan.", topic: "Pemerintahan", link:"pengantar" },
-    { id: 20, title: "Surat Keterangan Tidak Mampu", description: "Surat keterangan yang menyatakan kondisi tidak mampu secara ekonomi.", topic: "Kesejahteraan Rakyat", link:"tidak_mampu" },
-    { id: 21, title: "Surat Keterangan Wali Nikah", description: "Surat keterangan yang menyatakan wali dalam pernikahan.", topic: "Kesejahteraan Rakyat", link:"wali_nikah" },
-    { id: 22, title: "Surat Keterangan Wali Murid", description: "Surat yang menyatakan hubungan wali dengan murid.", topic: "Kesejahteraan Rakyat", link:"wali_murid" },
-    { id: 23, title: "Surat Keterangan Domisili", description: "Surat yang menyatakan tempat tinggal resmi warga.", topic: "Pelayanan Umum" , link:"domisili"},
-    { id: 24, title: "Surat Keterangan Kuasa", description: "Surat yang memberikan kuasa kepada pihak lain untuk suatu urusan.", topic: "Pelayanan Umum", link:"kuasa" },
-    { id: 25, title: "Surat Keterangan Objek", description: "Surat keterangan terkait kepemilikan atau status objek tertentu.", topic: "Pelayanan Umum", link:"objek" },
-    { id: 26, title: "Surat Keterangan Penghasilan", description: "SSurat yang menyatakan jumlah penghasilan seseorang.", topic: "Pelayanan Umum", link:"penghasilan" },
-    { id: 27, title: "Surat Keterangan Usaha", description: "Surat keterangan yang menyatakan keberadaan suatu usaha.", topic: "Pelayanan Umum", link:"usaha" }
+    { id: 15, title: "Surat Keterangan Tidak Keberatan", description: "Surat pernyataan tidak keberatan terhadap suatu hal.", topic: "Pemerintahan", link:"tidak_keberatan" },
+    { id: 16, title: "Surat Keterangan Catatan Kepolisian", description: "Surat keterangan catatan kepolisian", topic: "Pemerintahan", link:"catatan_kepolisian" },
+    { id: 17, title: "Surat Keterangan Kehilangan Kepolisian", description: "Surat keterangan kehilangan yang diterbitkan untuk kepolisian.", topic: "Pemerintahan", link:"kehilangan_kepolisian" },
+    { id: 18, title: "Surat Pengantar", description: "Surat pengantar untuk keperluan administrasi atau permohonan.", topic: "Pemerintahan", link:"pengantar" },
+    { id: 19, title: "Surat Keterangan Tidak Mampu", description: "Surat keterangan yang menyatakan kondisi tidak mampu secara ekonomi.", topic: "Kesejahteraan Rakyat", link:"tidak_mampu" },
+    { id: 20, title: "Surat Keterangan Wali Murid", description: "Surat yang menyatakan hubungan wali dengan murid.", topic: "Kesejahteraan Rakyat", link:"wali_murid" },
+    { id: 21, title: "Surat Keterangan Domisili", description: "Surat yang menyatakan tempat tinggal resmi warga.", topic: "Pelayanan Umum" , link:"domisili"},
+    { id: 22, title: "Surat Keterangan Kuasa", description: "Surat yang memberikan kuasa kepada pihak lain untuk suatu urusan.", topic: "Pelayanan Umum", link:"kuasa" },
+    { id: 23, title: "Surat Keterangan Objek", description: "Surat keterangan terkait kepemilikan atau status objek tertentu.", topic: "Pelayanan Umum", link:"objek" },
+    { id: 24, title: "Surat Keterangan Penghasilan", description: "SSurat yang menyatakan jumlah penghasilan seseorang.", topic: "Pelayanan Umum", link:"penghasilan" },
+    { id: 25, title: "Surat Keterangan Usaha", description: "Surat keterangan yang menyatakan keberadaan suatu usaha.", topic: "Pelayanan Umum", link:"usaha" }
   ];
 
   const letters = useMemo(() => baseLetters.map(letter => ({

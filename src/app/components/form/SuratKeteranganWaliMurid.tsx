@@ -32,9 +32,9 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
     tanggalLahir: "",
     jenisKelamin: "",
     pekerjaan: "Pelajar/Mahasiswa",
-    kelasRomawi: "", // Field baru
-    kelasHuruf: "", // Field baru
-    sekolah: "", // Field baru
+    kelasRomawi: "",
+    kelasHuruf: "", 
+    sekolah: "", 
     alamat: "",
   },
 };
@@ -45,7 +45,6 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
@@ -113,10 +112,15 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
-      setEditData(true);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -174,7 +178,6 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
         {/* Form Section */}
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px] pb-10">
            <form onSubmit={handleSubmit} noValidate className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-8 rounded-[15px] bg-white shadow">
-            {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
             <div className="flex flex-col gap-6">
               <h1 className="text-black text-[32px] font-bold">Data Wali Murid (Pengaju)</h1>
               <InputField inputLabel="Nama Lengkap" inputPlaceholder="Masukkan nama lengkap wali" data={formData.wali.nama} setData={(val) => handleWaliChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.wali_nama} />
@@ -194,7 +197,6 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
               <InputFieldDate inputLabel="Tanggal Lahir" data={formData.murid.tanggalLahir} setData={(val) => handleMuridChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_tanggalLahir} />
               <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.murid.jenisKelamin} setData={(val) => handleMuridChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_jenisKelamin} />
               <InputField inputLabel="Pekerjaan" inputPlaceholder="Co. Pelajar/Mahasiswa" data={formData.murid.pekerjaan} setData={(val) => handleMuridChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_pekerjaan} />
-              {/* DIUBAH: InputField Kelas dipecah menjadi 3 */}
               <InputField inputLabel="Nama Sekolah" inputPlaceholder="Contoh: SDN 1 Simpar" data={formData.murid.sekolah} setData={(val) => handleMuridChange("sekolah", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_sekolah} />
               <InputField inputLabel="Kelas (Angka Romawi)" inputPlaceholder="Contoh: VII" data={formData.murid.kelasRomawi} setData={(val) => handleMuridChange("kelasRomawi", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_kelasRomawi} />
               <InputField inputLabel="Kelas (Huruf)" inputPlaceholder="Contoh: A" data={formData.murid.kelasHuruf} setData={(val) => handleMuridChange("kelasHuruf", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.murid_kelasHuruf} />
@@ -213,17 +215,15 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

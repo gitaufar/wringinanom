@@ -6,7 +6,7 @@ import { useState } from "react";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganKuasaProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -44,7 +44,6 @@ export default function SuratKeteranganKuasa({
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   
@@ -84,12 +83,11 @@ export default function SuratKeteranganKuasa({
     setShowConfirmModal(true);
   };
 
-  // DIUBAH: Ganti seluruh fungsi ini dengan versi baru
+ 
   const handleConfirm = async () => {
     setLoading(true);
     setEditData(false);
 
-    // Memetakan dari state frontend ke format backend yang baru
     const data_dinamis = {
       namaPemberi: formData.pemberiKuasa.nama,
       kotaPemberi: formData.pemberiKuasa.kotaLahir,
@@ -125,10 +123,15 @@ export default function SuratKeteranganKuasa({
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
-      setEditData(true);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -248,17 +251,15 @@ export default function SuratKeteranganKuasa({
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

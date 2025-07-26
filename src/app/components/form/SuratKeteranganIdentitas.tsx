@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 
 type SuratKeteranganIdentitasProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -16,18 +16,15 @@ type FormErrors = {
 };
 
 export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdentitasProps) {
-  const [edit, setEdit] = useState(true);
-  const [submited, setSubmited] = useState<string | null>("");
-
+  
   const initialState = {
     namaPengaju: "",
     nikPengaju: "",
     
-    // Field baru
-    dokumen1: "", // Untuk nama dokumen (misal: KTP)
-    dokumen2: "", // Untuk nama dokumen (misal: Kartu Keluarga)
+    dokumen1: "", 
+    dokumen2: "", 
     agama: "",
-
+    
     // Dokumen 1
     namaDok1: "",
     kotaLahirDok1: "",
@@ -37,7 +34,7 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
     jenisKelaminDok1: "",
     alamatDok1: "",
     statusDok1: "",
-
+    
     // Dokumen 2
     namaDok2: "",
     kotaLahirDok2: "",
@@ -48,15 +45,16 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
     statusDok2: "",
     alamatDok2: "",
   };
-
+  
   const [form, setForm] = useState(initialState);
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [edit, setEdit] = useState(true);
+  const [submited, setSubmited] = useState<string | null>("");
+  
   const handleInputChange = (field: keyof typeof initialState, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -64,14 +62,13 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
     }
   };
 
-  // DIUBAH: Tambahkan validasi untuk field baru
+ 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     Object.keys(form).forEach(keyStr => {
       const key = keyStr as keyof typeof initialState;
       if (!form[key]?.trim()) {
         const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        // Logika untuk membuat pesan error lebih rapi
         newErrors[key] = `${fieldName.replace(/Dok(\d)/, ' Dok $1')} wajib diisi.`;
       }
     });
@@ -89,16 +86,10 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
     setShowConfirmModal(true);
   };
 
-  // DIUBAH: Ganti seluruh fungsi ini
   const handleConfirm = async () => {
     setLoading(true);
     setEdit(false);
 
-    // Membuat format tanggal DD-MM-YYYY untuk Tanggal_Surat
-    const today = new Date();
-    const tanggalSurat = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
-
-    // Memetakan dari state frontend ke format yang diinginkan backend
     const data_dinamis = {
       namaDok1: form.namaDok1,
       // Mengambil data umum dari Dokumen 1 (sesuai asumsi)
@@ -115,7 +106,6 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
       dok2: form.dokumen2,
       // Mengambil nama dari Dokumen 2
       namaDok2: form.namaDok2,
-      Tanggal_Surat: tanggalSurat,
     };
 
     try {
@@ -134,10 +124,15 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
-      setEdit(true);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEdit(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -262,17 +257,15 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+       isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

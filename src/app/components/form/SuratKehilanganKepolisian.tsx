@@ -8,10 +8,10 @@ import InputFieldTime from "../../components/field/InputFieldTime";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKehilanganKepolisianProps = {
-  tipe: String;
+  tipe: string;
 };
 
-// BARU: Tipe untuk objek error
+
 type FormErrors = {
   [key: string]: string | undefined;
 };
@@ -34,15 +34,14 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
   };
 
   const [formData, setFormData] = useState(initialData);
-  const [errors, setErrors] = useState<FormErrors>({}); // BARU: State untuk error
+  const [errors, setErrors] = useState<FormErrors>({}); 
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // BARU: Fungsi untuk menangani perubahan input dan membersihkan error
+
   const handleInputChange = (field: keyof typeof initialData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -50,14 +49,12 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
     }
   };
   
-  // BARU: Fungsi validasi otomatis untuk struktur data datar
+
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     Object.keys(formData).forEach(keyStr => {
       const key = keyStr as keyof typeof formData;
-      // Memeriksa jika value kosong setelah di-trim
       if (!formData[key] || !formData[key].trim()) {
-        // Membuat nama field yang lebih mudah dibaca, contoh: "namaBarang" -> "Nama Barang"
         const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
         newErrors[key] = `${fieldName} wajib diisi.`;
       }
@@ -65,15 +62,15 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
     return newErrors;
   };
 
-  // DIUBAH: handleSubmit sekarang menjalankan validasi
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      return; // Hentikan jika ada error
+      return; 
     }
-    setErrors({}); // Bersihkan error jika valid
+    setErrors({}); 
     setShowConfirmModal(true);
   };
 
@@ -101,12 +98,15 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({
-        title: "Pengajuan Berhasil!",
-        resi: result.permohonan.no_resi,
-      });
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -193,17 +193,15 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
 
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+         isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

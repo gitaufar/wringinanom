@@ -5,7 +5,7 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type PengajuanKeteranganAnakKandungProps = {
-  tipe: String;
+  tipe: string;
 };
 
 // BARU: Tipe untuk objek error
@@ -19,11 +19,8 @@ export default function PengajuanKeteranganAnakKandung({
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
-  // BARU: State untuk menampung error validasi
   const [errors, setErrors] = useState<FormErrors>({});
 
   const initialState = {
@@ -91,25 +88,6 @@ export default function PengajuanKeteranganAnakKandung({
     const angkaNum = parseInt(form.anakKe || "0");
     const angkaNum2 = parseInt(form.darixSaudara || "0");
 
-    // const data_dinamis = {
-    //   namaAnak: form.namaLengkap,
-    //   kotaAnak: form.kotaLahir,
-    //   tanggalLahirAnak: form.tanggalLahir,
-    //   alamatAnak: form.alamatAnak,
-    //   namaIbu: form.ibu.nama,
-    //   kotaIbu: form.ibu.kotaLahir,
-    //   tanggalLahirIbu: form.ibu.tanggalLahir,
-    //   pekerjaanIbu: form.ibu.pekerjaan,
-    //   alamatIbu: form.ibu.alamat,
-    //   namaAyah: form.ayah.nama,
-    //   kotaAyah: form.ayah.kotaLahir,
-    //   tanggalLahirAyah: form.ayah.tanggalLahir,
-    //   pekerjaanAyah: form.ayah.pekerjaan,
-    //   alamatAyah: form.ayah.alamat,
-    //   angkaNum: angkaNum,
-    //   angkaNum2: angkaNum2,
-    // };
-
     try {
       const res = await fetch("/api/permohonan", {
         method: "POST",
@@ -142,14 +120,18 @@ export default function PengajuanKeteranganAnakKandung({
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
+      window.location.href = `/${result.permohonan.no_resi}`;
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEdit(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleReset = () => {
@@ -237,17 +219,15 @@ export default function PengajuanKeteranganAnakKandung({
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </>
   );

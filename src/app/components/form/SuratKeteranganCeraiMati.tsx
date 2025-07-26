@@ -7,7 +7,7 @@ import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganCeraiMatiProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -34,8 +34,8 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
   const [errors, setErrors] = useState<FormErrors>({}); // BARU: State untuk error
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
-   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
@@ -64,10 +64,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     console.log("HASIL VALIDASI:", formErrors);
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      return; // Hentikan jika ada error
+      return; 
     }
     console.log("VALIDASI BERHASIL, MENAMPILKAN MODAL..."); 
-    setErrors({}); // Bersihkan error jika valid
+    setErrors({}); 
     setShowConfirmModal(true);
   };
 
@@ -83,7 +83,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nik: formData.NIKPengaju, // NIK dari pemohon utama
+          nik: formData.NIKPengaju, 
           jenis_surat: "cerai_mati",
           tipe: tipe,
           keterangan: `Pengajuan Surat Keterangan Cerai Mati oleh ${formData.NamaPengaju}`,
@@ -105,11 +105,16 @@ const handleSubmit = async (e: React.FormEvent) => {
       if (!res.ok) {
         throw new Error(result.error || "Gagal mengirim permohonan");
       }
+      
+      window.location.href = `/${result.permohonan.no_resi}`;
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
-      setEditData(true);
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -208,17 +213,15 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
       </div>
       <ConfirmationModal
-              isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
-              onClose={() => {
-                setShowConfirmModal(false);
-                setErrorInfo(null);
-                if (successInfo) window.location.href = "/";
-              }}
-              onConfirm={handleConfirm}
-              isLoading={loading}
-              title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
-              message={errorInfo || "Apakah data yang Anda isi sudah benar dan ingin melanjutkan pengajuan?"}
-              successInfo={successInfo}
+        isOpen={showConfirmModal || errorInfo !== null}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setErrorInfo(null);
+        }}
+        onConfirm={handleConfirm}
+        isLoading={loading}
+        title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
             />
     </div>
   );
