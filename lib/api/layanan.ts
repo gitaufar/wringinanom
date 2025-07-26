@@ -17,6 +17,11 @@ export const tambahRiwayatLayanan = async (nik: string, keterangan: string) => {
     return data; // biasanya berisi { riwayat: { no_resi, ... } }
   } catch (err: any) {
     console.error("Error saat POST:", err);
-    throw new Error(err.message || "Terjadi kesalahan");
+
+    if (err instanceof Error) {
+      throw new Error(err.message || "Terjadi kesalahan");
+    }
+
+    throw new Error("Terjadi kesalahan tak dikenal");
   }
 };
