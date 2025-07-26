@@ -9,7 +9,7 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import InputFieldTime from "../../components/field/InputFieldTime"; // BARU
 
 type SuratPernyataanKelahiranProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -29,8 +29,8 @@ export default function SuratPernyataanKelahiran({ tipe }: SuratPernyataanKelahi
     kotaLahir: "",
     tanggalLahir: "",
     hariLahir: "",
-    jamLahir: "", // Field baru
-    anakKe: "",   // Field baru
+    jamLahir: "", 
+    anakKe: "",   
     agama: "",
     alamat: "",
   },
@@ -59,7 +59,6 @@ export default function SuratPernyataanKelahiran({ tipe }: SuratPernyataanKelahi
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
@@ -92,10 +91,7 @@ const handleConfirm = async () => {
     setLoading(true);
     setEditData(false);
 
-    const today = new Date();
-    const tanggalSurat = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
-
-    // DIUBAH: data_dinamis disesuaikan dengan format backend yang baru
+   
     const data_dinamis = {
       namaAnak: formData.anak.nama,
       jenisKelamin: formData.anak.jenisKelamin,
@@ -106,7 +102,7 @@ const handleConfirm = async () => {
       agama: formData.anak.agama,
       alamat: formData.anak.alamat,
       angkaNum: formData.anak.anakKe,
-      // Angka_Str: terbilang(formData.anak.anakKe), // Ini biasanya dihandle backend
+
       namaAyah: formData.ayah.nama,
       nikAyah: formData.ayah.nik,
       kotaLahirAyah: formData.ayah.kotaLahir,
@@ -137,10 +133,15 @@ const handleConfirm = async () => {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
-      setEditData(true);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -149,7 +150,7 @@ const handleConfirm = async () => {
 
   const handleReset = () => {
     setFormData(initialData);
-    setSubmited(null);
+    setSubmited("");
     setEditData(true);
     setErrors({});
   };
@@ -271,17 +272,15 @@ const handleConfirm = async () => {
         </div>
       </div>
        <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );

@@ -7,10 +7,10 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
 
 type SuratKeteranganBiodataPendudukProps = {
-  tipe: String;
+  tipe: string;
 };
 
-// BARU: Tipe untuk objek error
+
 type FormErrors = {
   [key:string]: string | undefined;
 }
@@ -46,8 +46,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     TanggalPerceraian: "",
   };
 
-  // BARU: Daftar field yang bersifat opsional
-  const optionalFields: (keyof typeof initialData)[] = [
+    const optionalFields: (keyof typeof initialData)[] = [
     'Nomorpaspor',
     'TanggalKadaluarsaPaspor',
     'NomorAktaPerkawinan',
@@ -60,12 +59,12 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
-  const [errors, setErrors] = useState<FormErrors>({}); // BARU: State untuk error
+  const [errors, setErrors] = useState<FormErrors>({}); 
 
-  // BARU: Fungsi untuk menangani perubahan input sekaligus menghapus error
+  
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -73,14 +72,13 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     }
   };
 
-  // BARU: Fungsi validasi yang mengecualikan field opsional
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     
     Object.keys(formData).forEach(keyStr => {
       const key = keyStr as keyof typeof formData;
 
-      // Lewati validasi jika field termasuk dalam daftar opsional
+   
       if (optionalFields.includes(key)) {
         return; 
       }
@@ -92,13 +90,6 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
       }
     });
 
-    // Contoh validasi kondisional (lebih advanced)
-    // if (formData.statusperkawinan === 'Menikah' && !formData.NomorAktaPerkawinan) {
-    //     newErrors.NomorAktaPerkawinan = 'Wajib diisi jika status Menikah';
-    // }
-    // if (formData.statusperkawinan === 'Cerai' && !formData.NomorAktaPerceraian) {
-    //     newErrors.NomorAktaPerceraian = 'Wajib diisi jika status Cerai';
-    // }
 
     return newErrors;
   };
@@ -166,15 +157,19 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
+      
+      window.location.href = `/${result.permohonan.no_resi}`;
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
-      setEditData(true);
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleReset = () => {
@@ -571,17 +566,15 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
       </div>
 
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+         isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
-        message={errorInfo || "Apakah data yang Anda isi sudah benar dan ingin melanjutkan pengajuan?"}
-        successInfo={successInfo}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
       />
     </div>
   );

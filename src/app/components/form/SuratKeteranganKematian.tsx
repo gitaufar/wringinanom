@@ -15,66 +15,61 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganKematian({tipe}: SuratKeteranganKematianProps) {
+export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematianProps) {
   const initialData = {
-  namaPengaju: "",
-  nikPengaju: "",
-  // Data Almarhum/ah
-  namaAlmarhum: "",
-  namaOrangTua: "",
-  nikAlmarhum: "",
-  kotaLahir: "",
-  tanggalLahir: "",
-  jenisKelamin: "",
-  agama: "",
-  pekerjaan: "", // Typo diperbaiki
-  alamatAlmarhum: "",
-  // Waktu Meninggal
-  hariKematian: "",
-  tanggalKematian: "",
-  waktuKematian: "",
-  tempatKematian: "",
-  penyebabKematian: "",
-  alamatKematian: "",
-};
-
-const [resi, setResi] = useState<string | null>(null);
+    namaPengaju: "",
+    nikPengaju: "",
+    // Data Almarhum/ah
+    namaAlmarhum: "",
+    namaOrangTua: "",
+    nikAlmarhum: "",
+    kotaLahir: "",
+    tanggalLahir: "",
+    jenisKelamin: "",
+    agama: "",
+    pekerjaan: "",
+    alamatAlmarhum: "",
+    // Waktu Meninggal
+    hariKematian: "",
+    tanggalKematian: "",
+    waktuKematian: "",
+    tempatKematian: "",
+    penyebabKematian: "",
+    alamatKematian: "",
+  };
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
-  const [submited, setSubmited] = useState<string | null>("");
+  const [submited, setSubmited] = useState<string | null>(""); 
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
-
+  
 
   const handleInputChange = (field: keyof typeof initialData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
-    Object.keys(formData).forEach(keyStr => {
+    Object.keys(formData).forEach((keyStr) => {
       const key = keyStr as keyof typeof initialData;
       if (!formData[key]?.trim()) {
-        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        const fieldName = key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
         newErrors[key] = `${fieldName} wajib diisi.`;
       }
     });
     return newErrors;
   };
 
-  // --- FUNGSI HANDLE SUBMIT YANG TELAH DISESUAIKAN ---
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formErrors = validateForm();
-    console.log("HASIL VALIDASI:", formErrors);
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
@@ -83,14 +78,11 @@ const [resi, setResi] = useState<string | null>(null);
     setShowConfirmModal(true);
   };
 
-  // DIUBAH: Ganti seluruh fungsi ini dengan versi baru
   const handleConfirm = async () => {
     setLoading(true);
     setEditData(false);
+    setShowConfirmModal(false); // Langsung tutup modal konfirmasi awal
 
-    
-
-    // Memetakan dari state frontend ke format backend yang baru
     const data_dinamis = {
       nama: formData.namaAlmarhum,
       namaOrangTua: formData.namaOrangTua,
@@ -114,22 +106,27 @@ const [resi, setResi] = useState<string | null>(null);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nik: formData.nikPengaju, // NIK pengaju tetap digunakan di sini
+          nik: formData.nikPengaju,
           jenis_surat: "kematian",
           tipe: tipe,
           keterangan: `Pengajuan Surat Keterangan Kematian oleh ${formData.namaPengaju}`,
-          data_dinamis, // Mengirim data_dinamis yang sudah disesuaikan
+          data_dinamis,
         }),
       });
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-      setResi(result.permohonan.no_resi);
-    } catch (err: any) {
-      setErrorInfo(`Terjadi kesalahan: ${err.message}`);
-      setEditData(true);
+      // DIUBAH: Langsung redirect ke halaman resi, tanpa menampilkan modal sukses
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -138,7 +135,7 @@ const [resi, setResi] = useState<string | null>(null);
   const handleReset = () => {
     setFormData(initialData);
     setErrors({});
-    setSubmited(null);
+    setSubmited("");
     setEditData(true);
   };
 
@@ -191,7 +188,6 @@ const [resi, setResi] = useState<string | null>(null);
             noValidate
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
             <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pengaju</h1>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
             <InputField inputLabel="NIK Pengaju" inputPlaceholder="NIK Pengaju" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nikPengaju} />
@@ -206,7 +202,7 @@ const [resi, setResi] = useState<string | null>(null);
             <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.agama} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamatAlmarhum} setData={(val) => handleInputChange("alamatAlmarhum", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamatAlmarhum} />
-            
+
             <h1 className="text-black text-xl lg:text-[24px] font-bold pt-4">Waktu Meninggal</h1>
             <InputFieldDropdown inputLabel="Hari" options={["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]} data={formData.hariKematian} setData={(val) => handleInputChange("hariKematian", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.hariKematian} />
             <InputFieldDate inputLabel="Tanggal Kematian" data={formData.tanggalKematian} setData={(val) => handleInputChange("tanggalKematian", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalKematian} />
@@ -216,8 +212,8 @@ const [resi, setResi] = useState<string | null>(null);
             <InputField inputLabel="Alamat Tempat Kematian" inputPlaceholder="Alamat lengkap tempat meninggal" data={formData.alamatKematian} setData={(val) => handleInputChange("alamatKematian", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamatKematian} />
 
             <div className="flex gap-4 pt-4">
-              <button type="submit" disabled={!editData} className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed">
-                Submit
+              <button type="submit" disabled={!editData || loading} className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium disabled:bg-blue-300 disabled:cursor-not-allowed">
+                {loading ? "Mengirim..." : "Submit"}
               </button>
               <button type="button" onClick={handleReset} className="px-6 py-3 rounded bg-gray-300 text-black text-sm font-medium">
                 Reset
@@ -232,20 +228,16 @@ const [resi, setResi] = useState<string | null>(null);
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) {
-            window.location.href = `/${resi}`
-            setResi(null);
-          };
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
+        // DIHAPUS: Prop successInfo tidak lagi digunakan
       />
     </div>
   );

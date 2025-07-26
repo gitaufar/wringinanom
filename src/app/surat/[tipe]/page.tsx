@@ -20,7 +20,6 @@ import SuratKeteranganKematian from '@/app/components/form/SuratKeteranganKemati
 import SuratKeteranganStatus from '@/app/components/form/SuratKeteranganStatus';
 import SuratPenambahanAnggotaKeluarga from '@/app/components/form/SuratPenambahanAnggotaKeluarga';
 import SuratKeteranganTidakMampu from '@/app/components/form/SuratKeteranganTidakMampu';
-import SuratKeteranganWaliNikah from '@/app/components/form/SuratKeteranganWaliNikah';
 import SuratKeteranganWaliMurid from '@/app/components/form/SuratKeteranganWaliMurid';
 import SuratKeteranganDomisili from '@/app/components/form/SuratKeteranganDomisili';
 import SuratKeteranganKuasa from '@/app/components/form/SuratKeteranganKuasa';

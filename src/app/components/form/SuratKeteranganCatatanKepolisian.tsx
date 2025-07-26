@@ -7,10 +7,9 @@ import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 type SuratKeteranganCatatanKepolisianProps = {
-  tipe: String;
+  tipe: string;
 };
 
-// BARU: Tipe untuk objek error
 type FormErrors = {
   [key: string]: string | undefined;
 };
@@ -34,19 +33,18 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
-  const [errors, setErrors] = useState<FormErrors>({}); // BARU: State untuk menyimpan error validasi
+  const [errors, setErrors] = useState<FormErrors>({}); 
 
-  // BARU: Fungsi untuk memvalidasi semua input
+  
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
     Object.keys(formData).forEach((key) => {
       const value = formData[key as keyof typeof formData];
       if (!value || value.trim() === "") {
-        // Membuat pesan error yang lebih user-friendly
         const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
         if (key === "jenisKelamin" || key === "statusPerkawinan") {
             newErrors[key] = `${fieldName} harus dipilih.`;
@@ -59,27 +57,26 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
     return newErrors;
   };
 
-  // DIUBAH: handleSubmit sekarang menjalankan validasi terlebih dahulu
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({}); // Hapus error lama setiap kali submit
+    setErrors({}); 
 
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      // Hentikan proses jika ada error
       return; 
     }
     
-    // Jika tidak ada error, lanjutkan proses
+    
     setSubmited("");
     setShowConfirmModal(true);
   };
 
-  // BARU: Fungsi untuk menangani perubahan input sekaligus menghapus error
+ 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Hapus error untuk field yang sedang diisi
+    
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -116,10 +113,15 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
-      setEditData(true);
+     window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); // Izinkan edit kembali jika ada error
     } finally {
       setLoading(false);
     }
@@ -201,17 +203,15 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
       </div>
 
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
-        message={errorInfo || "Apakah data yang Anda isi sudah benar dan ingin melanjutkan pengajuan?"}
-        successInfo={successInfo}
+        message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
       />
     </div>
   );

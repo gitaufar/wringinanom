@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 
 type SuratKeteranganDitinggalSuamiAtauIstriProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -40,20 +40,16 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
   const [form, setForm] = useState(initialState);
   const [editData, setEditData] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
-  
-  // BARU: State untuk modal dan validasi
   const [errors, setErrors] = useState<FormErrors>({});
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-   // BARU: Fungsi validasi untuk data bertingkat
-  // GANTI DENGAN VERSI INI YANG LEBIH AMAN:
+
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
-    
-    // Pengecekan 'penjaga' (!form.namaPengaju) ditambahkan sebelum .trim()
+   
     if (!form.namaPengaju || !form.namaPengaju.trim()) newErrors.namaPengaju = "Nama Pengaju wajib diisi.";
     if (!form.nikPengaju || !form.nikPengaju.trim()) newErrors.nikPengaju = "NIK Pengaju wajib diisi.";
 
@@ -94,11 +90,6 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
     setLoading(true);
     setEditData(false);
 
-    // Membuat format tanggal DD-MM-YYYY untuk Tanggal_Surat
-    const today = new Date();
-    const tanggalSurat = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
-
-    // Memetakan dari state frontend ke format yang diinginkan backend
     const data_dinamis = {
       // Data Pihak yang Ditinggalkan (diasumsikan sebagai Pihak 1)
       nama1: form.pihakYgDitinggalkan.namaLengkap,
@@ -117,8 +108,6 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
       LamaTahun: form.Lama_Tahun,
       LamaBulan: form.Lama_Bulan,
     
-      // Catatan: TanggalMenigallkan belum ada di format backend Anda, 
-      // namun datanya ada di form.pihakYgDitinggalkan.tanggalMeninggalkan jika diperlukan.
     };
 
     try {
@@ -137,10 +126,15 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
-      setEditData(true);
+      window.location.href = `/${result.permohonan.no_resi}`;
+
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorInfo(`Terjadi kesalahan: ${err.message}`);
+      } else {
+        setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
+      }
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
@@ -274,17 +268,15 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({ tipe }: SuratKe
         </div>
       </div>
       <ConfirmationModal
-        isOpen={showConfirmModal || successInfo !== null || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
         }}
         onConfirm={handleConfirm}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        successInfo={successInfo}
       />
     </div>
   );
