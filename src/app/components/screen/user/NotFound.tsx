@@ -9,7 +9,7 @@ export default function SearchNotFoundPage() {
 
   const handleSearch = () => {
     if (!search) return;
-    window.location.href = `/resi/${search}`;
+    window.location.href = `/${search}`;
   };
 
   return (

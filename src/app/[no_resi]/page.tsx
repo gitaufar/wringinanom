@@ -69,7 +69,7 @@ const Receipt = () => {
 
   if (loading) return <div style={{ textAlign: "center" }}>Loading...</div>;
   if (error)
-    return <div style={{ textAlign: "center", color: "red" }}>{error}</div>;
+    return <NotFound />;
   if (!order)
     return <NotFound />;
 
