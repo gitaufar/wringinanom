@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  _request: Request,
-  context: { params: { no_resi: string } }
-) {
-  const { no_resi } = context.params;
-  console.log("Menerima no_resi:", no_resi);
+export async function GET(request: NextRequest) {
+  const no_resi = request.nextUrl.pathname.split("/").pop(); // Ambil dari URL
+
+  if (!no_resi) {
+    return NextResponse.json(
+      { error: "No Resi tidak ditemukan di URL" },
+      { status: 400 }
+    );
+  }
 
   try {
     const riwayatlayanan = await prisma.riwayatlayanan.findUnique({
@@ -33,12 +36,15 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  context: { params: { no_resi: string } }
-) {
-  const { no_resi } = context.params;
-  console.log("No Resi yang diterima:", no_resi);
+export async function DELETE(request: NextRequest) {
+  const no_resi = request.nextUrl.pathname.split("/").pop();
+
+  if (!no_resi) {
+    return NextResponse.json(
+      { error: "No Resi tidak ditemukan di URL" },
+      { status: 400 }
+    );
+  }
 
   try {
     await prisma.riwayatlayanan.delete({
@@ -55,11 +61,15 @@ export async function DELETE(
   }
 }
 
-export async function PUT(
-  request: Request,
-  context: { params: { no_resi: string } }
-) {
-  const { no_resi } = context.params;
+export async function PUT(request: NextRequest) {
+  const no_resi = request.nextUrl.pathname.split("/").pop();
+
+  if (!no_resi) {
+    return NextResponse.json(
+      { error: "No Resi tidak ditemukan di URL" },
+      { status: 400 }
+    );
+  }
 
   try {
     const body = await request.json();
