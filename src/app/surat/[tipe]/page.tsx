@@ -60,7 +60,8 @@ export default function Page() {
             componentToRender = <PengajuanKeteranganAnakKandung tipe={tipe} />;
             break;
         case 'beda_identitas':
-            componentToRender = <BedaIdentitasForm tipe={tipe} />;            break;
+            componentToRender = <BedaIdentitasForm tipe={tipe} />;            
+            break;
         case 'belum_nikah':
             componentToRender = <SuratKeteranganBelumNikah tipe={tipe} />;
             break;
