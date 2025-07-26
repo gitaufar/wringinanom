@@ -1,15 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-type Context = {
-  params: {
-    no_resi: string;
-  };
-};
-
-export async function GET(_request: NextRequest, context: Context) {
+export async function GET(
+  _request: Request,
+  context: { params: { no_resi: string } }
+) {
   const { no_resi } = context.params;
+  console.log("Menerima no_resi:", no_resi);
 
   try {
     const riwayatlayanan = await prisma.riwayatlayanan.findUnique({
@@ -20,18 +17,28 @@ export async function GET(_request: NextRequest, context: Context) {
     });
 
     if (!riwayatlayanan) {
-      return NextResponse.json({ error: "Riwayat layanan tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Riwayat layanan tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ data: riwayatlayanan });
   } catch (error) {
     console.error("Gagal mengambil data riwayat layanan:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Terjadi kesalahan server" },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(_req: NextRequest, context: Context) {
+export async function DELETE(
+  _request: Request,
+  context: { params: { no_resi: string } }
+) {
   const { no_resi } = context.params;
+  console.log("No Resi yang diterima:", no_resi);
 
   try {
     await prisma.riwayatlayanan.delete({
@@ -41,11 +48,17 @@ export async function DELETE(_req: NextRequest, context: Context) {
     return NextResponse.json({ message: "Riwayat berhasil dihapus" });
   } catch (error) {
     console.error("Gagal menghapus riwayat:", error);
-    return NextResponse.json({ error: "Gagal menghapus riwayat layanan" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal menghapus riwayat layanan" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(request: NextRequest, context: Context) {
+export async function PUT(
+  request: Request,
+  context: { params: { no_resi: string } }
+) {
   const { no_resi } = context.params;
 
   try {
@@ -53,12 +66,17 @@ export async function PUT(request: NextRequest, context: Context) {
     const { keterangan } = body;
 
     if (!keterangan) {
-      return NextResponse.json({ error: "Keterangan wajib diisi" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Keterangan wajib diisi" },
+        { status: 400 }
+      );
     }
 
     const updatedRiwayat = await prisma.riwayatlayanan.update({
       where: { no_resi },
-      data: { keterangan },
+      data: {
+        keterangan,
+      },
     });
 
     return NextResponse.json({
@@ -67,6 +85,9 @@ export async function PUT(request: NextRequest, context: Context) {
     });
   } catch (error) {
     console.error("Gagal memperbarui keterangan:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan saat memperbarui keterangan" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Terjadi kesalahan saat memperbarui keterangan" },
+      { status: 500 }
+    );
   }
 }
