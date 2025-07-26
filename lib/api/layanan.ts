@@ -1,4 +1,27 @@
-export const tambahRiwayatLayanan = async (nik: string, keterangan: string) => {
+// Define interfaces for API responses
+interface RiwayatLayanan {
+  no_resi: string;
+  nik: string;
+  keterangan: string;
+  tanggal_dibuat: string;
+  status?: string;
+}
+
+interface TambahRiwayatResponse {
+  success: boolean;
+  message?: string;
+  riwayat: RiwayatLayanan;
+}
+
+interface ErrorResponse {
+  error: string;
+  message?: string;
+}
+
+export const tambahRiwayatLayanan = async (
+  nik: string, 
+  keterangan: string
+): Promise<TambahRiwayatResponse> => {
   try {
     const res = await fetch("/api/layanan", {
       method: "POST",
@@ -8,14 +31,15 @@ export const tambahRiwayatLayanan = async (nik: string, keterangan: string) => {
       body: JSON.stringify({ nik, keterangan }),
     });
 
-    const data = await res.json();
+    const data = await res.json() as TambahRiwayatResponse | ErrorResponse;
 
     if (!res.ok) {
-      throw new Error(data.error || "Gagal menambahkan riwayat");
+      const errorData = data as ErrorResponse;
+      throw new Error(errorData.error || "Gagal menambahkan riwayat");
     }
 
-    return data; // biasanya berisi { riwayat: { no_resi, ... } }
-  } catch (err: any) {
+    return data as TambahRiwayatResponse; // biasanya berisi { riwayat: { no_resi, ... } }
+  } catch (err: unknown) {
     console.error("Error saat POST:", err);
 
     if (err instanceof Error) {

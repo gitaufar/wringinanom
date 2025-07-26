@@ -3,13 +3,13 @@
 
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { Penduduk } from '@prisma/client'
+import { penduduk } from '@prisma/client'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
 import { useRouter } from 'next/navigation'
 
 export default function TabelKonfirmasi() {
   const router = useRouter()
-  const [data, setData] = useState<Penduduk[]>([])
+  const [data, setData] = useState<penduduk[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function TabelKonfirmasi() {
                     {format(new Date(d.tanggal_lahir), 'dd-MM-yyyy')}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">{d.alamat}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{d.keterangan}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{"kosong dulu"}</td>
                   <td className="px-6 py-4 flex space-x-2">
                     <button
                       onClick={() => router.push(`/admin/kependudukan/edit/${d.nik}`)}

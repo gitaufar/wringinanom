@@ -1,18 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteParams {
-  params: { nik: string };
-}
-
-export async function GET(req: NextRequest, context: RouteParams) {
+export async function GET(
+  req: NextRequest, 
+  props: { params: Promise<{ nik: string }> }
+) {
   try {
-    const { nik } = context.params;
+    const params = await props.params;
+    const { nik } = params;
 
     // Validate NIK parameter
-    if (!nik || typeof nik !== "string") {
+    if (!nik || typeof nik !== 'string') {
       return NextResponse.json(
-        { error: "NIK parameter is required and must be a string" },
+        { error: "NIK parameter is required and must be a string" }, 
         { status: 400 }
       );
     }
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, context: RouteParams) {
 
     if (!penduduk) {
       return NextResponse.json(
-        { error: "Penduduk tidak ditemukan" },
+        { error: "Penduduk tidak ditemukan" }, 
         { status: 404 }
       );
     }
@@ -32,20 +32,24 @@ export async function GET(req: NextRequest, context: RouteParams) {
   } catch (error) {
     console.error("Gagal mengambil data penduduk:", error);
     return NextResponse.json(
-      { error: "Terjadi kesalahan server" },
+      { error: "Terjadi kesalahan server" }, 
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(req: NextRequest, context: RouteParams) {
+export async function DELETE(
+  req: NextRequest, 
+  props: { params: Promise<{ nik: string }> }
+) {
   try {
-    const { nik } = context.params;
+    const params = await props.params;
+    const { nik } = params;
 
     // Validate NIK parameter
-    if (!nik || typeof nik !== "string") {
+    if (!nik || typeof nik !== 'string') {
       return NextResponse.json(
-        { error: "NIK parameter is required and must be a string" },
+        { error: "NIK parameter is required and must be a string" }, 
         { status: 400 }
       );
     }
@@ -56,7 +60,7 @@ export async function DELETE(req: NextRequest, context: RouteParams) {
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Penduduk tidak ditemukan" },
+        { error: "Penduduk tidak ditemukan" }, 
         { status: 404 }
       );
     }
@@ -65,14 +69,14 @@ export async function DELETE(req: NextRequest, context: RouteParams) {
       where: { nik },
     });
 
-    return NextResponse.json({
+    return NextResponse.json({ 
       message: "Penduduk berhasil dihapus",
-      success: true,
+      success: true 
     });
   } catch (error) {
     console.error("Gagal menghapus penduduk:", error);
     return NextResponse.json(
-      { error: "Terjadi kesalahan server" },
+      { error: "Terjadi kesalahan server" }, 
       { status: 500 }
     );
   }

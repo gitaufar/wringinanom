@@ -13,16 +13,15 @@ const InformationSection = () => {
           </h2>
           <p className="text-black capitalize text-[20px] leading-[30px]">
             Hubungi kontak kami di bawah ini untuk informasi layanan, pengaduan,
-            atau bantuan administrasi. Kami akan merespons secepat mungkin di hari kerja.
+            atau bantuan administrasi. Kami akan merespons secepat mungkin di
+            hari kerja.
           </p>
 
           {/* Gunakan komponen ButtonGeneral */}
           <ButtonGeneral
-  text="Telpon"
-  icon={<AiOutlinePhone size={25} />}
-  onClick={() => window.location.href = ""}
-/>
-
+            text="Telpon"
+            onClick={() => (window.location.href = "")}
+          />
         </div>
 
         {/* Kanan: Gambar dan Label */}

@@ -9,9 +9,10 @@ import { terbilang } from "angka-menjadi-terbilang";
 
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { tipe: string } }
+  props: { params: Promise<{ tipe: string }> }
 ) {
-  console.log("masuk1")
+  console.log("masuk1");
+  const params = await props.params;
   const { tipe } = params;
   let pathFile = "";
   switch (tipe) {
@@ -104,7 +105,6 @@ export async function POST(
       console.log("❌ Tipe surat tidak dikenali");
   }
 
-  
   try {
     const body = await _req.json();
 
@@ -229,7 +229,8 @@ export async function POST(
           Umur_1: body.umur1,
           Pekerjaan_1: body.pekerjaan1,
           Alamat_1: body.alamat1,
-          Status_Pasangan_1: body.statusPasangan2 === "Istri" ? "Suami" : "Istri",
+          Status_Pasangan_1:
+            body.statusPasangan2 === "Istri" ? "Suami" : "Istri",
           Nama_2: body.nama2,
           Umur_2: body.umur2,
           Pekerjaan_2: body.pekerjaan2,
@@ -330,7 +331,6 @@ export async function POST(
           Bulan: body.bulanHilang,
           Tahun: body.tahunHilang,
           Tanggal_Surat: tanggalSurat,
-          
         });
         break;
       case "penambahan_anggota":
@@ -498,7 +498,7 @@ export async function POST(
           Nama: body.nama,
           Kota: body.kota,
           Tanggal_Lahir: body.tanggalLahir,
-          Jenis_Kelamin:body.jenisKelamin,
+          Jenis_Kelamin: body.jenisKelamin,
           Pekerjaan: body.pekerjaan,
           Alamat: body.alamat,
           Nama_Anak: body.namaAnak,

@@ -1,8 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 
-const globalForPrisma = globalThis as any as {
+// Define proper interface for global Prisma
+interface GlobalForPrisma {
   prisma: PrismaClient | undefined
 }
+
+// Type the global object properly
+const globalForPrisma = globalThis as unknown as GlobalForPrisma
 
 export const prisma =
   globalForPrisma.prisma ??

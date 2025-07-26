@@ -48,10 +48,24 @@ type TambahPendudukProps = {
   formDataProps?: PendudukProps;
 };
 
+// Helper function to convert null values to empty strings
+const sanitizeFormData = (data: PendudukProps | undefined): PendudukProps => {
+  if (!data) return defaultForm;
+
+  const sanitized = { ...data };
+  (Object.keys(sanitized) as Array<keyof PendudukProps>).forEach((key) => {
+    if (sanitized[key] === null || sanitized[key] === undefined) {
+      sanitized[key] = "" as any;
+    }
+  });
+
+  return sanitized;
+};
+
 export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<PendudukProps>(
-    formDataProps || defaultForm
+    sanitizeFormData(formDataProps)
   );
 
   const [editStates, setEditStates] = useState<{
@@ -65,12 +79,12 @@ export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
   );
 
   const [submitStates] = useState<{
-  [K in keyof PendudukProps]: string | null;
-}>(
-  Object.fromEntries(
-    Object.keys(defaultForm).map((key) => [key, formDataProps ? null : ""])
-  ) as { [K in keyof PendudukProps]: string | null }
-);
+    [K in keyof PendudukProps]: string | null;
+  }>(
+    Object.fromEntries(
+      Object.keys(defaultForm).map((key) => [key, formDataProps ? null : ""])
+    ) as { [K in keyof PendudukProps]: string | null }
+  );
 
   const handleChange = (field: keyof PendudukProps, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
