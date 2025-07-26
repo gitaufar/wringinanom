@@ -1,14 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-// gunakan RouteHandlerContext dari Next.js
-export async function GET(
-  req: NextRequest,
-  context: { params: { nik: string } }
-) {
-  const { nik } = context.params;
+interface RouteParams {
+  params: { nik: string };
+}
 
+export async function GET(req: NextRequest, context: RouteParams) {
   try {
+    const { nik } = context.params;
+
+    // Validate NIK parameter
+    if (!nik || typeof nik !== "string") {
+      return NextResponse.json(
+        { error: "NIK parameter is required and must be a string" },
+        { status: 400 }
+      );
+    }
+
     const penduduk = await prisma.penduduk.findUnique({
       where: { nik },
     });
@@ -30,13 +38,18 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { nik: string } }
-) {
-  const { nik } = context.params;
-
+export async function DELETE(req: NextRequest, context: RouteParams) {
   try {
+    const { nik } = context.params;
+
+    // Validate NIK parameter
+    if (!nik || typeof nik !== "string") {
+      return NextResponse.json(
+        { error: "NIK parameter is required and must be a string" },
+        { status: 400 }
+      );
+    }
+
     const existing = await prisma.penduduk.findUnique({
       where: { nik },
     });
@@ -52,7 +65,10 @@ export async function DELETE(
       where: { nik },
     });
 
-    return NextResponse.json({ message: "Penduduk berhasil dihapus" });
+    return NextResponse.json({
+      message: "Penduduk berhasil dihapus",
+      success: true,
+    });
   } catch (error) {
     console.error("Gagal menghapus penduduk:", error);
     return NextResponse.json(
