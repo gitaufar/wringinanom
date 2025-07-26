@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { FaUserAlt, FaChartLine, FaClock } from "react-icons/fa";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
@@ -19,7 +19,13 @@ type Penduduk = {
   nama_lengkap: string;
 };
 
-export default function Dashboard() {
+// API response types for better type safety
+type LayananResponse = Layanan[];
+type PendudukResponse = {
+  data: Penduduk[];
+};
+
+export default function Dashboard(): JSX.Element {
   const [hariIni, setHariIni] = useState<Layanan[]>([]);
   const [kemarin, setKemarin] = useState<Layanan[]>([]);
   const [pendudukHariIni, setPendudukHariIni] = useState<Penduduk[]>([]);
@@ -30,22 +36,23 @@ export default function Dashboard() {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const formatDate = (date: Date) =>
+    const formatDate = (date: Date): string =>
       `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
         2,
         "0"
       )}-${String(date.getDate()).padStart(2, "0")}`;
 
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       try {
         const [resTodayLayanan, resYesterdayLayanan] = await Promise.all([
           fetch(`/api/layanan?date=${formatDate(today)}`),
           fetch(`/api/layanan?date=${formatDate(yesterday)}`),
         ]);
-        const [layananToday, layananYesterday] = await Promise.all([
-          resTodayLayanan.json(),
-          resYesterdayLayanan.json(),
-        ]);
+
+        const layananToday = (await resTodayLayanan.json()) as LayananResponse;
+        const layananYesterday =
+          (await resYesterdayLayanan.json()) as LayananResponse;
+
         setHariIni(layananToday);
         setKemarin(layananYesterday);
       } catch (err) {
@@ -53,16 +60,17 @@ export default function Dashboard() {
       }
     };
 
-    const fetchPenduduk = async () => {
+    const fetchPenduduk = async (): Promise<void> => {
       try {
         const [resTodayPenduduk, resYesterdayPenduduk] = await Promise.all([
           fetch(`/api/penduduk?date=${formatDate(today)}`),
           fetch(`/api/penduduk?date=${formatDate(yesterday)}`),
         ]);
-        const [dataToday, dataYesterday] = await Promise.all([
-          resTodayPenduduk.json(),
-          resYesterdayPenduduk.json(),
-        ]);
+
+        const dataToday = (await resTodayPenduduk.json()) as PendudukResponse;
+        const dataYesterday =
+          (await resYesterdayPenduduk.json()) as PendudukResponse;
+
         setPendudukHariIni(dataToday.data || []);
         setPendudukKemarin(dataYesterday.data || []);
       } catch (err) {
@@ -70,8 +78,8 @@ export default function Dashboard() {
       }
     };
 
-    fetchData();
-    fetchPenduduk();
+    void fetchData();
+    void fetchPenduduk();
   }, []);
 
   const perubahanPersen = (today: number, yesterday: number): number => {

@@ -1,19 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import FilterPenduduk from '../../components/filter/FilterPenduduk';
-import TabelPermohonan from '../../components/tabel/TabelPermohonan';
-import TabelRiwayatPermohonan from '@/app/components/tabel/TabelRiwayatPermohonan';
-import Image from 'next/image';
-import { Search } from 'lucide-react';
+import React, { JSX, useState } from "react";
+import FilterPenduduk from "../../components/filter/FilterPenduduk";
+import TabelPermohonan from "../../components/tabel/TabelPermohonan";
+import TabelRiwayatPermohonan from "@/app/components/tabel/TabelRiwayatPermohonan";
+import Image from "next/image";
+import { Search } from "lucide-react";
 
-const AdminPage = () => {
-  const [search, setSearch] = useState('');
+const AdminPage = (): JSX.Element => {
+  const [search, setSearch] = useState("");
   const [change, setChange] = useState(false);
 
   return (
     <div className="flex min-h-screen">
-
       {/* Main Content */}
       <div className="flex-1 bg-[#f7f8fc] p-6">
         {/* Header */}
@@ -55,7 +54,11 @@ const AdminPage = () => {
         <FilterPenduduk />
 
         {/* Tabel Permohonan */}
-        <TabelPermohonan search={search} setChange={setChange} change={change} />
+        <TabelPermohonan
+          search={search}
+          setChange={setChange}
+          change={change}
+        />
 
         {/* Title for History Table */}
         <h2 className="text-xl font-semibold mt-8 mb-4">Riwayat Permohonan</h2>
