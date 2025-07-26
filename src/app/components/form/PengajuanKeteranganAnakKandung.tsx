@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import type { ReactNode } from 'react'; // Impor tipe ReactNode
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
@@ -8,16 +9,23 @@ type PengajuanKeteranganAnakKandungProps = {
   tipe: string;
 };
 
-// BARU: Tipe untuk objek error
 type FormErrors = {
   [key: string]: string | undefined;
 };
 
+// Tipe spesifik untuk response dari API
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; // error bersifat opsional
+};
+
 export default function PengajuanKeteranganAnakKandung({
   tipe,
-}: PengajuanKeteranganAnakKandungProps) {
+}: PengajuanKeteranganAnakKandungProps): ReactNode {
   const [edit, setEdit] = useState(true);
-  const [submited, setSubmited] = useState<string | null>("");
+  const [submited, setSubmited] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +46,6 @@ export default function PengajuanKeteranganAnakKandung({
 
   const [form, setForm] = useState(initialState);
 
-  // BARU: Fungsi untuk validasi semua field, termasuk yang nested
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
@@ -69,20 +76,19 @@ export default function PengajuanKeteranganAnakKandung({
     return newErrors;
   };
 
-  // DIUBAH: handleSubmit sekarang menjalankan validasi terlebih dahulu
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      return; // Hentikan proses jika ada error
+      return; 
     }
-    setErrors({}); // Bersihkan error jika berhasil
+    setErrors({});
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
-    setSubmited("");
+  const handleConfirm = async (): Promise<void> => {
+    setSubmited(null);
     setLoading(true);
 
     const angkaNum = parseInt(form.anakKe || "0");
@@ -118,7 +124,8 @@ export default function PengajuanKeteranganAnakKandung({
         }),
       });
 
-      const result = await res.json();
+      // DIUBAH: Menggunakan type assertion 'as' untuk memberi tipe pada hasil .json()
+      const result = await res.json() as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
       window.location.href = `/${result.permohonan.no_resi}`;
 
@@ -128,23 +135,23 @@ export default function PengajuanKeteranganAnakKandung({
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEdit(true); // Izinkan edit kembali jika ada error
+      setEdit(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setForm(initialState);
-    setErrors({}); // BARU: Reset error juga saat form di-reset
+    setErrors({});
     setEdit(true);
-    setSubmited("");
+    setSubmited(null);
   };
 
   return (
     <>
       <div className="min-h-screen flex flex-col items-center bg-white font-roboto">
-         <div className="w-full h-20 flex items-center justify-center gap-5 px-4 md:px-5 bg-white shadow fixed top-0 z-10">
+        <div className="w-full h-20 flex items-center justify-center gap-5 px-4 md:px-5 bg-white shadow fixed top-0 z-10">
           <button
             onClick={() => window.history.back()}
             className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -171,9 +178,6 @@ export default function PengajuanKeteranganAnakKandung({
             noValidate
             className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
           >
-            {/* DIUBAH: Semua komponen InputField dan InputFieldDate sekarang memiliki
-              prop 'error' dan 'setData' nya diperbarui untuk menghapus error saat mengetik.
-            */}
             <div className="space-y-3">
               <h2 className="text-xl font-bold">Nama Pengaju</h2>
               <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => { setForm({ ...form, namaPengaju: val }); if(errors.namaPengaju) setErrors(prev => ({...prev, namaPengaju: undefined})) }} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaPengaju} />
@@ -224,7 +228,7 @@ export default function PengajuanKeteranganAnakKandung({
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => { void handleConfirm(); }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

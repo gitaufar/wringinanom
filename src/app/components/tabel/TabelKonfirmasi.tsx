@@ -20,7 +20,8 @@ export default function TabelKonfirmasi() {
   }, [])
 
   const handleDelete = async (nik: string) => {
-    if (!confirm('Yakin ingin menghapus?')) return
+    // DIUBAH: Menggunakan window.confirm untuk konfirmasi di browser
+    if (!window.confirm('Yakin ingin menghapus?')) return
     await fetch(`/api/penduduk/${nik}`, { method: 'DELETE' })
     setData((d) => d.filter((x) => x.nik !== nik))
   }
@@ -61,7 +62,8 @@ export default function TabelKonfirmasi() {
                   <td className="px-6 py-4 text-sm text-gray-700">{d.nama_lengkap}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{d.jenis_kelamin}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">
-                    {format(new Date(d.tanggal_lahir), 'dd-MM-yyyy')}
+                    {/* --- PERUBAHAN DI SINI --- */}
+                    {d.tanggal_lahir ? format(new Date(d.tanggal_lahir), 'dd-MM-yyyy') : '-'}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">{d.alamat}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{"kosong dulu"}</td>
