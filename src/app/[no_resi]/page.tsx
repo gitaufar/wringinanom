@@ -1,4 +1,5 @@
 "use client";
+import NotFound from "../components/screen/user/NotFound";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -70,7 +71,7 @@ const Receipt = () => {
   if (error)
     return <div style={{ textAlign: "center", color: "red" }}>{error}</div>;
   if (!order)
-    return <div style={{ textAlign: "center" }}>Data tidak ditemukan</div>;
+    return <NotFound />;
 
   return (
     <div className="bg-[#f4f4f4] flex justify-center items-center min-h-screen p-5">
