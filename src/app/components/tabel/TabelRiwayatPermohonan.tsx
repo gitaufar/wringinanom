@@ -32,10 +32,10 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
 
         if (Array.isArray(json)) {
           const filtered = json.filter(
-            (item: any) => item.status?.toLowerCase() !== "menunggu"
+            (item: DataRiwayat) => item.status?.toLowerCase() !== "menunggu"
           );
 
-          const mappedData: DataRiwayat[] = filtered.map((item: any) => ({
+          const mappedData: DataRiwayat[] = filtered.map((item: DataRiwayat) => ({
             no_resi: item.no_resi,
             date: item.date,
             tipe: item.tipe,

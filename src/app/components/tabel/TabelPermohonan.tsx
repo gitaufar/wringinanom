@@ -13,7 +13,7 @@ type DataPermintaan = {
   };
   tanggal: string;
   jenis_surat: string;
-  data_dinamis?: any;
+  data_dinamis?: Record<string, unknown>;
   riwayatlayanan: {
     status: "Menunggu" | "Selesai" | "Dibatalkan";
   };
@@ -25,13 +25,8 @@ type TabelPermohonanProps = {
   change: boolean;
 };
 
-const TabelPermohonan = ({
-  search = "",
-  setChange,
-  change,
-}: TabelPermohonanProps) => {
+const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
   const [Permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
-  const [loading, setLoading] = useState(false);
   const [firstLoading, setFirstLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +39,6 @@ const TabelPermohonan = ({
   useEffect(() => {
     const fetchPermohonan = async () => {
       try {
-        setLoading(true);
         const res = await fetch("/api/permohonan");
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
@@ -54,10 +48,11 @@ const TabelPermohonan = ({
         );
 
         setPermohonan(onlyMenunggu);
-      } catch (err: any) {
-        setError(err.message || "Terjadi kesalahan");
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Terjadi Kesalahan";
+        alert(message);
       } finally {
-        setLoading(false);
         setFirstLoading(false);
       }
     };
@@ -97,8 +92,12 @@ const TabelPermohonan = ({
       setPermohonan((prev) => prev.filter((item) => item.no_resi !== no_resi));
       setChange(!change);
       setModalApproveOpen(false);
-    } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan saat menyetujui.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Terjadi kesalahan saat menyetujui.";
+      alert(message);
     }
   };
 
@@ -132,12 +131,17 @@ const TabelPermohonan = ({
       setAlasan(""); // Reset input
       setChange(!change);
       setModalRejectOpen(false);
-    } catch (err: any) {
-      alert("Gagal membatalkan permohonan");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal membatalkan permohonan.";
+      alert(message);
     }
   };
 
-  const handlePreview = async (jenisSurat: string, dataDinamis: any) => {
+  const handlePreview = async (
+    jenisSurat: string,
+    dataDinamis: Record<string, unknown>
+  ) => {
     try {
       const res = await fetch(`/api/surat/${jenisSurat}`, {
         method: "POST",
@@ -153,12 +157,14 @@ const TabelPermohonan = ({
       const printWindow = window.open("", "_blank", "width=800,height=600");
       if (printWindow) {
         printWindow.document.write(`
-          <html><head><title>Preview</title></head><body>${html}</body></html>
-        `);
+        <html><head><title>Preview</title></head><body>${html}</body></html>
+      `);
         printWindow.document.close();
       }
-    } catch (err: any) {
-      alert("Gagal preview dokumen: " + err.message);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal preview dokumen";
+      alert("Gagal preview dokumen: " + message);
     }
   };
 
@@ -222,9 +228,13 @@ const TabelPermohonan = ({
                   </button>
                   <button
                     className="hover:text-blue-700"
-                    onClick={() =>
-                      handlePreview(row.jenis_surat, row.data_dinamis)
-                    }
+                    onClick={() => {
+                      if (row.data_dinamis) {
+                        handlePreview(row.jenis_surat, row.data_dinamis);
+                      } else {
+                        alert("Data dinamis tidak tersedia untuk surat ini.");
+                      }
+                    }}
                   >
                     <FaEye size={16} />
                   </button>

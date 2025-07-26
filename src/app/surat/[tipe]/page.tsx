@@ -11,7 +11,6 @@ import SuratKeteranganTidakKeberatan from '@/app/components/form/SuratKeterangan
 import SuratPengantar from '@/app/components/form/SuratPengantar';
 import SuratPernyataanKelahiran from '@/app/components/form/SuratPernyataanKelahiran';
 import PengajuanKeteranganAnakKandung from '@/app/components/form/PengajuanKeteranganAnakKandung';
-import SuratKeteranganBedaIdentitas from '@/app/components/form/SuratKeteranganIdentitas';
 import SuratKeteranganBelumNikah from '@/app/components/form/SuratKeteranganBelumNikah';
 import SuratKeteranganBiodataPenduduk from '@/app/components/form/SuratKeteranganBiodataPenduduk';
 import SuratKeteranganCeraiMati from '@/app/components/form/SuratKeteranganCeraiMati';
@@ -20,7 +19,6 @@ import SuratKeteranganDudaJanda from '@/app/components/form/SuratKeteranganDudaJ
 import SuratKeteranganKematian from '@/app/components/form/SuratKeteranganKematian';
 import SuratKeteranganStatus from '@/app/components/form/SuratKeteranganStatus';
 import SuratPenambahanAnggotaKeluarga from '@/app/components/form/SuratPenambahanAnggotaKeluarga';
-import SuratKeteranganPanggilan from '@/app/components/form/SuratKeteranganPanggilan';
 import SuratKeteranganTidakMampu from '@/app/components/form/SuratKeteranganTidakMampu';
 import SuratKeteranganWaliNikah from '@/app/components/form/SuratKeteranganWaliNikah';
 import SuratKeteranganWaliMurid from '@/app/components/form/SuratKeteranganWaliMurid';
@@ -86,9 +84,6 @@ export default function Page() {
             break;
         case 'penambahan_anggota':
             componentToRender = <SuratPenambahanAnggotaKeluarga tipe={tipe} />;
-            break;
-        case 'panggilan':
-            componentToRender = <SuratKeteranganPanggilan tipe={tipe} />;
             break;
         case 'tidak_mampu':
             componentToRender = <SuratKeteranganTidakMampu tipe={tipe} />;
