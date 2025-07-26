@@ -87,9 +87,6 @@ export default function Page() {
         case 'tidak_mampu':
             componentToRender = <SuratKeteranganTidakMampu tipe={tipe} />;
             break;
-        case 'wali_nikah':
-            componentToRender = <SuratKeteranganWaliNikah tipe={tipe} />;
-            break;
         case 'wali_murid':
             componentToRender = <SuratKeteranganWaliMurid tipe={tipe} />;
             break;
