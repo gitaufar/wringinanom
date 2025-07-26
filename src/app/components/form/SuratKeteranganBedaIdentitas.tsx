@@ -7,19 +7,23 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
 
 type SuratKeteranganBedaIdentitasProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
   [key: string]: string | undefined;
 };
 
-
-export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBedaIdentitasProps) {
+export default function SuratKeteranganBedaIdentitas({
+  tipe,
+}: SuratKeteranganBedaIdentitasProps) {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ title: string; resi: string } | null>(null);
+  const [successInfo, setSuccessInfo] = useState<{
+    title: string;
+    resi: string;
+  } | null>(null);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -41,19 +45,24 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
   const [form, setForm] = useState(initialState);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const handleInputChange = (field: keyof typeof initialState, value: string) => {
-    setForm(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof typeof initialState,
+    value: string
+  ) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
-    Object.keys(form).forEach(keyStr => {
+    Object.keys(form).forEach((keyStr) => {
       const key = keyStr as keyof typeof initialState;
       if (!form[key] || !form[key].trim()) {
-        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        const fieldName = key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
         newErrors[key] = `${fieldName} wajib diisi.`;
       }
     });
@@ -106,11 +115,15 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
         title: "Pengajuan Berhasil!",
         resi: data.permohonan.no_resi,
       });
-    } catch (err: any) {
-      setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorInfo(`Gagal mengirim permohonan: ${err.message}`);
+      } else {
+        setErrorInfo(
+          "Gagal mengirim permohonan: Terjadi kesalahan tak terduga."
+        );
+      }
       setEdit(true);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -125,9 +138,23 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
     <div className="min-h-screen flex flex-col items-center bg-white font-roboto">
       {/* Header */}
       <div className="w-full h-20 flex items-center justify-center gap-5 px-4 md:px-5 bg-white shadow fixed top-0 z-10">
-        <button onClick={() => window.history.back()} className="p-2 rounded-full hover:bg-gray-100 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-black">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        <button
+          onClick={() => window.history.back()}
+          className="p-2 rounded-full hover:bg-gray-100 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 text-black"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
           </svg>
         </button>
         <div className="w-10 h-10 rounded-full bg-black/10 flex-shrink-0" />
@@ -158,29 +185,152 @@ export default function SuratKeteranganBedaIdentitas({ tipe }: SuratKeteranganBe
           {/* DIUBAH: Semua komponen input sekarang terhubung ke sistem validasi */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Nama Pengaju</h2>
-            <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaPengaju} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikPengaju} />
+            <InputField
+              inputLabel="Nama Pengaju"
+              inputPlaceholder="Nama Pengaju"
+              data={form.namaPengaju}
+              setData={(val) => handleInputChange("namaPengaju", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.namaPengaju}
+            />
+            <InputField
+              inputLabel="NIK"
+              inputPlaceholder="NIK"
+              data={form.nikPengaju}
+              setData={(val) => handleInputChange("nikPengaju", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              numberOnly
+              error={errors.nikPengaju}
+            />
           </div>
 
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Identitas</h2>
-            <InputField inputLabel="Nama Lama" inputPlaceholder="Nama Lama" data={form.namaLama} setData={(val) => handleInputChange("namaLama", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaLama} />
-            <InputField inputLabel="Nama Baru" inputPlaceholder="Nama Baru" data={form.namaBaru} setData={(val) => handleInputChange("namaBaru", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaBaru} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikAnak} setData={(val) => handleInputChange("nikAnak", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikAnak} />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.kotaLahir} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={form.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.tanggalLahir} />
-            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={form.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.jenisKelamin} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={form.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.alamat} />
-            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen","Katolik", "Hindu", "Buddha", "Konghucu"]} data={form.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.agama} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={form.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.pekerjaan} />
-            <InputField inputLabel="Kewarganegaraan" inputPlaceholder="Kewarganegaraan" data={form.kewarganegaraan} setData={(val) => handleInputChange("kewarganegaraan", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.kewarganegaraan} />
+            <InputField
+              inputLabel="Nama Lama"
+              inputPlaceholder="Nama Lama"
+              data={form.namaLama}
+              setData={(val) => handleInputChange("namaLama", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.namaLama}
+            />
+            <InputField
+              inputLabel="Nama Baru"
+              inputPlaceholder="Nama Baru"
+              data={form.namaBaru}
+              setData={(val) => handleInputChange("namaBaru", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.namaBaru}
+            />
+            <InputField
+              inputLabel="NIK"
+              inputPlaceholder="NIK"
+              data={form.nikAnak}
+              setData={(val) => handleInputChange("nikAnak", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              numberOnly
+              error={errors.nikAnak}
+            />
+            <InputField
+              inputLabel="Kota/Kabupaten Lahir"
+              inputPlaceholder="Kota/Kabupaten"
+              data={form.kotaLahir}
+              setData={(val) => handleInputChange("kotaLahir", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.kotaLahir}
+            />
+            <InputFieldDate
+              inputLabel="Tanggal Lahir"
+              data={form.tanggalLahir}
+              setData={(val) => handleInputChange("tanggalLahir", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.tanggalLahir}
+            />
+            <InputFieldDropdown
+              inputLabel="Jenis Kelamin"
+              options={["Laki-laki", "Perempuan"]}
+              data={form.jenisKelamin}
+              setData={(val) => handleInputChange("jenisKelamin", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.jenisKelamin}
+            />
+            <InputField
+              inputLabel="Alamat"
+              inputPlaceholder="Alamat"
+              data={form.alamat}
+              setData={(val) => handleInputChange("alamat", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.alamat}
+            />
+            <InputFieldDropdown
+              inputLabel="Agama"
+              options={[
+                "Islam",
+                "Kristen",
+                "Katolik",
+                "Hindu",
+                "Buddha",
+                "Konghucu",
+              ]}
+              data={form.agama}
+              setData={(val) => handleInputChange("agama", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.agama}
+            />
+            <InputField
+              inputLabel="Pekerjaan"
+              inputPlaceholder="Pekerjaan"
+              data={form.pekerjaan}
+              setData={(val) => handleInputChange("pekerjaan", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.pekerjaan}
+            />
+            <InputField
+              inputLabel="Kewarganegaraan"
+              inputPlaceholder="Kewarganegaraan"
+              data={form.kewarganegaraan}
+              setData={(val) => handleInputChange("kewarganegaraan", val)}
+              setEditData={setEdit}
+              editData={edit}
+              submited={submited}
+              error={errors.kewarganegaraan}
+            />
           </div>
 
           <div className="flex gap-4">
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors"
+            >
               Submit
             </button>
-            <button type="button" onClick={handleReset} className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md transition-colors">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md transition-colors"
+            >
               Reset
             </button>
           </div>

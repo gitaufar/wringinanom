@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import InputFieldTime from "../field/InputFieldTime";
 
 type SuratKeteranganKematianProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
@@ -37,6 +37,8 @@ export default function SuratKeteranganKematian({tipe}: SuratKeteranganKematianP
   penyebabKematian: "",
   alamatKematian: "",
 };
+
+const [resi, setResi] = useState<string | null>(null);
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
@@ -86,9 +88,7 @@ export default function SuratKeteranganKematian({tipe}: SuratKeteranganKematianP
     setLoading(true);
     setEditData(false);
 
-    // Membuat format tanggal DD-MM-YYYY untuk Tanggal_Surat
-    const today = new Date();
-    const tanggalSurat = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+    
 
     // Memetakan dari state frontend ke format backend yang baru
     const data_dinamis = {
@@ -126,6 +126,7 @@ export default function SuratKeteranganKematian({tipe}: SuratKeteranganKematianP
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       setSuccessInfo({ title: "Pengajuan Berhasil!", resi: result.permohonan.no_resi });
+      setResi(result.permohonan.no_resi);
     } catch (err: any) {
       setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       setEditData(true);
@@ -235,7 +236,10 @@ export default function SuratKeteranganKematian({tipe}: SuratKeteranganKematianP
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
-          if (successInfo) window.location.href = "/";
+          if (successInfo) {
+            window.location.href = `/${resi}`
+            setResi(null);
+          };
         }}
         onConfirm={handleConfirm}
         isLoading={loading}

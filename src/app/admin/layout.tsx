@@ -4,14 +4,6 @@ import ButtonLogout from "@/app/components/button/ButtonLogout";
 import { ReactNode } from "react";
 import Sidebar from "@/app/components/slider/Sidebar";
 
-// Menu navigasi
-const menus = [
-  { label: "Dashboard", value: "dashboard" },
-  { label: "Administrasi", value: "administrasi" },
-  { label: "Laporan", value: "laporan" },
-  { label: "Kependudukan", value: "kependudukan" },
-];
-
 export default function AdminLayout({ children }: { children: ReactNode }) {
   // Jalankan usePathname di dalam komponen client
   return (
