@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import FilterPenduduk from '../../components/filter/FilterPenduduk';
-import Sidebar from '../../components/slider/Sidebar';
 import TabelPermohonan from '../../components/tabel/TabelPermohonan';
 import TabelRiwayatPermohonan from '@/app/components/tabel/TabelRiwayatPermohonan';
 import Image from 'next/image';

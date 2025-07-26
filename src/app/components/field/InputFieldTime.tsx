@@ -17,8 +17,6 @@ export default function InputFieldTime({
   data,
   setData,
   editData,
-  setEditData,
-  submited,
   error, // BARU: Ambil prop error dari props
 }: InputFieldTimeProps) {
   return (

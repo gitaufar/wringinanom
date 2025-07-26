@@ -1,7 +1,12 @@
-// api/permohonan/status
+// api/permohonan/status/route.ts
+
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+
+interface DecodedToken {
+  id: string;
+}
 
 export async function PUT(req: NextRequest) {
   try {
@@ -19,13 +24,19 @@ export async function PUT(req: NextRequest) {
 
     const token = req.cookies.get("admin_token")?.value;
     if (!token) {
-      return NextResponse.json({ error: "Token tidak ditemukan" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Token tidak ditemukan" },
+        { status: 401 }
+      );
     }
 
-    let decoded;
+    let decoded: DecodedToken;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
-    } catch (err) {
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET as string
+      ) as DecodedToken;
+    } catch {
       return NextResponse.json({ error: "Token tidak valid" }, { status: 401 });
     }
 
@@ -36,7 +47,10 @@ export async function PUT(req: NextRequest) {
     });
 
     if (!riwayat) {
-      return NextResponse.json({ error: "Resi tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Resi tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     const status_lama = riwayat.status;
@@ -66,17 +80,18 @@ export async function PUT(req: NextRequest) {
       status_lama,
       status_baru,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ INTERNAL ERROR:", error);
     return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
+      {
+        error: error instanceof Error ? error.message : "Internal Server Error",
+      },
       { status: 500 }
     );
   }
 }
 
-
-export async function GET(req: NextRequest) {
+export async function GET(_: NextRequest) {
   try {
     const data = await prisma.permohonansurat.findMany({
       include: {
@@ -88,12 +103,14 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ data });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ ERROR:", error);
     return NextResponse.json(
-      { error: error.message || "Terjadi kesalahan server" },
+      {
+        error:
+          error instanceof Error ? error.message : "Terjadi kesalahan server",
+      },
       { status: 500 }
     );
   }
 }
-

@@ -1,9 +1,7 @@
 "use client";
 
 import ButtonLogout from "@/app/components/button/ButtonLogout";
-import Link from "next/link";
 import { ReactNode } from "react";
-import { usePathname } from "next/navigation"; // untuk styling aktif (client side)
 import Sidebar from "@/app/components/slider/Sidebar";
 
 // Menu navigasi
