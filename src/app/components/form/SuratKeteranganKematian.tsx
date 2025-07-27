@@ -2,10 +2,11 @@
 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
-import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import InputFieldTime from "../field/InputFieldTime";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganKematianProps = {
   tipe: string;
@@ -15,7 +16,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematianProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematianProps): ReactNode {
   const initialData = {
     namaPengaju: "",
     nikPengaju: "",
@@ -48,7 +56,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   
 
-  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+  const handleInputChange = (field: keyof typeof initialData, value: string): void => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -67,7 +75,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -81,7 +89,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
   const handleConfirm = async () => {
     setLoading(true);
     setEditData(false);
-    setShowConfirmModal(false); // Langsung tutup modal konfirmasi awal
+    setShowConfirmModal(false); 
 
     const data_dinamis = {
       nama: formData.namaAlmarhum,
@@ -114,10 +122,9 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
-      // DIUBAH: Langsung redirect ke halaman resi, tanpa menampilkan modal sukses
       window.location.href = `/${result.permohonan.no_resi}`;
 
     } catch (err) {
@@ -126,7 +133,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
@@ -233,11 +240,12 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
-        // DIHAPUS: Prop successInfo tidak lagi digunakan
       />
     </div>
   );

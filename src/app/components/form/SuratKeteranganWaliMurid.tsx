@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
+
 
 type SuratKeteranganWaliMuridProps = {
   tipe: string;
@@ -14,7 +16,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMuridProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMuridProps): ReactNode {
   const initialData = {
   wali: {
     nama: "",
@@ -65,7 +74,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -76,7 +85,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
     setShowConfirmModal(true);
   };
 
-   const handleConfirm = async () => {
+   const handleConfirm = async (): Promise <void> => {
     setLoading(true);
     setEditData(false);
     
@@ -109,7 +118,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       window.location.href = `/${result.permohonan.no_resi}`;
@@ -120,7 +129,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
@@ -133,7 +142,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
     setSubmited("");
   };
 
-  // BARU: Fungsi helper untuk update state
+ 
   const handleWaliChange = (field: keyof typeof initialData.wali, value: string) => {
     setFormData(prev => ({ ...prev, wali: { ...prev.wali, [field]: value } }));
     const errorKey = `wali_${field}`;
@@ -220,7 +229,9 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

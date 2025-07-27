@@ -1,10 +1,11 @@
 "use client";
 
 import InputField from "../../components/field/InputField";
-import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import InputFieldDate from "../field/InputFieldDate";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 
 type SuratKeteranganDudaJandaProps = {
@@ -15,7 +16,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJandaProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJandaProps): ReactNode {
   const initialData = {
     namaPengaju: "",
     nikPengaju: "",
@@ -41,7 +49,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-   const handleInputChange = (field: keyof typeof initialData, value: string) => {
+   const handleInputChange = (field: keyof typeof initialData, value: string): void => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -60,7 +68,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     console.log("HASIL VALIDASI:", formErrors);
@@ -72,7 +80,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setLoading(true);
     setEditData(false);
 
@@ -105,7 +113,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       window.location.href = `/${result.permohonan.no_resi}`;
@@ -223,7 +231,9 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

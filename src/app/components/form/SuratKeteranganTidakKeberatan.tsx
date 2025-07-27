@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
@@ -14,34 +15,42 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganTidakKeberatanProps) {
- const initialData = {
-  pengaju: {
-    nama: "",
-    nik: "",
-    kotaLahir: "",
-    tanggalLahir: "",
-    jenisKelamin: "",
-    statusPerkawinan: "",
-    pekerjaan: "",
-    agama: "",
-    alamat: "",
-  },
-  anak: {
-    nama: "",
-    nik: "",
-    kotaLahir: "",
-    tanggalLahir: "",
-    jenisKelamin: "",
-    statusPerkawinan: "",
-    pekerjaan: "",
-    agama: "",
-    alamat: "",
-  },
-  
-  orangtua: "",
-  alamatTujuan: "",
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string;
 };
+
+export default function SuratKeteranganTidakKeberatan({
+  tipe,
+}: SuratKeteranganTidakKeberatanProps): ReactNode {
+  const initialData = {
+    pengaju: {
+      nama: "",
+      nik: "",
+      kotaLahir: "",
+      tanggalLahir: "",
+      jenisKelamin: "",
+      statusPerkawinan: "",
+      pekerjaan: "",
+      agama: "",
+      alamat: "",
+    },
+    anak: {
+      nama: "",
+      nik: "",
+      kotaLahir: "",
+      tanggalLahir: "",
+      jenisKelamin: "",
+      statusPerkawinan: "",
+      pekerjaan: "",
+      agama: "",
+      alamat: "",
+    },
+    orangtua: "",
+    alamatTujuan: "",
+  };
 
   const [formData, setFormData] = useState(initialData);
   const [editData, setEditData] = useState(true);
@@ -51,18 +60,47 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
-  
+
+  // DIUBAH: Menggunakan satu handleInputChange yang bisa menangani state nested
+  const handleInputChange = (field: string, value: string): void => {
+    const fieldParts = field.split(".");
+
+    if (fieldParts.length > 1) {
+      const [parentKey, childKey] = fieldParts;
+      if (parentKey === 'pengaju' || parentKey === 'anak') {
+        setFormData(prev => ({
+          ...prev,
+          [parentKey]: {
+            ...prev[parentKey],
+            [childKey]: value,
+          },
+        }));
+      }
+    } else {
+      const key = field as keyof typeof initialData;
+      if (key === 'orangtua' || key === 'alamatTujuan') {
+        setFormData(prev => ({
+          ...prev,
+          [key]: value,
+        }));
+      }
+    }
+
+    const errorKey = field.replace('.', '_');
+    if (errors[errorKey]) {
+      setErrors(prev => ({ ...prev, [errorKey]: undefined }));
+    }
+  };
+
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     const { pengaju, anak } = formData;
 
-    // Validasi Pengaju
     Object.keys(pengaju).forEach(key => {
       const field = key as keyof typeof pengaju;
       if (!pengaju[field]?.trim()) newErrors[`pengaju_${field}`] = `${field.replace(/([A-Z])/g, ' $1')} Pengaju wajib diisi.`;
     });
     
-    // Validasi Anak
     Object.keys(anak).forEach(key => {
       const field = key as keyof typeof anak;
       if (!anak[field]?.trim()) newErrors[`anak_${field}`] = `${field.replace(/([A-Z])/g, ' $1')} Anak wajib diisi.`;
@@ -73,9 +111,8 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
 
     return newErrors;
   };
-  
 
-   const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -86,7 +123,7 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setLoading(true);
     setEditData(false);
 
@@ -126,46 +163,27 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       window.location.href = `/${result.permohonan.no_resi}`;
-
     } catch (err) {
       if (err instanceof Error) {
         setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setFormData(initialData);
     setErrors({});
     setSubmited("");
     setEditData(true);
-  };
-  
-  // BARU: Fungsi helper untuk update state
-  const handlePengajuChange = (field: keyof typeof initialData.pengaju, value: string) => {
-    setFormData(prev => ({ ...prev, pengaju: { ...prev.pengaju, [field]: value } }));
-    const errorKey = `pengaju_${field}`;
-    if (errors[errorKey]) setErrors(prev => ({ ...prev, [errorKey]: undefined }));
-  };
-
-  const handleAnakChange = (field: keyof typeof initialData.anak, value: string) => {
-    setFormData(prev => ({ ...prev, anak: { ...prev.anak, [field]: value } }));
-    const errorKey = `anak_${field}`;
-    if (errors[errorKey]) setErrors(prev => ({ ...prev, [errorKey]: undefined }));
-  };
-
-  const handleInputChange = (field: 'orangtua' | 'alamatTujuan', value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
   return (
@@ -176,8 +194,19 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
           onClick={() => window.history.back()}
           className="p-2 rounded-full hover:bg-gray-100 transition"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-black">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 text-black"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
           </svg>
         </button>
         <div className="w-10 h-10 rounded-full bg-black/10 flex-shrink-0" />
@@ -199,58 +228,67 @@ export default function SuratKeteranganTidakKeberatan({ tipe }: SuratKeteranganT
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-          {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
+        >
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Pengaju (Orang Tua)</h2>
-            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.pengaju.nama} setData={(val) => handlePengajuChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_nama} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.pengaju.nik} setData={(val) => handlePengajuChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.pengaju_nik} />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.pengaju.kotaLahir} setData={(val) => handlePengajuChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_kotaLahir} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.pengaju.tanggalLahir} setData={(val) => handlePengajuChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_tanggalLahir} />
-            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.pengaju.jenisKelamin} setData={(val) => handlePengajuChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_jenisKelamin} />
-            <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Menikah", "Menikah"]} data={formData.pengaju.statusPerkawinan} setData={(val) => handlePengajuChange("statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_statusPerkawinan} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pengaju.pekerjaan} setData={(val) => handlePengajuChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_pekerjaan} />
-            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.pengaju.agama} setData={(val) => handlePengajuChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_agama} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.pengaju.alamat} setData={(val) => handlePengajuChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_alamat} />
+            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.pengaju.nama} setData={(val) => handleInputChange("pengaju.nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_nama} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.pengaju.nik} setData={(val) => handleInputChange("pengaju.nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.pengaju_nik} />
+            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.pengaju.kotaLahir} setData={(val) => handleInputChange("pengaju.kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_kotaLahir} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.pengaju.tanggalLahir} setData={(val) => handleInputChange("pengaju.tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_tanggalLahir} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.pengaju.jenisKelamin} setData={(val) => handleInputChange("pengaju.jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_jenisKelamin} />
+            <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Menikah", "Menikah"]} data={formData.pengaju.statusPerkawinan} setData={(val) => handleInputChange("pengaju.statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_statusPerkawinan} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pengaju.pekerjaan} setData={(val) => handleInputChange("pengaju.pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_pekerjaan} />
+            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.pengaju.agama} setData={(val) => handleInputChange("pengaju.agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_agama} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.pengaju.alamat} setData={(val) => handleInputChange("pengaju.alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_alamat} />
           </div>
 
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Anak</h2>
-            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.anak.nama} setData={(val) => handleAnakChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_nama} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.anak.nik} setData={(val) => handleAnakChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.anak_nik} />
-            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.anak.kotaLahir} setData={(val) => handleAnakChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_kotaLahir} />
-            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.anak.tanggalLahir} setData={(val) => handleAnakChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_tanggalLahir} />
-            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.anak.jenisKelamin} setData={(val) => handleAnakChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_jenisKelamin} />
-            <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Menikah", "Menikah"]} data={formData.anak.statusPerkawinan} setData={(val) => handleAnakChange("statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_statusPerkawinan} />
-            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.anak.pekerjaan} setData={(val) => handleAnakChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_pekerjaan} />
-            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.anak.agama} setData={(val) => handleAnakChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_agama} />
-            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.anak.alamat} setData={(val) => handleAnakChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_alamat} />
+            <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.anak.nama} setData={(val) => handleInputChange("anak.nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_nama} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.anak.nik} setData={(val) => handleInputChange("anak.nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.anak_nik} />
+            <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.anak.kotaLahir} setData={(val) => handleInputChange("anak.kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_kotaLahir} />
+            <InputFieldDate inputLabel="Tanggal Lahir" data={formData.anak.tanggalLahir} setData={(val) => handleInputChange("anak.tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_tanggalLahir} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.anak.jenisKelamin} setData={(val) => handleInputChange("anak.jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_jenisKelamin} />
+            <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Menikah", "Menikah"]} data={formData.anak.statusPerkawinan} setData={(val) => handleInputChange("anak.statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_statusPerkawinan} />
+            <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.anak.pekerjaan} setData={(val) => handleInputChange("anak.pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_pekerjaan} />
+            <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.anak.agama} setData={(val) => handleInputChange("anak.agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_agama} />
+            <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.anak.alamat} setData={(val) => handleInputChange("anak.alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.anak_alamat} />
             <InputField inputLabel="Orang Tua dari Pihak Pengaju" inputPlaceholder="Contoh: Ayah / Ibu" data={formData.orangtua} setData={(val) => handleInputChange("orangtua", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.orangtua} />
             <InputField inputLabel="Alamat Tujuan" inputPlaceholder="Alamat Tujuan Anak" data={formData.alamatTujuan} setData={(val) => handleInputChange("alamatTujuan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamatTujuan} />
           </div>
 
           <div className="flex gap-4">
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md"
+            >
               Submit
             </button>
-            <button type="button" onClick={handleReset} className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="bg-gray-300 hover:bg-gray-400 text-black px-6 py-2 rounded-md"
+            >
               Reset
             </button>
           </div>
         </form>
 
-        {/* Footer */}
         <div className="py-10 text-center text-sm text-neutral-500">
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
       </div>
-       <ConfirmationModal
+      <ConfirmationModal
         isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => { void handleConfirm(); }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
