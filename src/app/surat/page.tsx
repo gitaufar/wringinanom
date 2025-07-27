@@ -12,7 +12,7 @@ import { ChevronLeft } from "lucide-react";
 // Buat slug dari judul surat
 const createSlug = (title: string) =>
   title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-
+//
 // Data surat dideklarasikan di luar komponen agar stable across renders
 const BASE_LETTERS = [
   { id: 1, title: "Surat Keterangan Anak Kandung", description: "Surat keterangan yang menyatakan hubungan anak kandung.", topic: "Pemerintahan", link:"anak_kandung" },
