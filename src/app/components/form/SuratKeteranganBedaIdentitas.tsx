@@ -5,6 +5,7 @@ import InputFieldDate from "./../../components/field/InputFieldDate";
 import InputFieldDropdown from "./../../components/field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganBedaIdentitasProps = {
   tipe: string;
@@ -14,11 +15,17 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
+
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
 export default function SuratKeteranganBedaIdentitas({
   tipe,
-}: 
-
-SuratKeteranganBedaIdentitasProps) {
+}: SuratKeteranganBedaIdentitasProps): ReactNode { 
   const initialState = {
     namaPengaju: "",
     nikPengaju: "",
@@ -42,13 +49,11 @@ SuratKeteranganBedaIdentitasProps) {
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  
-
 
   const handleInputChange = (
     field: keyof typeof initialState,
     value: string
-  ) => {
+  ): void => {
     setForm((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -69,18 +74,18 @@ SuratKeteranganBedaIdentitasProps) {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => { 
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      return; // Hentikan jika ada error
+      return; 
     }
-    setErrors({}); // Bersihkan error jika valid
+    setErrors({}); 
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => { 
     try {
       setSubmited("");
       setLoading(true);
@@ -108,24 +113,24 @@ SuratKeteranganBedaIdentitasProps) {
         }),
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error);
+      // DIUBAH: Menggunakan type assertion 'as' untuk memberi tipe pada hasil .json()
+      const result = (await res.json()) as ApiResponse;
+      if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       window.location.href = `/${result.permohonan.no_resi}`;
-
     } catch (err) {
       if (err instanceof Error) {
         setErrorInfo(`Terjadi kesalahan: ${err.message}`);
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEdit(true); // Izinkan edit kembali jika ada error
+      setEdit(true); 
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => { 
     setForm(initialState);
     setErrors({});
     setEdit(true);
@@ -180,7 +185,6 @@ SuratKeteranganBedaIdentitasProps) {
           noValidate
           className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8"
         >
-          {/* DIUBAH: Semua komponen input sekarang terhubung ke sistem validasi */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Nama Pengaju</h2>
             <InputField
@@ -341,12 +345,14 @@ SuratKeteranganBedaIdentitasProps) {
       </div>
 
       <ConfirmationModal
-       isOpen={showConfirmModal || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

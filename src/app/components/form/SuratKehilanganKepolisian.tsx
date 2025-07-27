@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from 'react'; // Impor tipe ReactNode
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
@@ -11,12 +12,19 @@ type SuratKehilanganKepolisianProps = {
   tipe: string;
 };
 
-
 type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepolisianProps) {
+// DIUBAH: Menambahkan tipe spesifik untuk response dari API
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; // error bersifat opsional
+};
+
+export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepolisianProps): ReactNode { // DIUBAH: Menambahkan return type
   const initialData = {
     nama: "",
     kota: "",
@@ -36,20 +44,18 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState<FormErrors>({}); 
   const [editData, setEditData] = useState(true);
-  const [submited, setSubmited] = useState<string | null>("");
+  const [submited, setSubmited] = useState<string | null>(""); // Diubah dari "" ke null
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-
-  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+  const handleInputChange = (field: keyof typeof initialData, value: string): void => { // DIUBAH: Return type void
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
   
-
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
     Object.keys(formData).forEach(keyStr => {
@@ -62,8 +68,7 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
     return newErrors;
   };
 
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => { // DIUBAH: Return type void
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -74,8 +79,8 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
-    setSubmited("");
+  const handleConfirm = async (): Promise<void> => { // DIUBAH: Return type Promise<void>
+    setSubmited(null); // Diubah dari "" ke null
     setLoading(true);
 
     const data_dinamis = { ...formData };
@@ -95,7 +100,8 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
         }),
       });
 
-      const result = await res.json();
+      
+      const result = await res.json() as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
       window.location.href = `/${result.permohonan.no_resi}`;
@@ -106,18 +112,16 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
-
   };
 
-  // DIUBAH: handleReset juga membersihkan error
-  const handleReset = () => {
+  const handleReset = (): void => { 
     setFormData(initialData);
     setErrors({});
-    setSubmited("");
+    setSubmited(""); 
     setEditData(true);
   };
 
@@ -145,8 +149,6 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
         </div>
       </div>
 
-
-
       <div className="w-full pt-24 px-5 lg:px-[170px]">
         <div className="flex justify-center items-center py-10 text-center">
           <div className="flex flex-col gap-4">
@@ -159,7 +161,6 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
           </div>
         </div>
         <form onSubmit={handleSubmit} noValidate className="max-w-4xl mx-auto bg-white shadow p-8 rounded-[15px] space-y-8">
-
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Pengaju</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.nama} setData={(val) => handleInputChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nama} />
@@ -190,15 +191,14 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
         <div className="py-10 text-center text-sm text-neutral-500">
           © 2025 Pemerintah Desa. All rights reserved.
         </div>
-
       </div>
       <ConfirmationModal
-         isOpen={showConfirmModal || errorInfo !== null}
+        isOpen={showConfirmModal || errorInfo !== null}
         onClose={() => {
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => { void handleConfirm(); }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

@@ -5,6 +5,7 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganBelumNikahProps = {
   tipe: string;
@@ -14,8 +15,15 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
 
-export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelumNikahProps) {
+
+export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelumNikahProps): ReactNode {
   const [edit, setEdit] = useState(true);
   const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -38,7 +46,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
   const [errors, setErrors] = useState<FormErrors>({});
 
   
-  const handleInputChange = (field: keyof typeof initialState, value: string) => {
+  const handleInputChange = (field: keyof typeof initialState, value: string): void => {
     setForm(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -57,7 +65,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
     return newErrors;
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -68,7 +76,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setEdit(false);
     setLoading(true);
 
@@ -96,7 +104,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
         }),
       });
 
-      const result = await res.json();
+      const result = await res.json() as ApiResponse;
       if (!res.ok) {
         throw new Error(result.error);
       }
@@ -185,7 +193,9 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

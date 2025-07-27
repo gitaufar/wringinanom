@@ -5,6 +5,7 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganBiodataPendudukProps = {
   tipe: string;
@@ -15,7 +16,14 @@ type FormErrors = {
   [key:string]: string | undefined;
 }
 
-export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeteranganBiodataPendudukProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeteranganBiodataPendudukProps): ReactNode {
   const initialData = {
     NamaPengaju: "",
     NIKPengaju: "",
@@ -65,7 +73,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   const [errors, setErrors] = useState<FormErrors>({}); 
 
   
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
+  const handleInputChange = (field: keyof typeof formData, value: string): void => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -95,7 +103,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
   };
 
   // DIUBAH: handleSubmit sekarang menjalankan validasi
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent):void => {
     e.preventDefault();
     const formErrors = validateForm();
      console.log("HASIL VALIDASI:", formErrors);
@@ -108,7 +116,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setLoading(true);
     setSubmited("");
 
@@ -155,7 +163,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
         }),
       });
 
-      const result = await res.json();
+      const result = await res.json() as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
       
       window.location.href = `/${result.permohonan.no_resi}`;
@@ -229,10 +237,6 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
             noValidate // Mencegah validasi bawaan browser
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
-            {/* DIUBAH: Semua InputField sekarang menggunakan handleInputChange
-              dan menerima prop 'error' untuk menampilkan pesan validasi.
-            */}
-
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               Nama Pengaju
             </h1>
@@ -571,7 +575,9 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
