@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(
   req: NextRequest, 
   props: { params: Promise<{ nik: string }> }
-) {
+): Promise<NextResponse> {
   try {
     const params = await props.params;
     const { nik } = params;
@@ -41,7 +41,7 @@ export async function GET(
 export async function DELETE(
   req: NextRequest, 
   props: { params: Promise<{ nik: string }> }
-) {
+): Promise<NextResponse> {
   try {
     const params = await props.params;
     const { nik } = params;

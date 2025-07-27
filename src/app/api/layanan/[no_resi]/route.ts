@@ -1,8 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  const no_resi = request.nextUrl.pathname.split("/").pop(); // Ambil dari URL
+// Interface untuk request body PUT
+interface UpdateKeteranganRequest {
+  keterangan: string;
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const no_resi: string | undefined = request.nextUrl.pathname.split("/").pop(); // Ambil dari URL
 
   if (!no_resi) {
     return NextResponse.json(
@@ -36,8 +41,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function DELETE(request: NextRequest) {
-  const no_resi = request.nextUrl.pathname.split("/").pop();
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  const no_resi: string | undefined = request.nextUrl.pathname.split("/").pop();
 
   if (!no_resi) {
     return NextResponse.json(
@@ -61,8 +66,8 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
-  const no_resi = request.nextUrl.pathname.split("/").pop();
+export async function PUT(request: NextRequest): Promise<NextResponse> {
+  const no_resi: string | undefined = request.nextUrl.pathname.split("/").pop();
 
   if (!no_resi) {
     return NextResponse.json(
@@ -72,7 +77,8 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
+    // Type assertion untuk request body
+    const body = (await request.json()) as UpdateKeteranganRequest;
     const { keterangan } = body;
 
     if (!keterangan) {

@@ -1,5 +1,4 @@
 // src/app/api/surat/[tipe]/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
@@ -7,21 +6,186 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { terbilang } from "angka-menjadi-terbilang";
 
+interface DocxTemplaterErrorProperties {
+  explanation: string;
+}
+
+interface DocxTemplaterError extends Error {
+  properties?: {
+    errors?: DocxTemplaterErrorProperties[];
+  };
+}
+/**
+ * Defines the shape of the route's parameters for Next.js 15
+ * In Next.js 15, params is a Promise that needs to be awaited
+ */
+interface RouteProps {
+  params: Promise<{
+    tipe: string;
+  }>;
+}
+
+/**
+ * A comprehensive interface for all possible fields in the request body.
+ * All fields are optional ('?') because their presence depends on the letter type ('tipe').
+ * This is the key change to prevent TypeScript errors related to the 'any' type from `req.json()`.
+ */
+interface SuratData {
+  nama?: string;
+  namaAnak?: string;
+  kotaAnak?: string;
+  tanggalLahirAnak?: string;
+  alamatAnak?: string;
+  namaIbu?: string;
+  kotaIbu?: string;
+  tanggalLahirIbu?: string;
+  pekerjaanIbu?: string;
+  alamatIbu?: string;
+  angkaNum?: number;
+  angkaNum2?: number;
+  namaAyah?: string;
+  kotaAyah?: string;
+  tanggalLahirAyah?: string;
+  pekerjaanAyah?: string;
+  alamatAyah?: string;
+  namaSekarang?: string;
+  kota?: string;
+  tanggalLahir?: string;
+  jenisKelamin?: string;
+  negara?: string;
+  agama?: string;
+  pekerjaan?: string;
+  nik?: string;
+  alamat?: string;
+  namaLama?: string;
+  noKK?: string;
+  kewarganegaraan?: string;
+  golDarah?: string;
+  statusPerkawinan?: string;
+  pendidikan?: string;
+  statusKeluarga?: string;
+  nikIbu?: string;
+  nikAyah?: string;
+  alamatLama?: string;
+  alamatBaru?: string;
+  noPaspor?: string;
+  tglBerakhirPaspor?: string;
+  noAktaKelahiran?: string;
+  noAktaPerkawinan?: string;
+  tglPerkawinan?: string;
+  noAktaPerceraian?: string;
+  tglPerceraian?: string;
+  status?: string;
+  tujuan?: string;
+  nama1?: string;
+  umur1?: number;
+  pekerjaan1?: string;
+  alamat1?: string;
+  statusPasangan2?: string;
+  nama2?: string;
+  umur2?: number;
+  pekerjaan2?: string;
+  alamat2?: string;
+  lamaTahun?: number;
+  lamaBulan?: number;
+  namaDok1?: string;
+  dok1?: string;
+  dok2?: string;
+  namaDok2?: string;
+  namaOrangTua?: string;
+  hari?: string;
+  tanggalKematian?: string;
+  waktuKematian?: string;
+  tempatKematian?: string;
+  penyebabKematian?: string;
+  alamatKematian?: string;
+  namaOrangtua?: string;
+  namaIstriSiri?: string;
+  namaOrangtuaIstriSiri?: string;
+  umur?: number;
+  tanggalHilang?: string;
+  bulanHilang?: string;
+  tahunHilang?: string;
+  namaKepalaKeluarga?: string;
+  namaAnggota?: string;
+  kotaAnggota?: string;
+  tanggalLahirAnggota?: string;
+  hubunganDalamKeluarga?: string;
+  alamatAnggota?: string;
+  jam?: string;
+  kotaLahirAyah?: string;
+  kotaLahirIbu?: string;
+  nomorKK?: string;
+  nikAnak?: string;
+  jenisKelaminAnak?: string;
+  statusPerkawinanAnak?: string;
+  pekerjaanAnak?: string;
+  agamaAnak?: string;
+  alamatTujuan?: string;
+  orangtua?: string;
+  pendidikanTerakhir?: string;
+  namaBarang?: string;
+  lokasiKehilangan?: string;
+  tanggalKehilangan?: string;
+  jamKehilangan?: string;
+  pengajuan?: string;
+  dusun?: string;
+  hubunganKeluarga?: string;
+  kelaminMempelai?: string;
+  kelasRomawi?: string;
+  kelasHuruf?: string;
+  sekolah?: string;
+  namaPemberi?: string;
+  kotaPemberi?: string;
+  tanggalLahirPemberi?: string;
+  pekerjaanPemberi?: string;
+  nikPemberi?: string;
+  alamatPemberi?: string;
+  namaPenerima?: string;
+  kotaPenerima?: string;
+  tanggalLahirPenerima?: string;
+  pekerjaanPenerima?: string;
+  nikPenerima?: string;
+  alamatPenerima?: string;
+  hubungan?: string;
+  keperluan?: string;
+  namaWajibPajak?: string;
+  nop?: string;
+  alamatObjekPajak?: string;
+  alamatWajibPajak?: string;
+  luas?: number;
+  njop?: number;
+  totalNJOP?: number;
+  tahunDataPBB?: number;
+  tahunBelumTerbit?: number;
+  tujuanPengajuan?: string;
+  namaDusun?: string;
+  penghasilan?: number;
+}
+
+function isDocxTemplaterError(error: unknown): error is DocxTemplaterError {
+  return (
+    error instanceof Error &&
+    typeof (error as DocxTemplaterError).properties === "object" &&
+    (error as DocxTemplaterError).properties !== null &&
+    Array.isArray((error as DocxTemplaterError).properties?.errors)
+  );
+}
+
 export async function POST(
   _req: NextRequest,
-  props: { params: Promise<{ tipe: string }> }
-) {
-  console.log("masuk1");
-  const params = await props.params;
-  const { tipe } = params;
+  props: RouteProps // Use the strongly-typed props
+): Promise<NextResponse> {
+  // Await the params since they're now a Promise in Next.js 15
+  const { tipe } = await props.params;
   let pathFile = "";
+
+  // This switch determines the DOCX template file based on the 'tipe' parameter.
   switch (tipe) {
     case "SK Anak Kandung":
-      console.log("masuk2");
       pathFile = "A.01.01_Surat_Keterangan_Anak_Kandung_(FINAL).docx";
       break;
     case "Beda Identitas":
-      console.log("masuk2");
       pathFile = "A.01.03_Surat_Keterangan_Beda_Identitas_Formal_(FINAL).docx";
       break;
     case "belum_nikah":
@@ -38,7 +202,7 @@ export async function POST(
         "A.01.07_Surat_Keterangan_Ditinggal_Suami_Atau_Istri_(FINAL).docx";
       break;
     case "duda_janda":
-      pathFile = "A.01.08_Surat_Keterangan_Duda_Janda_{FINAL}.docx";
+      pathFile = "A.01.08_Surat_Keterangan_Duda_Janda_(FINAL).docx"; // Corrected filename
       break;
     case "identitas":
       pathFile = "A.01.09_Surat_Keterangan_Identitas_(FINAL).docx";
@@ -102,17 +266,20 @@ export async function POST(
       pathFile = "C.01.05_Surat_Keterangan_Usaha.docx";
       break;
     default:
-      console.log("❌ Tipe surat tidak dikenali");
+      console.log("❌ Tipe surat tidak dikenali:", tipe);
+      return NextResponse.json(
+        { error: "Tipe surat tidak dikenali" },
+        { status: 400 }
+      );
   }
 
   try {
-    const body = await _req.json();
+    // Cast the request body to the 'SuratData' interface to ensure type safety.
+    const body = (await _req.json()) as SuratData;
 
-    // Path ke template .docx
     const templatePath = path.join(process.cwd(), "templates", pathFile);
     const content = fs.readFileSync(templatePath, "binary");
 
-    // Load DOCX ke PizZip dan Docxtemplater
     const zip = new PizZip(content);
     const doc = new Docxtemplater(zip, {
       paragraphLoop: true,
@@ -125,9 +292,10 @@ export async function POST(
       year: "numeric",
     });
 
+    // Set data for the template. All data from 'body' is now type-safe.
+    // The nullish coalescing operator (??) provides default values for optional fields.
     switch (tipe) {
       case "SK Anak Kandung":
-        console.log("masuk3");
         doc.setData({
           Nama_Anak: body.namaAnak,
           Kota_Anak: body.kotaAnak,
@@ -139,9 +307,9 @@ export async function POST(
           Pekerjaan_Ibu: body.pekerjaanIbu,
           Alamat_Ibu: body.alamatIbu,
           Angka_Num: body.angkaNum,
-          Angka_Str: terbilang(body.angkaNum),
+          Angka_Str: terbilang(body.angkaNum ?? 0),
           Angka_Num2: body.angkaNum2,
-          Angka_Str2: terbilang(body.angkaNum2),
+          Angka_Str2: terbilang(body.angkaNum2 ?? 0),
           Nama_Ayah: body.namaAyah,
           Kota_Ayah: body.kotaAyah,
           Tanggal_Lahir_Ayah: body.tanggalLahirAyah,
@@ -151,7 +319,6 @@ export async function POST(
         });
         break;
       case "Beda Identitas":
-        console.log("masuk3");
         doc.setData({
           Nama_Sekarang: body.namaSekarang,
           Kota: body.kota,
@@ -365,7 +532,7 @@ export async function POST(
           Agama: body.agama,
           Alamat: body.alamat,
           Angka_Num: body.angkaNum,
-          Angka_Str: terbilang(body.angkaNum),
+          Angka_Str: terbilang(body.angkaNum ?? "1"),
           Nama_Ayah: body.namaAyah,
           NIK_Ayah: body.nikAyah,
           Kota_Lahir_Ayah: body.kotaLahirAyah,
@@ -581,29 +748,48 @@ export async function POST(
         });
         break;
       default:
-        console.log("❌ Tipe surat tidak dikenali");
+        // Fallback for any unhandled cases.
+        console.log("Tipe surat tidak memiliki data mapping:", tipe);
     }
 
-    // Render isi dokumen
     doc.render();
 
-    // Convert ke buffer file
     const buffer = doc.getZip().generate({ type: "nodebuffer" });
 
-    // Return file ke frontend untuk didownload
+    // Dynamically and safely generate the output filename.
+    const personName =
+      body.nama ||
+      body.namaAnak ||
+      body.namaSekarang ||
+      body.namaPemberi ||
+      "dokumen";
+    const safePersonName = personName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+    const outputFilename = `${tipe}_${safePersonName}.docx`;
+
     return new NextResponse(buffer, {
       status: 200,
       headers: {
         "Content-Type":
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "Content-Disposition": `attachment; filename=Surat_Keterangan_Beda_Identitas_${body.nama}.docx`,
+        "Content-Disposition": `attachment; filename="${outputFilename}"`,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Gagal generate surat:", err);
-    return NextResponse.json(
-      { error: "Gagal generate surat" },
-      { status: 500 }
-    );
+
+    let errorMessage = "Gagal generate surat";
+    if (err instanceof Error) {
+      // Check if it's a docxtemplater error with proper type safety
+      if (isDocxTemplaterError(err) && err.properties?.errors) {
+        const errorDetails = err.properties.errors
+          .map((e: DocxTemplaterErrorProperties) => e.explanation)
+          .join(", ");
+        errorMessage = `Template error: ${errorDetails}`;
+      } else {
+        errorMessage = `Server error: ${err.message}`;
+      }
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

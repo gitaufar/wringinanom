@@ -1,14 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+
+// Define types for the request body
+interface PostRequestBody {
+  nik: string;
+  jenis_surat: string;
+  tipe: string;
+  data_dinamis?: Prisma.InputJsonValue;
+}
 
 // Auto-generate no_resi seperti: RWS-1712345678901
-const generateResi = () => {
+const generateResi = (): string => {
   return `RWS-${Date.now()}`;
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const body = await req.json();
+    const body = (await req.json()) as PostRequestBody;
     const { nik, jenis_surat, tipe, data_dinamis } = body;
 
     if (!nik || !jenis_surat || !tipe) {
@@ -69,7 +78,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
     const noResi = searchParams.get("no_resi");
@@ -106,17 +115,16 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ data: allPermohonan });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Internal Error GET /api/permohonan:", error);
-    return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal Server Error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
 // Tambahkan di bawah export GET(...)
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
     const noResi = searchParams.get("no_resi");
@@ -136,11 +144,10 @@ export async function DELETE(req: NextRequest) {
       message: `Permohonan dan riwayat dengan resi ${noResi} berhasil dihapus`,
       deleted: deletedPermohonan,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Gagal menghapus permohonan:", error);
-    return NextResponse.json(
-      { error: error.message || "Internal Server Error" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal Server Error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

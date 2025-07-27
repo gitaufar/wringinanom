@@ -8,9 +8,14 @@ interface DecodedToken {
   id: string;
 }
 
-export async function PUT(req: NextRequest) {
+interface PutRequestBody {
+  no_resi: string;
+  status_baru: string;
+}
+
+export async function PUT(req: NextRequest): Promise<NextResponse> {
   try {
-    const body = await req.json();
+    const body = (await req.json()) as PutRequestBody;
     const { no_resi, status_baru } = body;
 
     console.log("🟢 Input diterima:", body);
@@ -91,7 +96,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-export async function GET(_: NextRequest) {
+export async function GET(_: NextRequest): Promise<NextResponse> {
   try {
     const data = await prisma.permohonansurat.findMany({
       include: {

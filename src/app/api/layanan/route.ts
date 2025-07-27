@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
     const dateParam = searchParams.get("date"); // Format: YYYY-MM-DD
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: Request): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
     const noResi = searchParams.get("no_resi");
