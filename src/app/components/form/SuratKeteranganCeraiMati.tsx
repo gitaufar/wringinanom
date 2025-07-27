@@ -2,9 +2,11 @@
 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
-import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
+
 
 type SuratKeteranganCeraiMatiProps = {
   tipe: string;
@@ -14,7 +16,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiMatiProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiMatiProps): ReactNode {
   const initialData = {
     NamaPengaju: "",
     NIKPengaju: "",
@@ -39,7 +48,7 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+  const handleInputChange = (field: keyof typeof initialData, value: string): void => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -58,7 +67,7 @@ export default function SuratKeteranganCeraiMati({ tipe }: SuratKeteranganCeraiM
     return newErrors;
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     console.log("HASIL VALIDASI:", formErrors);
@@ -71,7 +80,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setShowConfirmModal(true);
   };
 
- const handleConfirm = async () => {
+ const handleConfirm = async (): Promise <void> => {
     setLoading(true);
     try {
       setSubmited("");
@@ -100,7 +109,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
 
       if (!res.ok) {
         throw new Error(result.error || "Gagal mengirim permohonan");
@@ -114,7 +123,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
@@ -218,7 +227,9 @@ const handleSubmit = async (e: React.FormEvent) => {
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={()=>{
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

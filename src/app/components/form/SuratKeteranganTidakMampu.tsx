@@ -3,9 +3,10 @@
 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
-import { useState } from "react";
 import InputFieldDropdown from "../field/InputFieldDropdown";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganTidakMampuProps = {
   tipe: string;
@@ -15,7 +16,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidakMampuProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidakMampuProps): ReactNode {
   const initialData = {
   nama: "",
   nik: "",
@@ -37,7 +45,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+  const handleInputChange = (field: keyof typeof initialData, value: string): void => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -57,7 +65,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
   };
 
 
-   const handleSubmit = (e: React.FormEvent) => {
+   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -68,7 +76,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
     setShowConfirmModal(true);
   };
 
-    const handleConfirm = async () => {
+    const handleConfirm = async (): Promise<void> => {
     setLoading(true);
     setEditData(false);
     
@@ -97,7 +105,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
      window.location.href = `/${result.permohonan.no_resi}`;
@@ -213,7 +221,9 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

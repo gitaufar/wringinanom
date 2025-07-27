@@ -1,20 +1,28 @@
 "use client";
 
 import InputField from "../../components/field/InputField";
-import { useState } from "react";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
+import { useState } from "react";
+import type { ReactNode } from "react"; 
 
 type SuratKeteranganObyekProps = {
-  tipe: String;
+  tipe: string;
 };
 
 type FormErrors = {
   [key: string]: string | undefined;
 };
 
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
 export default function SuratKeteranganObyek({
   tipe,
-}: SuratKeteranganObyekProps) {
+}: SuratKeteranganObyekProps): ReactNode {
 
   const initialData = {
   namaPengaju: "",
@@ -39,7 +47,7 @@ export default function SuratKeteranganObyek({
   const [loading, setLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-  const handleInputChange = (field: keyof typeof initialData, value: string) => {
+  const handleInputChange = (field: keyof typeof initialData, value: string): void => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -60,7 +68,7 @@ export default function SuratKeteranganObyek({
 
 
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
@@ -71,7 +79,7 @@ export default function SuratKeteranganObyek({
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setLoading(true);
     setEditData(false);
     
@@ -101,7 +109,7 @@ export default function SuratKeteranganObyek({
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
        window.location.href = `/${result.permohonan.no_resi}`;
@@ -213,7 +221,9 @@ export default function SuratKeteranganObyek({
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}

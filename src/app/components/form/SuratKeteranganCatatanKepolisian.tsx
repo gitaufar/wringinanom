@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react"; 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import InputFieldDropdown from "../../components/field/InputFieldDropdown";
@@ -14,7 +15,14 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeteranganCatatanKepolisianProps) {
+type ApiResponse = {
+  permohonan: {
+    no_resi: string;
+  };
+  error?: string; 
+};
+
+export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeteranganCatatanKepolisianProps): ReactNode {
   const initialData = {
     namaLengkap: "",
     kotaLahir: "",
@@ -38,6 +46,12 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({}); 
 
+  const handleInputChange = (field: keyof typeof formData, value: string): void => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }};
   
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -58,32 +72,23 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
   };
 
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => { 
     e.preventDefault();
-    setErrors({}); 
-
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return; 
     }
-    
-    
-    setSubmited("");
+    setErrors({}); 
     setShowConfirmModal(true);
   };
 
  
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  };
+  
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setLoading(true);
+    setSubmited("");
     const data_dinamis = {
       nama: formData.namaLengkap,
       kota: formData.kotaLahir,
@@ -110,7 +115,7 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
         }),
       });
 
-      const result = await res.json();
+      const result = (await res.json()) as ApiResponse;
       if (!res.ok) throw new Error(result.error || "Gagal mengirim permohonan");
 
      window.location.href = `/${result.permohonan.no_resi}`;
@@ -129,7 +134,7 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
 
   const handleReset = () => {
     setFormData(initialData);
-    setErrors({}); // BARU: Reset error juga
+    setErrors({}); 
     setSubmited("");
     setEditData(true);
   };
@@ -167,7 +172,7 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
         <div className="flex justify-center items-center px-4 md:px-8 lg:px-[170px]">
           <form
             onSubmit={handleSubmit}
-            noValidate // DIUBAH: Mencegah validasi bawaan browser agar kita bisa pakai validasi custom
+            noValidate 
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
             <h2 className="text-xl font-bold">Data Pengaju</h2>
@@ -208,7 +213,9 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
           setShowConfirmModal(false);
           setErrorInfo(null);
         }}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          void handleConfirm();
+        }}
         isLoading={loading}
         title={errorInfo ? "Gagal Mengirim" : "Konfirmasi Pengajuan"}
         message={errorInfo || "Apakah Anda yakin semua data sudah benar?"}
