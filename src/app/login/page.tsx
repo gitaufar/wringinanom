@@ -1,7 +1,8 @@
 "use client";
+import { JSX } from "react";
 import LoginScreen from "../components/screen/LoginScreen";
 
-const page = () => {
+const page = (): JSX.Element => {
   return (
     <div>
       <LoginScreen />

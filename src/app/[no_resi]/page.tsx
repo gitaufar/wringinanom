@@ -1,6 +1,6 @@
 "use client";
 import NotFound from "../components/screen/user/NotFound";
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSX } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -8,7 +8,7 @@ import {
   FaFacebook,
   FaTelegram,
   FaClipboard,
-} from "react-icons/fa"; // pastikan path sesuai
+} from "react-icons/fa";
 import StatusCard from "../components/card/StatusCard";
 
 type Order = {
@@ -22,7 +22,22 @@ type Order = {
   description?: string;
 };
 
-const Receipt = () => {
+interface PermohonanResponse {
+  data: {
+    no_resi: string;
+    penduduk: {
+      nama_lengkap: string;
+    };
+    nik: string;
+    jenis_surat: string;
+    date: string;
+    status: "Selesai" | "Menunggu" | "Dibatalkan" | "Diproses";
+    keterangan?: string;
+  };
+  error?: string;
+}
+
+const Receipt = (): JSX.Element => {
   const { no_resi } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [copied, setCopied] = useState(false);
@@ -30,13 +45,13 @@ const Receipt = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       if (!no_resi) return;
       try {
-        const res = await fetch(`/api/layanan/${no_resi}`);
-        const data = await res.json();
+        const res = await fetch(`/api/layanan/${String(no_resi)}`);
+        const data = (await res.json()) as PermohonanResponse;
 
-        if (!res.ok) throw new Error(data.error || "Gagal memuat data");
+        if (!res.ok) throw new Error(data.error ?? "Gagal memuat data");
 
         const permohonan = data.data;
 
@@ -48,45 +63,42 @@ const Receipt = () => {
           submissionDate: permohonan.date,
           creationDate: new Date(permohonan.date).toLocaleDateString("id-ID"),
           status: permohonan.status,
-          description: permohonan.keterangan || "", // tambahkan keterangan
+          description: permohonan.keterangan || "",
         });
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Terjadi kesalahan tak diketahui.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    void fetchData();
   }, [no_resi]);
 
-  const handleCopy = () => {
+  const handleCopy = (): void => {
     if (!order) return;
-    navigator.clipboard.writeText(order.receiptNumber);
+    void navigator.clipboard.writeText(order.receiptNumber);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) return <div style={{ textAlign: "center" }}>Loading...</div>;
-  if (error)
-    return <NotFound />;
-  if (!order)
-    return <NotFound />;
+  if (error || !order) return <NotFound />;
 
   return (
     <div className="bg-[#f4f4f4] flex justify-center items-center min-h-screen p-5">
       <div className="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-blue-600">
-            {order.letterType}
-          </h1>
+          <h1 className="text-2xl font-bold text-blue-600">{order.letterType}</h1>
           <p className="mt-1 text-lg">#{order.receiptNumber}</p>
         </div>
 
         <div className="flex justify-center my-6">
-          <h2 className="text-4xl font-bold text-blue-600">
-            # {order.receiptNumber}
-          </h2>
+          <h2 className="text-4xl font-bold text-blue-600"># {order.receiptNumber}</h2>
         </div>
 
         <div className="mt-5 text-base bg-[#f9f9f9] p-5 rounded-lg">
@@ -141,10 +153,7 @@ const Receipt = () => {
             {copied ? "Disalin!" : "Salin Resi"}
           </button>
 
-          <Link
-            href={`https://wa.me?text=${order.receiptNumber}`}
-            target="_blank"
-          >
+          <Link href={`https://wa.me?text=${order.receiptNumber}`} target="_blank">
             <button className="px-5 py-2 bg-[#25D366] text-white rounded-md flex items-center text-base hover:bg-green-500">
               <FaWhatsapp className="mr-2" />
               WhatsApp
