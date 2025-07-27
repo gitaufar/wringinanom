@@ -55,7 +55,7 @@ const LetterSelectionPage = (): JSX.Element => {
   const letters = useMemo(() => {
     return BASE_LETTERS.map(letter => ({
       ...letter,
-      imageUrl: `/preview_surat/${createSlug(letter.title)}.png`
+      imageUrl: `/preview_surat_img/${createSlug(letter.title)}.png`
     }));
   }, []);
 
