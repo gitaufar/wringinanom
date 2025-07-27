@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "flowbite-react patch"
+    "postinstall": "prisma generate && flowbite-react patch"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
