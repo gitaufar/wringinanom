@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import { useParams } from 'next/navigation';
 
 import SuratKehilanganKepolisian from '@/app/components/form/SuratKehilanganKepolisian';
@@ -28,7 +28,7 @@ import SuratKeteranganPenghasilan from '@/app/components/form/SuratKeteranganPen
 import SuratKeteranganUsaha from '@/app/components/form/Usaha';
 import BedaIdentitasForm from '@/app/components/form/SuratKeteranganBedaIdentitas';
 
-export default function Page() {
+export default function Page(): JSX.Element {
     const { tipe } = useParams();
 
     let componentToRender;
