@@ -1,14 +1,15 @@
 import { PencilIcon } from "lucide-react";
+import { JSX } from "react";
 
 type InputField = {
-	inputLabel?: string;
-	inputPlaceholder: string;
-	setData: (value: string) => void;
-	setEditData: (value: boolean) => void;
-	editData: boolean;
-	submited?: string | null;
-	data?: string;
-	numberOnly?: boolean;
+  inputLabel?: string;
+  inputPlaceholder: string;
+  setData: (value: string) => void;
+  setEditData: (value: boolean) => void;
+  editData: boolean;
+  submited?: string | null;
+  data?: string;
+  numberOnly?: boolean;
   error?: string;
 };
 
@@ -21,10 +22,10 @@ export default function InputField({
   submited,
   data = "",
   numberOnly = false,
-  error, // BARU: Ambil prop error
-}: InputField) {
+  error,
+}: InputField): JSX.Element {
   return (
-    <div className="flex flex-col gap-2"> {/* DIUBAH: Mengurangi gap agar lebih rapat dengan pesan error */}
+    <div className="flex flex-col gap-2">
       {inputLabel && (
         <label className="text-base sm:text-base font-normal text-neutral-600">
           {inputLabel}
@@ -35,7 +36,6 @@ export default function InputField({
           value={data}
           onChange={(e) => setData(e.target.value)}
           onKeyDown={(event) => {
-            // Izinkan Ctrl+V
             if (
               (event.ctrlKey || event.metaKey) &&
               event.key.toLowerCase() === "v"
@@ -51,7 +51,6 @@ export default function InputField({
               event.preventDefault();
             }
           }}
-          // DIUBAH: Logika className dirombak untuk menangani state error
           className={`
             w-full text-xs sm:text-base font-normal border rounded-[4px]
             px-[12px] py-[8px] outline-none transition-colors
@@ -59,10 +58,10 @@ export default function InputField({
             focus:ring-2
             ${editData ? "bg-transparent" : "bg-[#F5F6FA]"}
             ${error
-              ? "border-red-500 focus:ring-red-500" // Style saat ada error
+              ? "border-red-500 focus:ring-red-500"
               : editData
-                ? "border-[#D5D5D5] focus:ring-blue-500" // Style saat bisa diedit
-                : "border-transparent" // Style saat tidak bisa diedit
+                ? "border-[#D5D5D5] focus:ring-blue-500"
+                : "border-transparent"
             }
           `}
           type="text"
@@ -81,7 +80,6 @@ export default function InputField({
           </div>
         )}
       </div>
-      {/* BARU: Tampilkan elemen p jika ada pesan error */}
       {error && <p className="text-red-600 text-sm">{error}</p>}
     </div>
   );

@@ -1,9 +1,8 @@
-// app/components/field/InputFieldDate.tsx
 
 "use client";
 
 import { PencilIcon } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, FC } from "react";
 
 type InputFieldDateProps = {
   inputLabel?: string;
@@ -12,19 +11,18 @@ type InputFieldDateProps = {
   editData: boolean;
   submited?: string | null;
   data?: string;
-  error?: string; // BARU: Tambahkan prop error
+  error?: string;
 };
 
-export default function InputFieldDate({
+const InputFieldDate: FC<InputFieldDateProps> = ({
   inputLabel,
   setData,
   setEditData,
   editData,
   submited,
   data = "",
-  error, // BARU: Ambil prop error
-}: InputFieldDateProps) {
-  
+  error,
+}) => {
   const handleToggleEdit = () => {
     if (editData && !data) {
       alert("Harap isi tanggal terlebih dahulu.");
@@ -46,18 +44,18 @@ export default function InputFieldDate({
           value={data}
           onChange={(e) => setData(e.target.value)}
           disabled={!editData}
-          // DIUBAH: Logika className diperbarui untuk menangani state error
           className={`
             flex-1 w-full text-xs sm:text-base font-normal border rounded-md
             px-3 py-2 outline-none transition-colors
             focus:ring-2
             ${data === "" ? "text-neutral-400" : "text-black"}
             ${editData ? "bg-transparent" : "bg-gray-100 text-gray-700"}
-            ${error
-              ? "border-red-500 focus:ring-red-500" // Style saat ada error
-              : editData
-                ? "border-gray-300 focus:ring-blue-500" // Style saat bisa diedit
-                : "border-gray-100" // Style saat tidak bisa diedit
+            ${
+              error
+                ? "border-red-500 focus:ring-red-500"
+                : editData
+                ? "border-gray-300 focus:ring-blue-500"
+                : "border-gray-100"
             }
           `}
         />
@@ -74,8 +72,9 @@ export default function InputFieldDate({
           </button>
         )}
       </div>
-      {/* BARU: Tampilkan pesan error jika ada */}
       {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );
-}
+};
+
+export default InputFieldDate;

@@ -1,8 +1,9 @@
-"use client"; 
+"use client";
 
-import { Button } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'; 
+import { Button } from "flowbite-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import Image from "next/image";
 
 interface LetterCardProps {
   title: string;
@@ -20,27 +21,31 @@ const LetterCard: React.FC<LetterCardProps> = ({
   imageUrl,
 }) => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false); // State untuk loading
+  const [loading, setLoading] = useState(false);
 
-  const handleClick = async () => {
+  const handleClick = async (): Promise<void> => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // opsional delay agar efek loading terlihat
-      router.push(`/surat/${link}`);
+      await new Promise((resolve) => setTimeout(resolve, 500)); // optional delay
+      if (link) {
+        router.push(`/surat/${link}`);
+      }
     } catch (error) {
       console.error("Gagal redirect:", error);
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 overflow-hidden flex flex-col bg-white">
-      
-      <div className="relative h-48 w-full bg-gray-100 flex items-center justify-center overflow-auto">
-        <img 
-          src={imageUrl} 
-          alt={`Preview untuk ${title}`} 
-          className="h-full w-full object-cover object-top pb-2"
+      <div className="relative h-48 w-full bg-gray-100 flex items-center justify-center">
+        <Image
+          src={imageUrl}
+          alt={`Preview untuk ${title}`}
+          fill
+          className="object-cover object-top pb-2 rounded-t-lg"
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
       </div>
 
@@ -58,11 +63,11 @@ const LetterCard: React.FC<LetterCardProps> = ({
               {topic}
             </span>
           </div>
-          
+
           <Button
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg"
             size="sm"
-            onClick={handleClick}
+            onClick={() => void handleClick()}
             disabled={loading}
           >
             {loading ? "Memuat..." : "Ajukan Surat"}

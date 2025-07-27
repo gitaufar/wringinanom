@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { JSX, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import HeroSection from '../section/HeroSection';
@@ -9,7 +9,7 @@ import TutorialSection from '../section/TutorialSection';
 import InformationSection from '../section/InformationSection';
 import Footer from '../section/Footer';
 
-const LandingPage = () => {
+const LandingPage = (): JSX.Element => {
   useEffect(() => {
     AOS.init({
       duration: 800,

@@ -16,7 +16,8 @@ const menus: Menu[] = [
   { label: 'Kependudukan',  path: '/admin/kependudukan' },
 ]
 
-export default function Sidebar() {
+// ✅ Tambahkan return type eksplisit: React.FC
+const Sidebar: React.FC = () => {
   const pathname = usePathname()
 
   return (
@@ -45,3 +46,5 @@ export default function Sidebar() {
     </aside>
   )
 }
+
+export default Sidebar

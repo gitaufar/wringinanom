@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import StatusCard from "../../components/card/StatusCard";
 import { FaEye, FaTrashAlt } from "react-icons/fa";
 
@@ -19,23 +19,28 @@ type TabelRiwayatPermohonanProps = {
   change: boolean;
 };
 
-const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
+const TabelRiwayatPermohonan = ({
+  change,
+}: TabelRiwayatPermohonanProps): JSX.Element => {
   const [dataRiwayat, setDataRiwayat] = useState<DataRiwayat[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedResi, setSelectedResi] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRiwayat = async () => {
+    const fetchRiwayat = async (): Promise<void> => {
       try {
         const res = await fetch("/api/layanan");
-        const json = await res.json();
+        const json: unknown = await res.json();
 
         if (Array.isArray(json)) {
           const filtered = json.filter(
-            (item: DataRiwayat) => item.status?.toLowerCase() !== "menunggu"
+            (item): item is DataRiwayat =>
+              typeof item === "object" &&
+              item !== null &&
+              (item as DataRiwayat).status?.toLowerCase() !== "menunggu"
           );
 
-          const mappedData: DataRiwayat[] = filtered.map((item: DataRiwayat) => ({
+          const mappedData: DataRiwayat[] = filtered.map((item) => ({
             no_resi: item.no_resi,
             date: item.date,
             tipe: item.tipe,
@@ -55,15 +60,15 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
       }
     };
 
-    fetchRiwayat();
+    void fetchRiwayat(); // ditandai dengan void untuk mencegah no-floating-promise
   }, [change]);
 
-  const handleDeleteConfirm = (noResi: string) => {
+  const handleDeleteConfirm = (noResi: string): void => {
     setSelectedResi(noResi);
     setShowConfirmModal(true);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     if (!selectedResi) return;
 
     try {
@@ -72,8 +77,12 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Gagal menghapus riwayat");
+        const err: unknown = await res.json();
+        const message =
+          typeof err === "object" && err !== null && "error" in err
+            ? String((err as { error: unknown }).error)
+            : "Gagal menghapus riwayat";
+        throw new Error(message);
       }
 
       setDataRiwayat((prev) =>
@@ -112,7 +121,7 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
               {dataRiwayat.map((row, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="px-6 py-4">{row.no_resi}</td>
-                  <td className="px-6 py-4">{row.penduduk?.nama_lengkap}</td>
+                  <td className="px-6 py-4">{row.penduduk.nama_lengkap}</td>
                   <td className="px-6 py-4">
                     {new Date(row.date).toLocaleDateString("id-ID", {
                       day: "2-digit",
@@ -161,7 +170,7 @@ const TabelRiwayatPermohonan = ({ change }: TabelRiwayatPermohonanProps) => {
                 Batal
               </button>
               <button
-                onClick={handleDelete}
+                onClick={() => void handleDelete()} // mencegah ESLint no-misused-promises
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Hapus

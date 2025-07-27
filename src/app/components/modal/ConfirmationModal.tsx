@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2 } from "lucide-react";
-import { ReactNode } from "react";
+import { JSX, ReactNode } from "react";
 
 type ConfirmationModalProps = {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export default function ConfirmationModal({
   message,
   successInfo = null,
   children,
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps): JSX.Element | null {
   if (!isOpen) {
     return null;
   }

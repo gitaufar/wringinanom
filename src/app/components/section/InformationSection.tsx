@@ -1,8 +1,8 @@
 "use client";
-import { AiOutlinePhone } from "react-icons/ai";
+import React from "react";
 import ButtonGeneral from "../button/ButtonGeneral";
 
-const InformationSection = () => {
+const InformationSection: React.FC = () => {
   return (
     <section className="flex justify-center items-center px-6 py-10 w-full max-w-[1440px] mx-auto">
       <div className="flex flex-col-reverse lg:flex-row justify-between items-center w-full gap-10">
@@ -20,7 +20,7 @@ const InformationSection = () => {
           {/* Gunakan komponen ButtonGeneral */}
           <ButtonGeneral
             text="Telpon"
-            onClick={() => (window.location.href = "")}
+            onClick={() => (window.location.href = "tel:08123456789")}
           />
         </div>
 

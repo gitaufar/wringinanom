@@ -1,7 +1,6 @@
-// components/tabel/TabelKependudukan.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { penduduk } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,13 @@ import {
 
 const LIMIT = 10;
 
-export default function TabelKependudukan() {
+interface FetchResponse {
+  data: penduduk[];
+  totalPages: number;
+  totalData: number;
+}
+
+export default function TabelKependudukan(): JSX.Element {
   const router = useRouter();
   const [data, setData] = useState<penduduk[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,24 +27,36 @@ export default function TabelKependudukan() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalData, setTotalData] = useState(0);
 
-  const fetchPage = async (p: number) => {
+  const fetchPage = async (p: number): Promise<void> => {
+  try {
     setLoading(true);
     const res = await fetch(`/api/penduduk?page=${p}&limit=${LIMIT}`);
-    const json = await res.json();
+    const json = (await res.json()) as FetchResponse;
     setData(json.data);
     setTotalPages(json.totalPages);
     setTotalData(json.totalData);
+  } catch (err) {
+    console.error("Failed to fetch data:", err);
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   useEffect(() => {
-    fetchPage(page);
+    void fetchPage(page); // ✅ Gunakan void untuk fungsi async dalam useEffect
   }, [page]);
 
-  const handleDelete = async (nik: string) => {
-    if (!confirm("Yakin ingin menghapus?")) return;
-    await fetch(`/api/penduduk/${nik}`, { method: "DELETE" });
-    fetchPage(page);
+  const handleDelete = async (nik: string): Promise<void> => {
+    const confirmDelete = confirm("Yakin ingin menghapus?");
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(`/api/penduduk/${nik}`, { method: "DELETE" });
+      await fetchPage(page);
+    } catch (err) {
+      console.error("Gagal menghapus data:", err);
+    }
   };
 
   return (
@@ -48,14 +65,7 @@ export default function TabelKependudukan() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {[
-                "NIK",
-                "Nama",
-                "Jenis Kelamin",
-                "Tanggal Lahir",
-                "Alamat",
-                "Action",
-              ].map((h) => (
+              {["NIK", "Nama", "Jenis Kelamin", "Tanggal Lahir", "Alamat", "Action"].map((h) => (
                 <th
                   key={h}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -68,46 +78,32 @@ export default function TabelKependudukan() {
           <tbody className="bg-white divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-gray-500">
-                  Loading…
-                </td>
+                <td colSpan={6} className="py-6 text-center text-gray-500">Loading…</td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-gray-500">
-                  Data kosong
-                </td>
+                <td colSpan={6} className="py-6 text-center text-gray-500">Data kosong</td>
               </tr>
             ) : (
               data.map((d) => (
                 <tr key={d.nik} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 text-sm text-gray-700">{d.nik}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.nama_lengkap}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.jenis_kelamin}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">
-                    {d.nama_lengkap}
+                    {d.tanggal_lahir ? format(new Date(d.tanggal_lahir), "dd-MM-yyyy") : "-"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {d.jenis_kelamin}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {d.tanggal_lahir
-                      ? format(new Date(d.tanggal_lahir), "dd-MM-yyyy")
-                      : "Tanggal tidak tersedia"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {d.alamat}
-                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{d.alamat}</td>
                   <td className="px-6 py-4 flex space-x-2">
                     <button
-                      onClick={() =>
-                        router.push(`/admin/kependudukan/edit/${d.nik}`)
-                      }
+                      onClick={() => router.push(`/admin/kependudukan/edit/${d.nik}`)}
                       className="p-2 rounded hover:bg-gray-100"
                       title="Edit"
                     >
                       <FiEdit className="text-gray-600" />
                     </button>
                     <button
-                      onClick={() => handleDelete(d.nik)}
+                      onClick={() => void handleDelete(d.nik)} // ✅ void untuk fungsi async
                       className="p-2 rounded hover:bg-red-50"
                       title="Hapus"
                     >
@@ -124,8 +120,7 @@ export default function TabelKependudukan() {
         {!loading && data.length > 0 && (
           <div className="px-6 py-4 flex items-center justify-between text-sm text-gray-600">
             <div>
-              Menampilkan {(page - 1) * LIMIT + 1}–
-              {(page - 1) * LIMIT + data.length} dari {totalData}
+              Menampilkan {(page - 1) * LIMIT + 1}–{(page - 1) * LIMIT + data.length} dari {totalData}
             </div>
             <div className="flex items-center space-x-2">
               <button

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { JSX } from 'react';
 
-export const RadioButton = () => {
+export const RadioButton = (): JSX.Element => {
   return (
     <div>RadioButton</div>
-  )
-}
+  );
+};

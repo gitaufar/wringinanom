@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import { TambahPendudukForm } from "../../form/TambahPendudukForm";
 import { Spinner } from "flowbite-react";
 
@@ -48,42 +48,37 @@ type TambahPendudukProps = {
   formDataProps?: PendudukProps;
 };
 
-// Helper function to convert null values to empty strings
+// ✅ Perbaikan: tidak perlu assertion `as string`
 const sanitizeFormData = (data: PendudukProps | undefined): PendudukProps => {
   if (!data) return defaultForm;
 
   const sanitized = { ...data };
   (Object.keys(sanitized) as Array<keyof PendudukProps>).forEach((key) => {
-    if (sanitized[key] === null || sanitized[key] === undefined) {
-      sanitized[key] = "" as any;
-    }
+    const value = sanitized[key];
+    sanitized[key] = value ?? "";
   });
 
   return sanitized;
 };
 
-export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
+export const TambahPenduduk = ({
+  formDataProps,
+}: TambahPendudukProps): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<PendudukProps>(
     sanitizeFormData(formDataProps)
   );
 
-  const [editStates, setEditStates] = useState<{
-    [K in keyof PendudukProps]: boolean;
-  }>(
+  const [editStates, setEditStates] = useState<Record<keyof PendudukProps, boolean>>(
     Object.fromEntries(
       Object.keys(defaultForm).map((key) => [key, formDataProps ? false : true])
-    ) as {
-      [K in keyof PendudukProps]: boolean;
-    }
+    ) as Record<keyof PendudukProps, boolean>
   );
 
-  const [submitStates] = useState<{
-    [K in keyof PendudukProps]: string | null;
-  }>(
+  const [submitStates] = useState<Record<keyof PendudukProps, string | null>>(
     Object.fromEntries(
       Object.keys(defaultForm).map((key) => [key, formDataProps ? null : ""])
-    ) as { [K in keyof PendudukProps]: string | null }
+    ) as Record<keyof PendudukProps, string | null>
   );
 
   const handleChange = (field: keyof PendudukProps, value: string) => {
@@ -94,7 +89,7 @@ export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
     setEditStates((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (): Promise<void> => {
     setLoading(true);
     try {
       const res = await fetch("/api/penduduk", {
@@ -105,7 +100,7 @@ export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
 
       if (!res.ok) throw new Error("Gagal mengirim data");
 
-      const result = await res.json();
+      const result: unknown = await res.json(); // ✅ Hindari `any`
       resetForm();
       alert("Data berhasil dikirim!");
       console.log("✅ Data terkirim:", result);
@@ -118,14 +113,12 @@ export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = (): void => {
     setFormData(defaultForm);
     setEditStates(
       Object.fromEntries(
         Object.keys(defaultForm).map((key) => [key, true])
-      ) as {
-        [K in keyof PendudukProps]: boolean;
-      }
+      ) as Record<keyof PendudukProps, boolean>
     );
   };
 
@@ -143,7 +136,7 @@ export const TambahPenduduk = ({ formDataProps }: TambahPendudukProps) => {
 
       <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
         <button
-          onClick={onSubmit}
+          onClick={() => void onSubmit()}
           className="bg-[#4880FF] rounded-2xl flex items-center justify-center gap-2 py-3 px-12 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >

@@ -1,6 +1,12 @@
 "use client";
 
-const ButtonTambahPenduduk = ({ onClick }: { onClick: () => void }) => {
+import { JSX } from "react";
+
+type ButtonTambahPendudukProps = {
+  onClick: () => void;
+};
+
+const ButtonTambahPenduduk = ({ onClick }: ButtonTambahPendudukProps): JSX.Element => {
   return (
     <button
       onClick={onClick}

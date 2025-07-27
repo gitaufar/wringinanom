@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import ButtonGeneral from "../button/ButtonGeneral";
+import { JSX } from "react";
 
 const steps = [
   {
@@ -33,8 +35,7 @@ const steps = [
   },
 ];
 
-
-const TutorialSection = () => {
+const TutorialSection = (): JSX.Element => {
   return (
     <section className="flex flex-col lg:flex-row items-start justify-between gap-12 px-4 sm:px-6 md:px-10 py-16 bg-white font-['Plus_Jakarta_Sans'] w-full max-w-[1440px] mx-auto">
       {/* Kiri: Judul dan deskripsi */}
@@ -70,18 +71,22 @@ const TutorialSection = () => {
               index !== steps.length - 1 ? "border-b border-black" : ""
             }`}
           >
-            {/* Nomor langkah (mobile + desktop) */}
+            {/* Nomor langkah */}
             <div className="absolute -left-[40px] text-[#020B23] text-2xl font-semibold hidden md:block">
               {step.number}
             </div>
-
             <div className="block md:hidden text-[#020B23] text-xl font-semibold">
               {step.number}
             </div>
 
-            {/* Gambar icon */}
+            {/* Gambar icon (gunakan Next.js Image) */}
             <div className="rounded-[22px] w-[100px] h-[100px] bg-[#D9D9D9] flex items-center justify-center overflow-hidden">
-              <img src={step.image} alt={step.title} className="w-12 h-12" />
+              <Image
+                src={step.image}
+                alt={step.title}
+                width={48}
+                height={48}
+              />
             </div>
 
             {/* Teks */}

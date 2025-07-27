@@ -1,11 +1,13 @@
+import { JSX } from "react";
+
 type ArrowIconProps = {
   color?: string;
 };
 
-const ArrowIcon = ({ color }: ArrowIconProps) => {
+const ArrowIcon = ({ color }: ArrowIconProps): JSX.Element => {
   return (
     <svg
-    className="cursor-pointer"
+      className="cursor-pointer"
       xmlns="http://www.w3.org/2000/svg"
       width="22"
       height="15"

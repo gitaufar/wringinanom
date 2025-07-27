@@ -3,10 +3,10 @@ import TabelKependudukan from "../../../components/tabel/TabelKependudukan";
 import TabelKonfirmasi from "../../../components/tabel/TabelKonfirmasi";
 import ButtonTambahPenduduk from "../../../components/button/ButtonTambahPenduduk";
 import { useRouter } from "next/navigation";
+import { JSX } from "react";
 
-
-export default function KependudukanPage() {
-  const router = useRouter()
+export default function KependudukanPage(): JSX.Element {
+  const router = useRouter();
 
   return (
     <div className="p-6 space-y-8">
@@ -14,7 +14,6 @@ export default function KependudukanPage() {
 
       {/* Filter + Tombol */}
       <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-
         <ButtonTambahPenduduk
           onClick={() => router.push('/admin/kependudukan/tambah')}
         />
@@ -32,5 +31,5 @@ export default function KependudukanPage() {
         <TabelKependudukan />
       </section>
     </div>
-  )
+  );
 }

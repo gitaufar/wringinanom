@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { JSX } from "react";
 
 interface InputFieldTimeProps {
   inputLabel: string;
@@ -18,7 +18,7 @@ export default function InputFieldTime({
   setData,
   editData,
   error, // BARU: Ambil prop error dari props
-}: InputFieldTimeProps) {
+}: InputFieldTimeProps): JSX.Element {
   return (
     <div className="flex flex-col gap-2 w-full">
       <label className="text-base font-medium text-black">{inputLabel}</label>

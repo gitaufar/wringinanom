@@ -1,7 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
+import type { FC, JSX } from "react";
 
-export default function Footer() {
+const Footer: FC = (): JSX.Element | null => {
   const path = usePathname();
   const hideFooterRoutes = ["/login", "/register", "/Chat", "/createProfile", "/kostumasiUser"];
   const shouldHideFooter = hideFooterRoutes.includes(path);
@@ -17,7 +18,7 @@ export default function Footer() {
             Lorem Ipsum is simply dummy text of the printing and typesetting industry.
           </p>
           <p className="text-sm">
-            Lorem Ipsum has been the industry's standard dummy text ever since.
+            Lorem Ipsum has been the industry&rsquo;s standard dummy text ever since.
           </p>
         </div>
 
@@ -30,7 +31,7 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div className="hidden lg:block" /> 
+        <div className="hidden lg:block" />
       </div>
 
       <div className="border-t border-white/30">
@@ -40,4 +41,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

@@ -1,6 +1,7 @@
 // app/components/field/InputFieldDropdown.tsx
 
 import { PencilIcon } from "lucide-react";
+import React, { JSX } from "react"; // pastikan import React ada (dibutuhkan untuk JSX.Element type)
 
 type InputFieldDropdownProps = {
   inputLabel?: string;
@@ -11,7 +12,7 @@ type InputFieldDropdownProps = {
   setEditData: (value: boolean) => void;
   editData: boolean;
   submited: string | null;
-  error?: string; // BARU: Tambahkan prop error
+  error?: string;
 };
 
 export default function InputFieldDropdown({
@@ -23,10 +24,10 @@ export default function InputFieldDropdown({
   setEditData,
   editData,
   submited,
-  error, // BARU: Ambil prop error
-}: InputFieldDropdownProps) {
+  error,
+}: InputFieldDropdownProps): JSX.Element {
   return (
-    <div className="flex flex-col gap-2"> {/* DIUBAH: Mengurangi gap */}
+    <div className="flex flex-col gap-2">
       {inputLabel && (
         <label className="text-base font-normal text-neutral-600">{inputLabel}</label>
       )}
@@ -35,7 +36,6 @@ export default function InputFieldDropdown({
           disabled={!editData}
           value={data}
           onChange={(e) => setData(e.target.value)}
-          // DIUBAH: Logika className diperbarui untuk menangani state error
           className={`
             w-full text-xs sm:text-base font-normal border rounded-[4px]
             px-[12px] py-[8px] outline-none transition-colors
@@ -43,10 +43,10 @@ export default function InputFieldDropdown({
             ${data === "" ? "text-neutral-400" : "text-black"}
             ${editData ? "bg-transparent" : "bg-[#F5F6FA]"}
             ${error
-              ? "border-red-500 focus:ring-red-500" // Style saat ada error
+              ? "border-red-500 focus:ring-red-500"
               : editData
-                ? "border-[#D5D5D5] focus:ring-blue-500" // Style saat bisa diedit
-                : "border-transparent" // Style saat tidak bisa diedit
+                ? "border-[#D5D5D5] focus:ring-blue-500"
+                : "border-transparent"
             }
           `}
         >
@@ -69,7 +69,6 @@ export default function InputFieldDropdown({
           </div>
         )}
       </div>
-      {/* BARU: Tampilkan pesan error jika ada */}
       {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );

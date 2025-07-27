@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { JSX } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-const LayananSection = () => {
+const LayananSection = (): JSX.Element => {
   return (
     <section className="relative w-full bg-[#34518D] py-20 overflow-hidden">
       {/* 🔵 Dekorasi Shape Kiri Atas */}
@@ -31,9 +33,11 @@ const LayananSection = () => {
         {/* Kanan: Card */}
         <div className="w-full md:w-1/2">
           <div className="bg-white rounded-xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
-            <img
+            <Image
               src="/png/bg-home.png"
               alt="Layanan"
+              width={500}
+              height={224}
               className="w-full h-56 object-cover rounded-t-xl"
             />
             <div className="p-6">
@@ -42,15 +46,15 @@ const LayananSection = () => {
               </h3>
               <p className="text-gray-700 text-sm mb-4">
                 Pengurusan dokumen kependudukan seperti KTP, KK, surat pindah,
-                akta kelahiran, dan dokumen administratif lainnya yang dibutuhkan
-                warga Desa Wringinanom.
+                akta kelahiran, dan dokumen administratif lainnya yang
+                dibutuhkan warga Desa Wringinanom.
               </p>
-              <a
+              <Link
                 href="/surat"
                 className="inline-block px-5 py-2 rounded-full bg-[#008266] text-white text-sm font-medium hover:bg-green-700 transition"
               >
                 Mulai Sekarang
-              </a>
+              </Link>
             </div>
           </div>
         </div>

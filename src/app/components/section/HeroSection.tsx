@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import ButtonGeneral from "../button/ButtonGeneral";
 import SearchIcon from "../icon/SearchIcon";
 
-const HeroSection = () => {
+const HeroSection = (): JSX.Element => {
   const [search, setSearch] = useState("");
   const router = useRouter();
 
@@ -19,11 +20,14 @@ const HeroSection = () => {
     <section className="relative w-full">
       <div className="relative w-full h-[60vh] sm:h-[90vh] overflow-hidden">
         {/* Background */}
-        <img
+        <Image
           src="/png/bg-home.png"
           alt="Background"
-          className="absolute inset-0 w-full h-full object-cover z-[-2]"
+          fill
+          className="object-cover z-[-2]"
+          priority
         />
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50 z-[-1]" />
 
@@ -46,17 +50,15 @@ const HeroSection = () => {
 
         {/* Hero Content */}
         <div className="relative h-full flex flex-col justify-center items-center text-center px-6 sm:px-10 text-white max-w-5xl mx-auto">
-<h1
-  className="text-[32px] sm:text-[40px] md:text-[64px] font-semibold leading-tight mb-3"
->
-  DESA WRINGINANOM
-</h1>
-
+          <h1 className="text-[32px] sm:text-[40px] md:text-[64px] font-semibold leading-tight mb-3">
+            DESA WRINGINANOM
+          </h1>
 
           <p className="text-sm sm:text-lg md:text-xl leading-relaxed mb-6 max-w-full sm:max-w-[80%] md:max-w-[60%]">
             Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom,
             Kec. Poncokusumo, Kab. Malang
           </p>
+
           <ButtonGeneral
             className="px-4 py-1.5 sm:px-6 sm:py-2.5 text-xs sm:text-sm"
             text="Mulai Sekarang"

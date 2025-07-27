@@ -1,6 +1,6 @@
-import React from "react";
+import React, { JSX } from "react";
 
-const TutorialCard = () => {
+const TutorialCard = (): JSX.Element => {
   return <div>TutorialCard</div>;
 };
 

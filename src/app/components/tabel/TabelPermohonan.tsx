@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { FaEdit, FaCheck, FaTimes, FaEye } from "react-icons/fa";
 import StatusCard from "../../components/card/StatusCard";
 import * as mammoth from "mammoth";
 import ConfirmationModal from "@/app/components/modal/ConfirmationModal";
+
+type Status = "Menunggu" | "Selesai" | "Dibatalkan";
 
 type DataPermintaan = {
   no_resi: string;
@@ -15,7 +17,7 @@ type DataPermintaan = {
   jenis_surat: string;
   data_dinamis?: Record<string, unknown>;
   riwayatlayanan: {
-    status: "Menunggu" | "Selesai" | "Dibatalkan";
+    status: Status;
   };
 };
 
@@ -25,44 +27,41 @@ type TabelPermohonanProps = {
   change: boolean;
 };
 
-const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
+const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps): JSX.Element => {
   const [Permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
   const [firstLoading, setFirstLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const [modalApproveOpen, setModalApproveOpen] = useState(false);
   const [modalRejectOpen, setModalRejectOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DataPermintaan | null>(null);
-
   const [alasan, setAlasan] = useState("");
 
   useEffect(() => {
-    const fetchPermohonan = async () => {
+    const fetchPermohonan = async (): Promise<void> => {
       try {
         const res = await fetch("/api/permohonan");
-        const result = await res.json();
+        const result = (await res.json()) as { data?: DataPermintaan[]; error?: string };
+
         if (!res.ok) throw new Error(result.error || "Gagal fetch Permohonan");
 
         const onlyMenunggu = (result.data || []).filter(
-          (x: DataPermintaan) => x.riwayatlayanan?.status === "Menunggu"
+          (x) => x.riwayatlayanan?.status === "Menunggu"
         );
 
         setPermohonan(onlyMenunggu);
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Terjadi Kesalahan";
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Terjadi Kesalahan";
         alert(message);
       } finally {
         setFirstLoading(false);
       }
     };
 
-    fetchPermohonan();
-    const interval = setInterval(fetchPermohonan, 5000);
+    void fetchPermohonan(); // ditandai void agar aman sesuai ESLint
+    const interval = setInterval(() => void fetchPermohonan(), 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleApprove = async () => {
+  const handleApprove = async (): Promise<void> => {
     if (!selectedItem) return;
     const { no_resi, jenis_surat, data_dinamis, penduduk } = selectedItem;
     try {
@@ -92,16 +91,13 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
       setPermohonan((prev) => prev.filter((item) => item.no_resi !== no_resi));
       setChange(!change);
       setModalApproveOpen(false);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Terjadi kesalahan saat menyetujui.";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Terjadi kesalahan saat menyetujui.";
       alert(message);
     }
   };
 
-  const handleReject = async () => {
+  const handleReject = async (): Promise<void> => {
     if (!selectedItem) return;
     try {
       await fetch("/api/permohonan/status", {
@@ -128,12 +124,11 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
       setPermohonan((prev) =>
         prev.filter((item) => item.no_resi !== selectedItem.no_resi)
       );
-      setAlasan(""); // Reset input
+      setAlasan("");
       setChange(!change);
       setModalRejectOpen(false);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Gagal membatalkan permohonan.";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Gagal membatalkan permohonan.";
       alert(message);
     }
   };
@@ -141,7 +136,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
   const handlePreview = async (
     jenisSurat: string,
     dataDinamis: Record<string, unknown>
-  ) => {
+  ): Promise<void> => {
     try {
       const res = await fetch(`/api/surat/${jenisSurat}`, {
         method: "POST",
@@ -150,6 +145,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
       });
 
       if (!res.ok) throw new Error("Gagal ambil dokumen");
+
       const blob = await res.blob();
       const arrayBuffer = await blob.arrayBuffer();
       const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
@@ -157,19 +153,17 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
       const printWindow = window.open("", "_blank", "width=800,height=600");
       if (printWindow) {
         printWindow.document.write(`
-        <html><head><title>Preview</title></head><body>${html}</body></html>
-      `);
+          <html><head><title>Preview</title></head><body>${html}</body></html>
+        `);
         printWindow.document.close();
       }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Gagal preview dokumen";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Gagal preview dokumen";
       alert("Gagal preview dokumen: " + message);
     }
   };
 
   if (firstLoading) return <p className="mt-4">Loading Permohonan...</p>;
-  if (error) return <p className="text-red-500 mt-4">❌ {error}</p>;
 
   return (
     <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
@@ -230,7 +224,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
                     className="hover:text-blue-700"
                     onClick={() => {
                       if (row.data_dinamis) {
-                        handlePreview(row.jenis_surat, row.data_dinamis);
+                        void handlePreview(row.jenis_surat, row.data_dinamis);
                       } else {
                         alert("Data dinamis tidak tersedia untuk surat ini.");
                       }
@@ -240,9 +234,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <StatusCard
-                    status={row.riwayatlayanan?.status || "Menunggu"}
-                  />
+                  <StatusCard status={row.riwayatlayanan?.status || "Menunggu"} />
                 </td>
               </tr>
             ))
@@ -250,23 +242,21 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps) => {
         </tbody>
       </table>
 
-      {/* MODAL APPROVE */}
       <ConfirmationModal
-        isOpen={modalApproveOpen}
-        onClose={() => setModalApproveOpen(false)}
-        onConfirm={handleApprove}
+       isOpen={modalApproveOpen}
+       onClose={() => setModalApproveOpen(false)}
+        onConfirm={() => void handleApprove()}
         title="Setujui Permohonan?"
         message={`Apakah Anda yakin ingin menyetujui permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
       />
 
-      {/* MODAL REJECT */}
       <ConfirmationModal
         isOpen={modalRejectOpen}
         onClose={() => {
           setModalRejectOpen(false);
           setAlasan("");
         }}
-        onConfirm={handleReject}
+        onConfirm={() => void handleReject()}
         title="Batalkan Permohonan?"
         message={`Apakah Anda yakin ingin membatalkan permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
       >

@@ -1,8 +1,9 @@
 "use client";
 
 import { FaFilter, FaRedo } from "react-icons/fa";
+import React, { JSX } from "react";
 
-const FilterPenduduk = () => {
+const FilterPenduduk = (): JSX.Element => {
   return (
     <div className="flex items-center bg-white border rounded-xl px-4 py-2 gap-4 overflow-x-auto">
       {/* Filter Icon & Label */}
@@ -24,7 +25,7 @@ const FilterPenduduk = () => {
       {/* Dropdown Status */}
       <DropdownSelect
         label="Status"
-        options={['Selesai', 'Diproses', 'Dibatalkan']}
+        options={["Selesai", "Diproses", "Dibatalkan"]}
         name="status"
       />
 
@@ -38,15 +39,13 @@ const FilterPenduduk = () => {
 };
 
 // Reusable dropdown select
-const DropdownSelect = ({
-  label,
-  options,
-  name,
-}: {
+interface DropdownSelectProps {
   label: string;
   options: string[];
   name: string;
-}) => {
+}
+
+const DropdownSelect = ({ label, options, name }: DropdownSelectProps): JSX.Element => {
   return (
     <div className="relative">
       <select
