@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   useContext,
@@ -10,6 +8,7 @@ import React, {
 import { penduduk } from "@prisma/client";
 
 const LIMIT = 10;
+const DEBOUNCE_DELAY = 500;
 
 interface FetchResponse {
   data: penduduk[];
@@ -23,6 +22,8 @@ interface PendudukContextType {
   totalData: number;
   loading: boolean;
   page: number;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
   setPage: (page: number) => void;
   refetch: () => void;
   setData: React.Dispatch<React.SetStateAction<penduduk[]>>;
@@ -44,13 +45,31 @@ export const PendudukProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<penduduk[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [totalData, setTotalData] = useState(0);
 
-  const fetchPenduduk = async (p: number) => {
+  // Debouncing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setPage(1); // Reset ke page 1 saat searchTerm berubah
+    }, DEBOUNCE_DELAY);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  const fetchPenduduk = async (p: number, search: string = "") => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/penduduk?page=${p}&limit=${LIMIT}`);
+      const query = new URLSearchParams({
+        page: p.toString(),
+        limit: LIMIT.toString(),
+        ...(search ? { search } : {}),
+      });
+
+      const res = await fetch(`/api/penduduk?${query.toString()}`);
       const json = (await res.json()) as FetchResponse;
       setData(json.data);
       setTotalPages(json.totalPages);
@@ -63,11 +82,11 @@ export const PendudukProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    void fetchPenduduk(page);
-  }, [page]);
+    void fetchPenduduk(page, debouncedSearchTerm);
+  }, [page, debouncedSearchTerm]);
 
   const refetch = () => {
-    void fetchPenduduk(page);
+    void fetchPenduduk(page, debouncedSearchTerm);
   };
 
   return (
@@ -79,6 +98,8 @@ export const PendudukProvider = ({ children }: { children: ReactNode }) => {
         totalData,
         loading,
         page,
+        searchTerm,
+        setSearchTerm,
         setPage,
         refetch,
       }}
