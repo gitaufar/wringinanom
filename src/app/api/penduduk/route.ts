@@ -1,5 +1,6 @@
 // src/app/api/penduduk/route.ts
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 
 // Interface untuk request body POST
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const tanggal = searchParams.get("date");
     const search = searchParams.get("search")?.toLowerCase() || "";
 
-    const whereClause: any = {};
+    const whereClause: Prisma.pendudukWhereInput = {};
 
     if (tanggal) {
       whereClause.createdAt = {

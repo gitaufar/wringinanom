@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  JSX,
+} from "react";
 
 export type DataRiwayat = {
   no_resi: string;
@@ -30,7 +37,12 @@ export const useRiwayat = (): RiwayatContextType => {
   return context;
 };
 
-export const RiwayatProvider = ({ children }: { children: ReactNode }) => {
+// ✅ Fixed: Added explicit return type
+export const RiwayatProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element => {
   const [dataRiwayat, setDataRiwayat] = useState<DataRiwayat[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -70,13 +82,18 @@ export const RiwayatProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // ✅ Fixed: Create a wrapper function that returns void
+  const refetchVoid = (): void => {
+    void fetchRiwayat();
+  };
+
   useEffect(() => {
     void fetchRiwayat();
   }, []);
 
   return (
     <RiwayatContext.Provider
-      value={{ dataRiwayat, setDataRiwayat, loading, refetch: fetchRiwayat }}
+      value={{ dataRiwayat, setDataRiwayat, loading, refetch: refetchVoid }}
     >
       {children}
     </RiwayatContext.Provider>

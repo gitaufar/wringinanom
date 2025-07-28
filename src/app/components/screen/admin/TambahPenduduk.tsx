@@ -3,8 +3,6 @@
 import React, { JSX, useState } from "react";
 import { TambahPendudukForm } from "../../form/TambahPendudukForm";
 import { Spinner } from "flowbite-react";
-import { useRouter } from "next/navigation";
-import { usePenduduk } from "../../context/PendudukContext";
 
 export type PendudukProps = {
   nik: string;
@@ -50,29 +48,28 @@ type TambahPendudukProps = {
   formDataProps?: PendudukProps;
 };
 
+// ✅ Perbaikan: tidak perlu assertion `as string`
 const sanitizeFormData = (data: PendudukProps | undefined): PendudukProps => {
   if (!data) return defaultForm;
+
   const sanitized = { ...data };
   (Object.keys(sanitized) as Array<keyof PendudukProps>).forEach((key) => {
-    sanitized[key] = sanitized[key] ?? "";
+    const value = sanitized[key];
+    sanitized[key] = value ?? "";
   });
+
   return sanitized;
 };
 
 export const TambahPenduduk = ({
   formDataProps,
 }: TambahPendudukProps): JSX.Element => {
-  const router = useRouter();
-  const { setData, data } = usePenduduk();
-
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<PendudukProps>(
     sanitizeFormData(formDataProps)
   );
 
-  const [editStates, setEditStates] = useState<
-    Record<keyof PendudukProps, boolean>
-  >(
+  const [editStates, setEditStates] = useState<Record<keyof PendudukProps, boolean>>(
     Object.fromEntries(
       Object.keys(defaultForm).map((key) => [key, formDataProps ? false : true])
     ) as Record<keyof PendudukProps, boolean>
@@ -103,16 +100,11 @@ export const TambahPenduduk = ({
 
       if (!res.ok) throw new Error("Gagal mengirim data");
 
-      const newPenduduk = await res.json();
-
-      // Tambah ke context
-      setData([newPenduduk, ...data]);
-
-      alert("Data berhasil dikirim!");
+      const result: unknown = await res.json(); // ✅ Hindari `any`
       resetForm();
-
-      // Navigasi ke halaman utama kependudukan
-      router.push("/admin/kependudukan");
+      alert("Data berhasil dikirim!");
+      console.log("✅ Data terkirim:", result);
+      window.location.href = "/admin/kependudukan";
     } catch (err) {
       console.error("❌ Gagal mengirim:", err);
       alert("Gagal mengirim data!");
