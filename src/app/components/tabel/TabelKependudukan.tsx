@@ -45,15 +45,7 @@ export default function TabelKependudukan() {
 
   return (
     <div className="overflow-x-auto">
-      <div className="mb-4 flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Cari NIK / Nama / Alamat"
-          className="border px-3 py-2 rounded w-full max-w-sm text-sm"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+      <div className="mb-4 flex justify-between items-center"></div>
 
       <div className="min-w-[800px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
