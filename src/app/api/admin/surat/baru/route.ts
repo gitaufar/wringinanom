@@ -7,13 +7,6 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { prisma } from "@/lib/prisma";
 
-// --- HELPER FUNCTIONS ---
-
-/**
- * Fungsi untuk memformat tanggal menjadi format lokal Indonesia (e.g., 28 Juli 2025)
- * @param date - Objek Date atau string tanggal
- * @returns Tanggal yang sudah diformat atau string kosong jika input tidak valid
- */
 function formatTanggal(date: Date | string | null | undefined): string {
     if (!date) return "-";
     try {
