@@ -9,7 +9,9 @@ import {
   FiChevronRight,
   FiEdit,
   FiTrash2,
+  FiPlus,
 } from "react-icons/fi";
+import PilihSuratModal from "../modal/PilihSuratModal";
 
 const LIMIT = 10;
 
@@ -26,25 +28,26 @@ export default function TabelKependudukan(): JSX.Element {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalData, setTotalData] = useState(0);
+  const [selectedNik, setSelectedNik] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchPage = async (p: number): Promise<void> => {
-  try {
-    setLoading(true);
-    const res = await fetch(`/api/penduduk?page=${p}&limit=${LIMIT}`);
-    const json = (await res.json()) as FetchResponse;
-    setData(json.data);
-    setTotalPages(json.totalPages);
-    setTotalData(json.totalData);
-  } catch (err) {
-    console.error("Failed to fetch data:", err);
-  } finally {
-    setLoading(false);
-  }
-};
-
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/penduduk?page=${p}&limit=${LIMIT}`);
+      const json = (await res.json()) as FetchResponse;
+      setData(json.data);
+      setTotalPages(json.totalPages);
+      setTotalData(json.totalData);
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    void fetchPage(page); // ✅ Gunakan void untuk fungsi async dalam useEffect
+    void fetchPage(page);
   }, [page]);
 
   const handleDelete = async (nik: string): Promise<void> => {
@@ -103,11 +106,21 @@ export default function TabelKependudukan(): JSX.Element {
                       <FiEdit className="text-gray-600" />
                     </button>
                     <button
-                      onClick={() => void handleDelete(d.nik)} // ✅ void untuk fungsi async
+                      onClick={() => void handleDelete(d.nik)}
                       className="p-2 rounded hover:bg-red-50"
                       title="Hapus"
                     >
                       <FiTrash2 className="text-red-500" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedNik(d.nik);
+                        setModalOpen(true);
+                      }}
+                      className="p-2 rounded hover:bg-blue-50"
+                      title="Buat Surat"
+                    >
+                      <FiPlus className="text-blue-600" />
                     </button>
                   </td>
                 </tr>
@@ -116,7 +129,6 @@ export default function TabelKependudukan(): JSX.Element {
           </tbody>
         </table>
 
-        {/* Pagination */}
         {!loading && data.length > 0 && (
           <div className="px-6 py-4 flex items-center justify-between text-sm text-gray-600">
             <div>
@@ -144,6 +156,10 @@ export default function TabelKependudukan(): JSX.Element {
           </div>
         )}
       </div>
+
+      {modalOpen && selectedNik && (
+        <PilihSuratModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onSelect={(jenis) => console.log(jenis)} />
+      )}
     </div>
   );
 }
