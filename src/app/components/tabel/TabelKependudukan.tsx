@@ -17,7 +17,6 @@ export default function TabelKependudukan() {
   const router = useRouter();
   const {
     data,
-    setData,
     loading,
     totalPages,
     totalData,
