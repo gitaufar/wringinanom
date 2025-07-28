@@ -20,10 +20,10 @@ export default function KependudukanPage(): JSX.Element {
       </div>
 
       {/* Menunggu Konfirmasi */}
-      <section>
+      {/* <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-3">Menunggu Konfirmasi</h2>
         <TabelKonfirmasi />
-      </section>
+      </section> */}
 
       {/* Data Penduduk */}
       <section>
