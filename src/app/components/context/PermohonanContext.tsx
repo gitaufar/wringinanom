@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  JSX,
+} from "react";
 
 type Status = "Menunggu" | "Selesai" | "Dibatalkan";
 
@@ -22,15 +29,25 @@ type PermohonanContextType = {
   fetchPermohonan: () => void;
 };
 
-const PermohonanContext = createContext<PermohonanContextType | undefined>(undefined);
+const PermohonanContext = createContext<PermohonanContextType | undefined>(
+  undefined
+);
 
-export const PermohonanProvider = ({ children }: { children: ReactNode }) => {
+// ✅ Fixed: Added explicit return type
+export const PermohonanProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element => {
   const [permohonan, setPermohonan] = useState<DataPermintaan[]>([]);
 
   const fetchPermohonan = async (): Promise<void> => {
     try {
       const res = await fetch("/api/permohonan");
-      const result = (await res.json()) as { data?: DataPermintaan[]; error?: string };
+      const result = (await res.json()) as {
+        data?: DataPermintaan[];
+        error?: string;
+      };
 
       if (!res.ok) throw new Error(result.error || "Gagal fetch permohonan");
 
@@ -45,14 +62,27 @@ export const PermohonanProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // ✅ Alternative: Create a wrapper function with explicit error handling
+  const fetchPermohonanVoid = (): void => {
+    fetchPermohonan().catch((err) => {
+      console.error("Error in fetchPermohonan:", err);
+    });
+  };
+
   useEffect(() => {
-    fetchPermohonan();
-    const interval = setInterval(fetchPermohonan, 5000);
+    // ✅ Alternative: Explicit error handling
+    fetchPermohonan().catch((err) => {
+      console.error("Error in initial fetchPermohonan:", err);
+    });
+
+    const interval = setInterval(fetchPermohonanVoid, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <PermohonanContext.Provider value={{ permohonan, fetchPermohonan }}>
+    <PermohonanContext.Provider
+      value={{ permohonan, fetchPermohonan: fetchPermohonanVoid }}
+    >
       {children}
     </PermohonanContext.Provider>
   );
@@ -61,7 +91,9 @@ export const PermohonanProvider = ({ children }: { children: ReactNode }) => {
 export const usePermohonan = (): PermohonanContextType => {
   const context = useContext(PermohonanContext);
   if (!context) {
-    throw new Error("usePermohonan harus digunakan di dalam <PermohonanProvider>");
+    throw new Error(
+      "usePermohonan harus digunakan di dalam <PermohonanProvider>"
+    );
   }
   return context;
 };

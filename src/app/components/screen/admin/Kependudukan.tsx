@@ -1,17 +1,18 @@
 "use client";
+
 import TabelKependudukan from "../../../components/tabel/TabelKependudukan";
 import ButtonTambahPenduduk from "../../../components/button/ButtonTambahPenduduk";
 import { useRouter } from "next/navigation";
-import { JSX, useState } from "react";
+import { JSX } from "react";
 import { Search as SearchIcon } from "lucide-react";
+import { usePenduduk } from "../../context/PendudukContext";
 
 export default function KependudukanPage(): JSX.Element {
   const router = useRouter();
-  const [search, setSearch] = useState("");
+  const { searchTerm, setSearchTerm } = usePenduduk();
 
   const handleSearch = () => {
-    // Tambahkan logika pencarian di sini
-    console.log("Cari:", search);
+    console.log("Cari dari context:", searchTerm);
   };
 
   return (
@@ -28,18 +29,19 @@ export default function KependudukanPage(): JSX.Element {
               type="text"
               placeholder="Cari penduduk..."
               className="flex-grow text-sm sm:text-base text-gray-800 bg-transparent border-none focus:outline-none"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch();
+                if (e.key === "Enter") handleSearch();
               }}
             />
             <SearchIcon className="w-4 h-4 text-gray-500" />
           </div>
         </div>
+
         {/* Tombol Tambah Penduduk */}
         <ButtonTambahPenduduk
-          onClick={() => router.push('/admin/kependudukan/tambah')}
+          onClick={() => router.push("/admin/kependudukan/tambah")}
         />
       </div>
 

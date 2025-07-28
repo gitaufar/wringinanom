@@ -1,5 +1,6 @@
 // src/app/api/penduduk/route.ts
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 
 // Interface untuk request body POST
@@ -31,15 +32,25 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const skip = (page - 1) * limit;
 
     const tanggal = searchParams.get("date");
+    const search = searchParams.get("search")?.toLowerCase() || "";
 
-    const whereClause = tanggal
-      ? {
-          createdAt: {
-            gte: new Date(`${tanggal}T00:00:00.000Z`),
-            lt: new Date(`${tanggal}T23:59:59.999Z`),
-          },
-        }
-      : {};
+    const whereClause: Prisma.pendudukWhereInput = {};
+
+    if (tanggal) {
+      whereClause.createdAt = {
+        gte: new Date(`${tanggal}T00:00:00.000Z`),
+        lt: new Date(`${tanggal}T23:59:59.999Z`),
+      };
+    }
+
+    if (search) {
+      whereClause.OR = [
+        { nama_lengkap: { contains: search, mode: "insensitive" } },
+        { nik: { contains: search, mode: "insensitive" } },
+        { alamat: { contains: search, mode: "insensitive" } },
+        { no_kk: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       prisma.penduduk.findMany({
