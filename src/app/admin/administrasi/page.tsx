@@ -29,26 +29,10 @@ const AdminPage = (): JSX.Element => {
             />
             <Search className="text-gray-400" />
           </div>
-
-          {/* Profile Section */}
-          <div className="flex items-center gap-2 ml-4">
-            <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden">
-              <Image
-                src="/placeholder-profile.png"
-                alt="Admin"
-                width={40}
-                height={40}
-              />
-            </div>
-            <div>
-              <p className="font-semibold text-sm">Admin</p>
-              <p className="text-xs text-gray-500">Moni Roy</p>
-            </div>
-          </div>
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold mb-4">Administrasi</h1>
+        <h1 className="text-2xl font-bold mt-8 mb-4">Administrasi</h1>
 
         {/* Filter */}
         <FilterPenduduk />
@@ -61,7 +45,7 @@ const AdminPage = (): JSX.Element => {
         />
 
         {/* Title for History Table */}
-        <h2 className="text-xl font-semibold mt-8 mb-4">Riwayat Permohonan</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-4">Riwayat Permohonan</h2>
 
         {/* Tabel Riwayat Permohonan */}
         <TabelRiwayatPermohonan change={change} />

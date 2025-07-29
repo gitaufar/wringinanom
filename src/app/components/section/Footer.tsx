@@ -15,19 +15,19 @@ const Footer: FC = (): JSX.Element | null => {
         <div>
           <h2 className="text-lg font-semibold">Desa Wringinanom</h2>
           <p className="mt-2 text-sm">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+            Website Administrasi Desa Wringinanom dirancang untuk memberikan kemudahan pengajuan surat administrasi secara digital kepada masyarakat.
           </p>
           <p className="text-sm">
-            Lorem Ipsum has been the industry&rsquo;s standard dummy text ever since.
+            Website ini menyediakan layanan pengajuan surat-surat administrasi secara online bagi warga Desa Wringinanom. Pengurusan dokumen menjadi lebih mudah dan.
           </p>
         </div>
 
         <div>
           <h2 className="text-lg font-semibold">Kontak Desa</h2>
           <ul className="mt-2 text-sm space-y-1">
-            <li>(Kontak) 0812-3456-7890</li>
-            <li>(Email) kontak@desakita.id</li>
-            <li>(Lokasi) Jl. Raya Desa No. 123</li>
+            <li>(Whatsapp) 0819-4555-1589</li>
+            <li>(Email) pemdesawringinanom@gmail.com</li>
+            <li>(Alamat)  Jl. Raya Kunci Wringinanom No.12, Simpar Utara</li>
           </ul>
         </div>
 

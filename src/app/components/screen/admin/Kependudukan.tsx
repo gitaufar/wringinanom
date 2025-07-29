@@ -47,7 +47,7 @@ export default function KependudukanPage(): JSX.Element {
 
       {/* Data Penduduk */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Data Penduduk</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-3">Data Penduduk</h2>
         <TabelKependudukan />
       </section>
     </div>

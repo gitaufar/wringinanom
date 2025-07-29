@@ -166,109 +166,119 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps): JSX.Eleme
   if (firstLoading) return <p className="mt-4">Loading Permohonan...</p>;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead className="text-left bg-[#F9FAFB] border-b">
+    <div className="overflow-x-auto">
+  <div className="min-w-[800px] bg-white border border-gray-200 rounded-lg mt-8 shadow-sm overflow-hidden">
+    <table className="min-w-full divide-y divide-gray-200 text-sm">
+      <thead className="bg-gray-50">
+        <tr>
+          {["NO RESI", "NAMA", "TANGGAL", "JENIS SURAT", "ACTION", "STATUS"].map((header) => (
+            <th
+              key={header}
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-100">
+        {Permohonan.length === 0 ? (
           <tr>
-            <th className="px-6 py-3 font-semibold">NO RESI</th>
-            <th className="px-6 py-3 font-semibold">NAMA</th>
-            <th className="px-6 py-3 font-semibold">TANGGAL</th>
-            <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
-            <th className="px-6 py-3 font-semibold">ACTION</th>
-            <th className="px-6 py-3 font-semibold">STATUS</th>
+            <td colSpan={6} className="py-6 text-center text-gray-500">
+              Tidak ada Permohonan ditemukan.
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {Permohonan.length === 0 ? (
-            <tr>
-              <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                Tidak ada Permohonan ditemukan.
+        ) : (
+          Permohonan.map((row) => (
+            <tr key={row.no_resi} className="hover:bg-gray-50 transition">
+              <td className="px-6 py-4 text-sm text-gray-700">{row.no_resi}</td>
+              <td className="px-6 py-4 text-sm text-gray-700">{row.penduduk?.nama_lengkap}</td>
+              <td className="px-6 py-4 text-sm text-gray-700">
+                {new Date(row.tanggal).toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-700">{row.jenis_surat}</td>
+              <td className="px-6 py-4 flex space-x-2">
+                <button className="p-2 rounded hover:bg-gray-100" title="Edit">
+                  <FaEdit className="text-gray-600" size={16} />
+                </button>
+                <button
+                  className="p-2 rounded hover:bg-green-50"
+                  title="Setujui"
+                  onClick={() => {
+                    setSelectedItem(row);
+                    setModalApproveOpen(true);
+                  }}
+                >
+                  <FaCheck className="text-green-600" size={16} />
+                </button>
+                <button
+                  className="p-2 rounded hover:bg-red-50"
+                  title="Tolak"
+                  onClick={() => {
+                    setSelectedItem(row);
+                    setModalRejectOpen(true);
+                  }}
+                >
+                  <FaTimes className="text-red-500" size={16} />
+                </button>
+                <button
+                  className="p-2 rounded hover:bg-blue-50"
+                  title="Preview"
+                  onClick={() => {
+                    if (row.data_dinamis) {
+                      void handlePreview(row.jenis_surat, row.data_dinamis);
+                    } else {
+                      alert("Data dinamis tidak tersedia untuk surat ini.");
+                    }
+                  }}
+                >
+                  <FaEye className="text-blue-600" size={16} />
+                </button>
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-700">
+                <StatusCard status={row.riwayatlayanan?.status || "Menunggu"} />
               </td>
             </tr>
-          ) : (
-            Permohonan.map((row) => (
-              <tr key={row.no_resi} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4">{row.no_resi}</td>
-                <td className="px-6 py-4">{row.penduduk?.nama_lengkap}</td>
-                <td className="px-6 py-4">
-                  {new Date(row.tanggal).toLocaleDateString("id-ID", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </td>
-                <td className="px-6 py-4">{row.jenis_surat}</td>
-                <td className="px-6 py-4 flex items-center gap-3">
-                  <button className="text-gray-600 hover:text-blue-600">
-                    <FaEdit size={16} />
-                  </button>
-                  <button
-                    className="text-green-600 hover:text-green-700"
-                    onClick={() => {
-                      setSelectedItem(row);
-                      setModalApproveOpen(true);
-                    }}
-                  >
-                    <FaCheck size={16} />
-                  </button>
-                  <button
-                    className="text-red-500 hover:text-red-700"
-                    onClick={() => {
-                      setSelectedItem(row);
-                      setModalRejectOpen(true);
-                    }}
-                  >
-                    <FaTimes size={16} />
-                  </button>
-                  <button
-                    className="hover:text-blue-700"
-                    onClick={() => {
-                      if (row.data_dinamis) {
-                        void handlePreview(row.jenis_surat, row.data_dinamis);
-                      } else {
-                        alert("Data dinamis tidak tersedia untuk surat ini.");
-                      }
-                    }}
-                  >
-                    <FaEye size={16} />
-                  </button>
-                </td>
-                <td className="px-6 py-4">
-                  <StatusCard status={row.riwayatlayanan?.status || "Menunggu"} />
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
 
-      <ConfirmationModal
-       isOpen={modalApproveOpen}
-       onClose={() => setModalApproveOpen(false)}
-        onConfirm={() => void handleApprove()}
-        title="Setujui Permohonan?"
-        message={`Apakah Anda yakin ingin menyetujui permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
-      />
+  {/* Modal Approve */}
+  <ConfirmationModal
+    isOpen={modalApproveOpen}
+    onClose={() => setModalApproveOpen(false)}
+    onConfirm={() => void handleApprove()}
+    title="Setujui Permohonan?"
+    message={`Apakah Anda yakin ingin menyetujui permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
+  />
 
-      <ConfirmationModal
-        isOpen={modalRejectOpen}
-        onClose={() => {
-          setModalRejectOpen(false);
-          setAlasan("");
-        }}
-        onConfirm={() => void handleReject()}
-        title="Batalkan Permohonan?"
-        message={`Apakah Anda yakin ingin membatalkan permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
-      >
-        <textarea
-          value={alasan}
-          onChange={(e) => setAlasan(e.target.value)}
-          placeholder="Masukkan alasan pembatalan"
-          className="mt-4 w-full border border-gray-300 rounded-md p-2 text-sm"
-          rows={3}
-        />
-      </ConfirmationModal>
-    </div>
+  {/* Modal Reject */}
+  <ConfirmationModal
+    isOpen={modalRejectOpen}
+    onClose={() => {
+      setModalRejectOpen(false);
+      setAlasan("");
+    }}
+    onConfirm={() => void handleReject()}
+    title="Batalkan Permohonan?"
+    message={`Apakah Anda yakin ingin membatalkan permohonan ${selectedItem?.penduduk?.nama_lengkap}?`}
+  >
+    <textarea
+      value={alasan}
+      onChange={(e) => setAlasan(e.target.value)}
+      placeholder="Masukkan alasan pembatalan"
+      className="mt-4 w-full border border-gray-300 rounded-md p-2 text-sm"
+      rows={3}
+    />
+  </ConfirmationModal>
+</div>
+
   );
 };
 

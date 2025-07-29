@@ -25,7 +25,7 @@ export default function PengajuanKeteranganAnakKandung({
   tipe,
 }: PengajuanKeteranganAnakKandungProps): ReactNode {
   const [edit, setEdit] = useState(true);
-  const [submited, setSubmited] = useState<string | null>(null);
+  const [submited, setSubmited] = useState<string | null>("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

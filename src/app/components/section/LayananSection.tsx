@@ -34,11 +34,11 @@ const LayananSection = (): JSX.Element => {
         <div className="w-full md:w-1/2">
           <div className="bg-white rounded-xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
             <Image
-              src="/png/bg-home.png"
+              src="/png/Administrasi.JPG"
               alt="Layanan"
               width={500}
               height={224}
-              className="w-full h-56 object-cover rounded-t-xl"
+              className="w-full h-70 object-cover object-[center_29%] rounded-t-xl"
             />
             <div className="p-6">
               <h3 className="text-xl font-semibold text-[#34518D] mb-3">

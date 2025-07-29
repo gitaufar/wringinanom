@@ -19,8 +19,10 @@ const InformationSection: React.FC = () => {
 
           {/* Gunakan komponen ButtonGeneral */}
           <ButtonGeneral
-            text="Telpon"
-            onClick={() => (window.location.href = "tel:08123456789")}
+            text="Telepon"
+            onClick={() =>
+            (window.location.href = "https://wa.me/6281945551589")
+          }
           />
         </div>
 
@@ -29,10 +31,9 @@ const InformationSection: React.FC = () => {
           <div
             className="w-full h-full rounded-full"
             style={{
-              background:
-                'url("/images/dokter.png") lightgray 50% / cover no-repeat',
-              flexShrink: 0,
-            }}
+            background: 'url("/png/ACHMAD MUSLIMIN.JPG") center 10% / cover no-repeat',
+            flexShrink: 0,
+      }}
           />
         </div>
       </div>

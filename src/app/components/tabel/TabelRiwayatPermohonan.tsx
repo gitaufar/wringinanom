@@ -60,7 +60,7 @@ const TabelRiwayatPermohonan = ({
       }
     };
 
-    void fetchRiwayat(); // ditandai dengan void untuk mencegah no-floating-promise
+    void fetchRiwayat();
   }, [change]);
 
   const handleDeleteConfirm = (noResi: string): void => {
@@ -99,7 +99,6 @@ const TabelRiwayatPermohonan = ({
 
   return (
     <div className="relative">
-      {/* TABEL */}
       <div className="bg-white rounded-xl shadow-sm mt-4 overflow-x-auto">
         {dataRiwayat.length === 0 ? (
           <p className="text-center text-gray-500 py-8">
@@ -107,30 +106,30 @@ const TabelRiwayatPermohonan = ({
           </p>
         ) : (
           <table className="min-w-full text-sm">
-            <thead className="text-left bg-[#F9FAFB] border-b">
+            <thead className="bg-[#F9FAFB] text-xs text-gray-700 uppercase">
               <tr>
-                <th className="px-6 py-3 font-semibold">NO RESI</th>
-                <th className="px-6 py-3 font-semibold">NAMA</th>
-                <th className="px-6 py-3 font-semibold">TANGGAL PERMINTAAN</th>
-                <th className="px-6 py-3 font-semibold">JENIS SURAT</th>
-                <th className="px-6 py-3 font-semibold">ACTION</th>
-                <th className="px-6 py-3 font-semibold">STATUS</th>
+                <th className="px-6 py-4 text-left font-medium">NO RESI</th>
+                <th className="px-6 py-4 text-left font-medium">NAMA</th>
+                <th className="px-6 py-4 text-left font-medium">TANGGAL PERMINTAAN</th>
+                <th className="px-6 py-4 text-left font-medium">JENIS SURAT</th>
+                <th className="px-6 py-4 text-left font-medium">ACTION</th>
+                <th className="px-6 py-4 text-left font-medium">STATUS</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200">
               {dataRiwayat.map((row, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{row.no_resi}</td>
-                  <td className="px-6 py-4">{row.penduduk.nama_lengkap}</td>
-                  <td className="px-6 py-4">
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">{row.no_resi}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{row.penduduk.nama_lengkap}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {new Date(row.date).toLocaleDateString("id-ID", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-6 py-4">{row.tipe}</td>
-                  <td className="px-6 py-4 flex items-center gap-3">
+                  <td className="px-6 py-4 whitespace-nowrap">{row.tipe}</td>
+                  <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                     <button className="hover:text-blue-700">
                       <FaEye size={16} />
                     </button>
@@ -141,7 +140,7 @@ const TabelRiwayatPermohonan = ({
                       <FaTrashAlt size={16} />
                     </button>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <StatusCard status={row.status} />
                   </td>
                 </tr>
@@ -151,7 +150,6 @@ const TabelRiwayatPermohonan = ({
         )}
       </div>
 
-      {/* MODAL */}
       {showConfirmModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 ">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
@@ -159,8 +157,7 @@ const TabelRiwayatPermohonan = ({
               Konfirmasi Hapus
             </h2>
             <p className="text-sm mb-4 text-center">
-              Apakah Anda yakin ingin menghapus riwayat dengan nomor resi:{" "}
-              <span className="font-medium">{selectedResi}</span>?
+              Apakah Anda yakin ingin menghapus riwayat dengan nomor resi: <span className="font-medium">{selectedResi}</span>?
             </p>
             <div className="flex justify-end gap-3">
               <button
@@ -170,7 +167,7 @@ const TabelRiwayatPermohonan = ({
                 Batal
               </button>
               <button
-                onClick={() => void handleDelete()} // mencegah ESLint no-misused-promises
+                onClick={() => void handleDelete()}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Hapus

@@ -21,7 +21,7 @@ const HeroSection = (): JSX.Element => {
       <div className="relative w-full h-[60vh] sm:h-[90vh] overflow-hidden">
         {/* Background */}
         <Image
-          src="/png/bg-home.png"
+          src="/png/KantorDesaWringinanom.JPG"
           alt="Background"
           fill
           className="object-cover z-[-2]"
@@ -55,7 +55,7 @@ const HeroSection = (): JSX.Element => {
           </h1>
 
           <p className="text-sm sm:text-lg md:text-xl leading-relaxed mb-6 max-w-full sm:max-w-[80%] md:max-w-[60%]">
-            Pusat Informasi dan Layanan Digital untuk Warga Desa Wringinanom,
+            Layanan Digital untuk Warga Desa Wringinanom,
             Kec. Poncokusumo, Kab. Malang
           </p>
 

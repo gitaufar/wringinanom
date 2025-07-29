@@ -136,19 +136,6 @@ export default function Dashboard(): JSX.Element {
       warnaPerubahan: persenSurat >= 0 ? "text-green-500" : "text-red-500",
       latarIkon: "bg-green-100",
     },
-    {
-      judul: "Total Laporan Masuk - Hari ini",
-      nilai: totalLaporanHariIni.toLocaleString(),
-      ikon: <FaClock className="text-2xl text-orange-500" />,
-      perubahan:
-        (persenLaporan >= 0 ? "+" : "") +
-        persenLaporan.toFixed(1) +
-        "% " +
-        (persenLaporan >= 0 ? "Naik" : "Turun") +
-        " dari kemarin",
-      warnaPerubahan: persenLaporan >= 0 ? "text-green-500" : "text-red-500",
-      latarIkon: "bg-orange-100",
-    },
   ];
 
   return (
@@ -184,15 +171,15 @@ export default function Dashboard(): JSX.Element {
           Permintaan Masuk Hari Ini
         </h3>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-600">
-            <thead className="text-xs text-gray-500 uppercase bg-gray-100">
+          <table className="min-w-full text-sm">
+            <thead className="bg-[#F9FAFB] text-xs text-gray-700 uppercase">
               <tr>
-                <th className="px-4 py-3">No Resi</th>
-                <th className="px-4 py-3">Nama</th>
-                <th className="px-4 py-3">Tanggal Permintaan</th>
-                <th className="px-4 py-3">Jenis Layanan</th>
-                <th className="px-4 py-3 text-center">Aksi</th>
-                <th className="px-4 py-3 text-center">Status</th>
+                <th className="px-6 py-4 text-left font-medium">No Resi</th>
+                <th className="px-6 py-4 text-left font-medium">Nama</th>
+                <th className="px-6 py-4 text-left font-medium">Tanggal Permintaan</th>
+                <th className="px-6 py-4 text-left font-medium">Jenis Layanan</th>
+                <th className="px-6 py-4 text-center font-medium">Aksi</th>
+                <th className="px-6 py-4 text-center font-medium">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -201,18 +188,18 @@ export default function Dashboard(): JSX.Element {
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {item.no_resi}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {item.penduduk?.nama_lengkap || "-"}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {new Date(item.date).toLocaleDateString("id-ID", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-4 py-3">{item.tipe}</td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-6 py-4 whitespace-nowrap">{item.tipe}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-2 justify-center">
                       <button
                         className="text-blue-600 hover:text-blue-800"
@@ -243,7 +230,7 @@ export default function Dashboard(): JSX.Element {
               ))}
               {hariIni.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-6 text-gray-400">
+                  <td colSpan={6} className="text-center text-gray-500 py-8">
                     Tidak ada permintaan hari ini.
                   </td>
                 </tr>

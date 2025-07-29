@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import ButtonGeneral from "../button/ButtonGeneral";
+import { FileText, ClipboardEdit, BellRing } from "lucide-react";
 import { JSX } from "react";
 
 const steps = [
@@ -9,35 +10,29 @@ const steps = [
     number: "01",
     title: "Pilih Jenis Layanan",
     description:
-      "Masuk ke halaman layanan dan pilih jenis pengurusan seperti surat pengantar, KK, atau laporan warga.",
-    image: "/icons/form.svg",
+      "Masuk ke halaman layanan dan pilih jenis pengurusan seperti surat pengantar, KK, dan lain sebagainya.",
+    icon: <FileText size={48} />, // Pakai JSX langsung
   },
   {
     number: "02",
     title: "Isi Formulir Online",
     description:
       "Lengkapi data pada formulir yang tersedia sesuai dengan keperluan pengurusan layanan.",
-    image: "/icons/online.svg",
+    icon: <ClipboardEdit size={48} />,
   },
   {
     number: "03",
-    title: "Unggah Dokumen Pendukung",
-    description:
-      "Upload dokumen seperti KTP, KK, atau dokumen lain yang relevan untuk keperluan administrasi.",
-    image: "/icons/upload.svg",
-  },
-  {
-    number: "04",
     title: "Kirim dan Tunggu Notifikasi",
     description:
       "Setelah formulir dikirim, sistem akan memproses dan mengirim nomor resi saat laporan dibuat. Kamu juga bisa cek statusnya di kolom pencarian menggunakan nomor resi yang diberikan.",
-    image: "/icons/notify.svg",
+    icon: <BellRing size={48} />,
   },
 ];
 
+
 const TutorialSection = (): JSX.Element => {
   return (
-    <section className="flex flex-col lg:flex-row items-start justify-between gap-12 px-4 sm:px-6 md:px-10 py-16 bg-white font-['Plus_Jakarta_Sans'] w-full max-w-[1440px] mx-auto">
+    <section className="flex flex-col lg:flex-row items-start justify-between gap-12 px-4 sm:px-6 md:px-10 py-16 bg-white w-full max-w-[1440px] mx-auto">
       {/* Kiri: Judul dan deskripsi */}
       <div className="flex flex-col items-start gap-6 w-full lg:max-w-[573px]">
         <h2 className="text-[#020B23] text-[36px] md:text-[55px] font-bold leading-snug capitalize">
@@ -45,7 +40,7 @@ const TutorialSection = (): JSX.Element => {
         </h2>
         <p className="text-black text-lg md:text-xl leading-relaxed">
           Berikut ini langkah mudah dalam menggunakan sistem pelayanan online
-          Desa Wringinanom. Kini, mengurus surat atau menyampaikan laporan bisa
+          Desa Wringinanom. Kini, mengurus surat bisa
           dilakukan dari rumah.
         </p>
         <ButtonGeneral
@@ -53,9 +48,8 @@ const TutorialSection = (): JSX.Element => {
           icon="arrow"
           className="mt-2"
           onClick={() => {
-            const tutorial = document.getElementById("tutorial-list");
-            tutorial?.scrollIntoView({ behavior: "smooth" });
-          }}
+            window.open("https://youtu.be/LHuma8WzfQE?si=C_2bF0_C6_bIq6GM", "_blank");
+          }} 
         />
       </div>
 
@@ -80,13 +74,8 @@ const TutorialSection = (): JSX.Element => {
             </div>
 
             {/* Gambar icon (gunakan Next.js Image) */}
-            <div className="rounded-[22px] w-[100px] h-[100px] bg-[#D9D9D9] flex items-center justify-center overflow-hidden">
-              <Image
-                src={step.image}
-                alt={step.title}
-                width={48}
-                height={48}
-              />
+            <div className="rounded-[22px] w-[100px] h-[100px] flex items-center justify-center overflow-hidden">
+              {step.icon}
             </div>
 
             {/* Teks */}
