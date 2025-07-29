@@ -26,6 +26,7 @@ type ApiResponse = {
 
 export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepolisianProps): ReactNode { // DIUBAH: Menambahkan return type
   const initialData = {
+    no_wa: "",
     nama: "",
     kota: "",
     nik: "",
@@ -92,6 +93,7 @@ export default function SuratKehilanganKepolisian({ tipe }: SuratKehilanganKepol
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.nik,
           jenis_surat: "kehilangan_kepolisian",
           tipe: tipe,

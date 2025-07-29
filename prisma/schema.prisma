@@ -64,6 +64,7 @@ model permohonansurat {
   data_dinamis   Json?
   no_resi        String         @unique(map: "PermohonanSurat_no_resi_key")
   tipe           String
+  no_wa          String?
   penduduk       penduduk       @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "PermohonanSurat_nik_fkey")
   riwayatlayanan riwayatlayanan @relation(fields: [no_resi], references: [no_resi], onDelete: Cascade, map: "PermohonanSurat_no_resi_fkey")
 
@@ -78,6 +79,7 @@ model riwayatlayanan {
   keterangan         String
   status             String
   data_dinamis       Json?
+  no_wa              String?
   logperubahanstatus logperubahanstatus[]
   permohonansurat    permohonansurat?
   penduduk           penduduk             @relation(fields: [nik], references: [nik], onDelete: NoAction, map: "RiwayatLayanan_nik_fkey")

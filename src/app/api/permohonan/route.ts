@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 
 // Define types for the request body
 interface PostRequestBody {
+  no_wa: string;
   nik: string;
   jenis_surat: string;
   tipe: string;
@@ -18,7 +19,7 @@ const generateResi = (): string => {
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const body = (await req.json()) as PostRequestBody;
-    const { nik, jenis_surat, tipe, data_dinamis } = body;
+    const { no_wa, nik, jenis_surat, tipe, data_dinamis } = body;
 
     if (!nik || !jenis_surat || !tipe) {
       return NextResponse.json(
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Buat entri RiwayatLayanan
     await prisma.riwayatlayanan.create({
       data: {
+        no_wa: no_wa,
         no_resi: noResi,
         nik,
         date: new Date(),
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         tipe,
         data_dinamis,
         no_resi: noResi,
+        no_wa: no_wa,
       },
     });
 
