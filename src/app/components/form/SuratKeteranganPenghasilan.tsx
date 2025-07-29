@@ -152,7 +152,6 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
   </button>
 
   {/* Avatar & Judul */}
-  <div className="w-10 h-10 rounded-full bg-black/10 flex-shrink-0" />
   <div className="flex-1 text-black font-roboto text-xl md:text-[28px] font-medium leading-9">
     Pengajuan Surat
   </div>

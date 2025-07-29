@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import type { FC, JSX } from "react";
+import { Mail, MapPin, Phone } from "lucide-react"; 
 
 const Footer: FC = (): JSX.Element | null => {
   const path = usePathname();
@@ -17,18 +18,24 @@ const Footer: FC = (): JSX.Element | null => {
           <p className="mt-2 text-sm">
             Website Administrasi Desa Wringinanom dirancang untuk memberikan kemudahan pengajuan surat administrasi secara digital kepada masyarakat.
           </p>
-          <p className="text-sm">
-            Website ini menyediakan layanan pengajuan surat-surat administrasi secara online bagi warga Desa Wringinanom. Pengurusan dokumen menjadi lebih mudah dan.
-          </p>
         </div>
 
         <div>
           <h2 className="text-lg font-semibold">Kontak Desa</h2>
-          <ul className="mt-2 text-sm space-y-1">
-            <li>(Whatsapp) 0819-4555-1589</li>
-            <li>(Email) pemdesawringinanom@gmail.com</li>
-            <li>(Alamat)  Jl. Raya Kunci Wringinanom No.12, Simpar Utara</li>
-          </ul>
+          <ul className="mt-2 text-sm space-y-2">
+            <li className="flex items-center space-x-2">
+             <Phone className="w-4 h-4 text-white-600" />
+             <span>0819-4555-1589</span>
+            </li>
+            <li className="flex items-center space-x-2">
+             <Mail className="w-4 h-4 text-white-600" />
+            <span>pemdesawringinanom@gmail.com</span>
+            </li>
+            <li className="flex items-center space-x-2">
+              <MapPin className="w-4 h-4 text-white-600" />
+              <span>Jl. Raya Kunci Wringinanom No.12, Simpar Utara</span>
+            </li>
+        </ul>
         </div>
 
         <div className="hidden lg:block" />
