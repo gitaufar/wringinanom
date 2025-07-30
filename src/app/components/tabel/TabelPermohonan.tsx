@@ -67,8 +67,14 @@ const TabelPermohonan = ({
   const [jenisFilter, setJenisFilter] = useState<string>("");
   const [availableJenis, setAvailableJenis] = useState<string[]>([]);
 
-  const fetchPermohonan = async (page: number = 1): Promise<void> => {
-    setIsLoading(true);
+  const fetchPermohonan = async (
+    page: number = 1,
+    showLoading: boolean = true
+  ): Promise<void> => {
+    if (showLoading) {
+      setIsLoading(true);
+    }
+
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -113,18 +119,20 @@ const TabelPermohonan = ({
       console.error("Error fetching permohonan:", err);
       alert(message);
     } finally {
-      setIsLoading(false);
+      if (showLoading) {
+        setIsLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    void fetchPermohonan(pagination.currentPage);
+    void fetchPermohonan(pagination.currentPage, true); // Show loading on initial fetch
   }, [change, pagination.currentPage, pagination.pageSize, jenisFilter]);
 
   // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      void fetchPermohonan(1); // Reset to first page when searching
+      void fetchPermohonan(1, true); // Show loading when searching
       setPagination((prev) => ({ ...prev, currentPage: 1 }));
     }, 500);
 
@@ -303,7 +311,7 @@ Pelayanan Administrasi Desa`;
   // Auto-refresh setiap 15 detik
   useEffect(() => {
     const intervalId = setInterval(() => {
-      void fetchPermohonan(pagination.currentPage);
+      void fetchPermohonan(pagination.currentPage, false); // Don't show loading for interval refresh
     }, 15000); // 15000 ms = 15 detik
 
     return () => clearInterval(intervalId); // Cleanup saat unmount
@@ -491,8 +499,7 @@ Pelayanan Administrasi Desa`;
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Page Info */}
             <div className="text-sm text-gray-600">
-              Halaman {pagination.currentPage} dari {pagination.totalPages} (
-              {pagination.totalCount} total data)
+              Halaman {pagination.currentPage} dari {pagination.totalPages}
             </div>
 
             {/* Pagination Controls */}
