@@ -10,6 +10,7 @@ type Layanan = {
   date: string;
   tipe: string;
   status: string;
+  data_dinamis: Record<string, unknown>;
   penduduk: {
     nama_lengkap: string;
   };
@@ -36,10 +37,13 @@ type PendudukResponse = {
 export default function Dashboard(): JSX.Element {
   const [hariIni, setHariIni] = useState<Layanan[]>([]);
   const [kemarin, setKemarin] = useState<Layanan[]>([]);
-  const [pendudukHariIni, setPendudukHariIni] = useState<Penduduk[]>([]);
-  const [pendudukKemarin, setPendudukKemarin] = useState<Penduduk[]>([]);
+  const [semuaPenduduk, setSemuaPenduduk] = useState<Penduduk[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // State for delete modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedResi, setSelectedResi] = useState<string | null>(null);
 
   useEffect(() => {
     const today = new Date();
@@ -113,31 +117,16 @@ export default function Dashboard(): JSX.Element {
 
     const fetchPenduduk = async (): Promise<void> => {
       try {
-        const [resTodayPenduduk, resYesterdayPenduduk] = await Promise.all([
-          fetch(`/api/penduduk?date=${formatDate(today)}`),
-          fetch(`/api/penduduk?date=${formatDate(yesterday)}`),
-        ]);
-
-        if (!resTodayPenduduk.ok || !resYesterdayPenduduk.ok) {
-          console.warn("Failed to fetch penduduk data");
-          setPendudukHariIni([]);
-          setPendudukKemarin([]);
-          return;
+        const res = await fetch(`/api/penduduk?limit=all`);
+        if (!res.ok) {
+          throw new Error("Gagal fetch semua penduduk");
         }
-
-        const dataToday = (await resTodayPenduduk.json()) as PendudukResponse;
-        const dataYesterday =
-          (await resYesterdayPenduduk.json()) as PendudukResponse;
-
-        console.log("Penduduk Today Response:", dataToday);
-        console.log("Penduduk Yesterday Response:", dataYesterday);
-
-        setPendudukHariIni(dataToday?.data || []);
-        setPendudukKemarin(dataYesterday?.data || []);
+        const data = (await res.json()) as PendudukResponse;
+        console.log("Semua Penduduk:", data);
+        setSemuaPenduduk(data?.data || []);
       } catch (err) {
-        console.error("Gagal mengambil penduduk:", err);
-        setPendudukHariIni([]);
-        setPendudukKemarin([]);
+        console.error("Gagal mengambil semua penduduk:", err);
+        setSemuaPenduduk([]);
       } finally {
         setIsLoading(false);
       }
@@ -151,6 +140,88 @@ export default function Dashboard(): JSX.Element {
     void loadData();
   }, []);
 
+  const handleDownload = async (item: Layanan): Promise<void> => {
+    const { no_resi, tipe, data_dinamis, penduduk, status } = item;
+
+    // Cek apakah surat sudah selesai
+    if (status !== "Selesai") {
+      alert("Surat hanya bisa didownload jika status sudah 'Selesai'.");
+      return;
+    }
+
+    if (!data_dinamis) {
+      alert("Data surat tidak tersedia untuk didownload.");
+      return;
+    }
+
+    try {
+      const fileRes = await fetch(`/api/surat/${tipe}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data_dinamis),
+      });
+
+      if (!fileRes.ok) {
+        throw new Error("Gagal generate surat");
+      }
+
+      const blob = await fileRes.blob();
+      const fileURL = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.download = `${no_resi}-${penduduk.nama_lengkap}.docx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Cleanup URL object
+      window.URL.revokeObjectURL(fileURL);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Terjadi kesalahan saat download.";
+      alert(message);
+    }
+  };
+
+  // Function to open delete confirmation modal
+  const handleDeleteConfirm = (item: Layanan): void => {
+    setSelectedResi(item.no_resi);
+    setShowConfirmModal(true);
+  };
+
+  // Function to handle actual deletion
+  const handleDelete = async (): Promise<void> => {
+    if (!selectedResi) return;
+
+    try {
+      const res = await fetch(`/api/layanan/${selectedResi}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const err: unknown = await res.json();
+        const message =
+          typeof err === "object" && err !== null && "error" in err
+            ? String((err as { error: unknown }).error)
+            : "Gagal menghapus layanan";
+        throw new Error(message);
+      }
+
+      // Refresh data after deletion by removing the deleted item from state
+      setHariIni((prevData) =>
+        prevData.filter((item) => item.no_resi !== selectedResi)
+      );
+
+      alert("Layanan berhasil dihapus.");
+    } catch (error) {
+      alert("Terjadi kesalahan saat menghapus layanan.");
+      console.error("Gagal hapus layanan:", error);
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedResi(null);
+    }
+  };
+
   const perubahanPersen = (today: number, yesterday: number): number => {
     if (yesterday === 0) return today > 0 ? 100 : 0;
     return ((today - yesterday) / yesterday) * 100;
@@ -160,31 +231,16 @@ export default function Dashboard(): JSX.Element {
   const totalLayananHariIni = Array.isArray(hariIni) ? hariIni.length : 0;
   const totalLayananKemarin = Array.isArray(kemarin) ? kemarin.length : 0;
 
-  const totalPendudukHariIni = Array.isArray(pendudukHariIni)
-    ? pendudukHariIni.length
-    : 0;
-  const totalPendudukKemarin = Array.isArray(pendudukKemarin)
-    ? pendudukKemarin.length
-    : 0;
-
   const persenSurat = perubahanPersen(totalLayananHariIni, totalLayananKemarin);
-  const persenPenduduk = perubahanPersen(
-    totalPendudukHariIni,
-    totalPendudukKemarin
-  );
+  const totalPenduduk = Array.isArray(semuaPenduduk) ? semuaPenduduk.length : 0;
 
   const statistikKartu = [
     {
-      judul: "Penduduk Baru - Hari ini",
-      nilai: totalPendudukHariIni.toLocaleString(),
+      judul: "Total Penduduk",
+      nilai: totalPenduduk.toLocaleString(),
       ikon: <FaUserAlt className="text-2xl text-purple-600" />,
-      perubahan:
-        (persenPenduduk >= 0 ? "+" : "") +
-        persenPenduduk.toFixed(1) +
-        "% " +
-        (persenPenduduk >= 0 ? "Naik" : "Turun") +
-        " dari kemarin",
-      warnaPerubahan: persenPenduduk >= 0 ? "text-green-500" : "text-red-500",
+      perubahan: "", // tidak perlu ada perbandingan
+      warnaPerubahan: "",
       latarIkon: "bg-purple-100",
     },
     {
@@ -309,12 +365,16 @@ export default function Dashboard(): JSX.Element {
                         <button
                           className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
                           title="Download"
+                          onClick={() => {
+                            void handleDownload(item);
+                          }}
                         >
                           <IoMdDownload />
                         </button>
                         <button
                           className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
                           title="Hapus"
+                          onClick={() => handleDeleteConfirm(item)}
                         >
                           <FiTrash2 />
                         </button>
@@ -347,34 +407,32 @@ export default function Dashboard(): JSX.Element {
         </div>
       </div>
 
-      {/* Debug Information (remove in production) */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="bg-gray-100 p-4 rounded-lg text-xs">
-          <details>
-            <summary className="cursor-pointer font-medium">Debug Info</summary>
-            <div className="mt-2 space-y-2">
-              <p>
-                Hari ini data:{" "}
-                {Array.isArray(hariIni) ? hariIni.length : "Not array"}
-              </p>
-              <p>
-                Kemarin data:{" "}
-                {Array.isArray(kemarin) ? kemarin.length : "Not array"}
-              </p>
-              <p>
-                Penduduk hari ini:{" "}
-                {Array.isArray(pendudukHariIni)
-                  ? pendudukHariIni.length
-                  : "Not array"}
-              </p>
-              <p>
-                Penduduk kemarin:{" "}
-                {Array.isArray(pendudukKemarin)
-                  ? pendudukKemarin.length
-                  : "Not array"}
-              </p>
+      {/* Delete Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-4 text-center">
+              Konfirmasi Hapus
+            </h2>
+            <p className="text-sm mb-4 text-center">
+              Apakah Anda yakin ingin menghapus layanan dengan nomor resi:{" "}
+              <span className="font-medium">{selectedResi}</span>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                Batal
+              </button>
+              <button
+                onClick={() => void handleDelete()}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Hapus
+              </button>
             </div>
-          </details>
+          </div>
         </div>
       )}
     </div>

@@ -10,7 +10,9 @@ export default function LoginScreen(): JSX.Element {
   const [error, setError] = useState<string>("");
   const [rememberPassword, setRememberPassword] = useState<boolean>(false);
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     setError("");
 
@@ -41,7 +43,9 @@ export default function LoginScreen(): JSX.Element {
         <form onSubmit={(e) => void handleLogin(e)} className="space-y-8">
           {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-800">Login to Account</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Login to Account
+            </h1>
             <p className="text-gray-500 font-medium">
               Please enter your email and password to continue
             </p>
@@ -69,7 +73,14 @@ export default function LoginScreen(): JSX.Element {
               <label htmlFor="password" className="text-gray-700 font-semibold">
                 Password
               </label>
-              <button type="button" className="text-sm text-blue-600 hover:underline">
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:underline"
+                onClick={() =>
+                  (window.location.href =
+                    "https://supabase.com/dashboard/project/zpulkknnenqcqzevebmq/editor/17355?schema=public")
+                }
+              >
                 Forgot Password?
               </button>
             </div>

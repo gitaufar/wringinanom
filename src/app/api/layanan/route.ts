@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 // Type untuk response data dari query
 type RiwayatLayananWithRelations = Prisma.riwayatlayananGetPayload<{
@@ -16,22 +17,6 @@ type RiwayatLayananWithRelations = Prisma.riwayatlayananGetPayload<{
     };
   };
 }>;
-
-interface PaginationResponse {
-  data: (RiwayatLayananWithRelations & {
-    extra_no_wa?: string | null;
-    extra_nik?: string;
-    extra_data_dinamis?: Prisma.JsonValue | null;
-  })[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
 
 // Type untuk where clause
 type WhereClause = {
@@ -58,6 +43,41 @@ type WhereClause = {
   }>;
 };
 
+// First, update your type definitions
+type LayananApiResponse = {
+  no_resi: string;
+  date: Date;
+  tipe: string;
+  keterangan: string;
+  status: string;
+  penduduk: {
+    nik: string;
+    nama_lengkap: string | null;
+    // ... other penduduk fields
+  };
+  // Optional fields from permohonansurat
+  data_dinamis?: JsonValue | null;
+  no_wa?: string | null;
+  nik?: string | null;
+  // Extra fields for backward compatibility
+  extra_data_dinamis?: JsonValue | null;
+  extra_no_wa?: string | null;
+  extra_nik?: string | null;
+};
+
+type PaginationResponse = {
+  data: LayananApiResponse[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+};
+
+// Updated API handler
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
@@ -163,14 +183,51 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       take: limit,
     });
 
-    // Transform data to include needed fields
-    const transformedData = riwayatlayanan.map((item) => ({
-      ...item,
-      extra_no_wa: item.permohonansurat?.no_wa,
-      extra_nik: item.permohonansurat?.nik,
-      extra_data_dinamis: item.permohonansurat?.data_dinamis,
-    }));
+    // Transform data with proper type handling
+    const transformedData: LayananApiResponse[] = riwayatlayanan.map((item) => {
+      const baseData = {
+        no_resi: item.no_resi,
+        date: item.date,
+        tipe: item.tipe,
+        keterangan: item.keterangan,
+        status: item.status,
+        penduduk: item.penduduk,
+      };
 
+      // Add optional fields with proper null handling
+      const optionalFields: Partial<LayananApiResponse> = {};
+
+      if (item.permohonansurat) {
+        optionalFields.data_dinamis = item.permohonansurat.data_dinamis;
+        optionalFields.no_wa = item.permohonansurat.no_wa;
+        optionalFields.nik = item.permohonansurat.nik;
+
+        // Keep extra_ fields for backward compatibility
+        optionalFields.extra_data_dinamis = item.permohonansurat.data_dinamis;
+        optionalFields.extra_no_wa = item.permohonansurat.no_wa;
+        optionalFields.extra_nik = item.permohonansurat.nik;
+      }
+
+      return {
+        ...baseData,
+        ...optionalFields,
+      };
+    });
+
+    // Check if this is a simple date-based request (like from Dashboard)
+    // If no pagination params and has date param, return simple array format
+    if (
+      dateParam &&
+      !pageParam &&
+      !limitParam &&
+      !searchParam &&
+      !excludeMenunggu
+    ) {
+      // For Dashboard compatibility, return just the data array
+      return NextResponse.json(transformedData);
+    }
+
+    // Otherwise return full pagination response
     const response: PaginationResponse = {
       data: transformedData,
       pagination: {

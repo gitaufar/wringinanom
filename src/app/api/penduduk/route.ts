@@ -27,9 +27,13 @@ interface PendudukRequest {
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
-    const skip = (page - 1) * limit;
+    const pageParam = searchParams.get("page") || "1";
+    const limitParam = searchParams.get("limit") || "10";
+
+    const isLimitAll = limitParam === "all";
+    const page = parseInt(pageParam, 10);
+    const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+    const skip = isLimitAll ? undefined : (page - 1) * (limit || 0);
 
     const tanggal = searchParams.get("date");
     const search = searchParams.get("search")?.toLowerCase() || "";
@@ -55,20 +59,20 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const [data, total] = await Promise.all([
       prisma.penduduk.findMany({
         where: whereClause,
+        orderBy: { nama_lengkap: "asc" },
         skip,
         take: limit,
-        orderBy: { nama_lengkap: "asc" },
       }),
       prisma.penduduk.count({ where: whereClause }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = isLimitAll ? 1 : Math.ceil(total / (limit || 1));
 
     return NextResponse.json({
       data,
       total,
       totalPages,
-      currentPage: page,
+      currentPage: isLimitAll ? 1 : page,
     });
   } catch (error) {
     console.error(error);

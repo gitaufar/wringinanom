@@ -11,9 +11,9 @@ type DataRiwayat = {
   tipe: string;
   keterangan: string;
   status: "Menunggu" | "Selesai" | "Dibatalkan";
-  extra_no_wa?: string;
-  extra_nik?: string;
-  extra_data_dinamis?: Record<string, unknown>;
+  no_wa?: string;
+  nik?: string;
+  data_dinamis?: Record<string, unknown>;
   penduduk: {
     nama_lengkap: string;
   };
@@ -153,15 +153,15 @@ const TabelRiwayatPermohonan = ({
 
   // Fungsi untuk membuka WhatsApp
   const handleWhatsApp = (item: DataRiwayat): void => {
-    const { extra_no_wa, penduduk, tipe, no_resi, status } = item;
+    const { no_wa, penduduk, tipe, no_resi, status } = item;
 
-    if (!extra_no_wa) {
+    if (!no_wa) {
       alert("Nomor WhatsApp tidak tersedia untuk riwayat ini.");
       return;
     }
 
     // Format nomor WA (hilangkan karakter non-digit dan tambahkan 62 jika diawali 08)
-    let formattedNumber = extra_no_wa.replace(/\D/g, "");
+    let formattedNumber = no_wa.replace(/\D/g, "");
     if (formattedNumber.startsWith("08")) {
       formattedNumber = "62" + formattedNumber.substring(1);
     } else if (!formattedNumber.startsWith("62")) {
@@ -201,7 +201,7 @@ const TabelRiwayatPermohonan = ({
 
   // Fungsi untuk download surat
   const handleDownload = async (item: DataRiwayat): Promise<void> => {
-    const { extra_nik, no_resi, tipe, extra_data_dinamis, penduduk, status } =
+    const { nik, no_resi, tipe, data_dinamis, penduduk, status } =
       item;
 
     // Cek apakah surat sudah selesai
@@ -210,7 +210,7 @@ const TabelRiwayatPermohonan = ({
       return;
     }
 
-    if (!extra_data_dinamis) {
+    if (!data_dinamis) {
       alert("Data surat tidak tersedia untuk didownload.");
       return;
     }
@@ -219,7 +219,7 @@ const TabelRiwayatPermohonan = ({
       const fileRes = await fetch(`/api/surat/${tipe}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(extra_data_dinamis),
+        body: JSON.stringify(data_dinamis),
       });
 
       if (!fileRes.ok) {
@@ -230,7 +230,7 @@ const TabelRiwayatPermohonan = ({
       const fileURL = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = fileURL;
-      link.download = `${extra_nik || no_resi}-${penduduk.nama_lengkap}.docx`;
+      link.download = `${no_resi}-${penduduk.nama_lengkap}.docx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

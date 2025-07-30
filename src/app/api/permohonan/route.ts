@@ -41,6 +41,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const noResi = generateResi();
+    const dateIndonesia = new Date(Date.now() + 7 * 60 * 60 * 1000); // offset 7 jam dari UTC (WIB)
 
     // Buat entri RiwayatLayanan
     await prisma.riwayatlayanan.create({
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         no_wa: no_wa,
         no_resi: noResi,
         nik,
-        date: new Date(),
+        date: dateIndonesia,
         tipe: jenis_surat,
         keterangan: "Menunggu diproses",
         status: "Menunggu",
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         data_dinamis,
         no_resi: noResi,
         no_wa: no_wa,
+        tanggal: dateIndonesia,
       },
     });
 
