@@ -300,6 +300,15 @@ Pelayanan Administrasi Desa`;
     }
   };
 
+  // Auto-refresh setiap 15 detik
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      void fetchPermohonan(pagination.currentPage);
+    }, 15000); // 15000 ms = 15 detik
+
+    return () => clearInterval(intervalId); // Cleanup saat unmount
+  }, [pagination.currentPage, pagination.pageSize, jenisFilter]);
+
   return (
     <div className="space-y-4">
       {/* Search and Filter Section */}
