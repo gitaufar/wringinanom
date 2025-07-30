@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ButtonGeneral from "../button/ButtonGeneral";
 import SearchIcon from "../icon/SearchIcon";
-import InformationSection from "./InformationSection";
-import LayananSection from "./LayananSection";
 
 const HeroSection = (): JSX.Element => {
   const [search, setSearch] = useState("");

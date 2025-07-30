@@ -86,7 +86,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const { searchParams } = new URL(req.url);
     const noResi = searchParams.get("no_resi");
     const jenis = searchParams.get("jenis");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
 
+    // Jika ada no_resi, return data spesifik (tidak perlu pagination)
     if (noResi) {
       const permohonan = await prisma.permohonansurat.findUnique({
         where: { no_resi: noResi },
@@ -106,8 +109,22 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ data: permohonan });
     }
 
+    // Validasi pagination parameters
+    const currentPage = Math.max(1, page);
+    const pageSize = Math.min(Math.max(1, limit), 100); // Max 100 items per page
+    const skip = (currentPage - 1) * pageSize;
+
+    // Filter berdasarkan jenis surat jika ada
     const filter = jenis ? { jenis_surat: { equals: jenis } } : undefined;
 
+    // Hitung total data untuk pagination info
+    const totalCount = await prisma.permohonansurat.count({
+      where: filter,
+    });
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    // Ambil data dengan pagination
     const allPermohonan = await prisma.permohonansurat.findMany({
       where: filter,
       include: {
@@ -115,9 +132,22 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         riwayatlayanan: true,
       },
       orderBy: { tanggal: "desc" },
+      skip: skip,
+      take: pageSize,
     });
 
-    return NextResponse.json({ data: allPermohonan });
+    // Response dengan pagination info
+    return NextResponse.json({
+      data: allPermohonan,
+      pagination: {
+        currentPage,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1,
+      },
+    });
   } catch (error) {
     console.error("❌ Internal Error GET /api/permohonan:", error);
     const errorMessage =
@@ -126,7 +156,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-// Tambahkan di bawah export GET(...)
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);

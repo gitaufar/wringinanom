@@ -1,7 +1,7 @@
 "use client";
 
 import { JSX, useEffect, useState } from "react";
-import { FaUserAlt, FaChartLine, FaClock } from "react-icons/fa";
+import { FaUserAlt, FaChartLine } from "react-icons/fa";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 type Layanan = {
@@ -89,21 +89,11 @@ export default function Dashboard(): JSX.Element {
 
   const totalLayananHariIni = hariIni.length;
   const totalLayananKemarin = kemarin.length;
-  const totalLaporanHariIni = hariIni.filter(
-    (d) => d.tipe.toLowerCase() === "laporan"
-  ).length;
-  const totalLaporanKemarin = kemarin.filter(
-    (d) => d.tipe.toLowerCase() === "laporan"
-  ).length;
 
   const totalPendudukHariIni = pendudukHariIni.length;
   const totalPendudukKemarin = pendudukKemarin.length;
 
   const persenSurat = perubahanPersen(totalLayananHariIni, totalLayananKemarin);
-  const persenLaporan = perubahanPersen(
-    totalLaporanHariIni,
-    totalLaporanKemarin
-  );
   const persenPenduduk = perubahanPersen(
     totalPendudukHariIni,
     totalPendudukKemarin
@@ -176,8 +166,12 @@ export default function Dashboard(): JSX.Element {
               <tr>
                 <th className="px-6 py-4 text-left font-medium">No Resi</th>
                 <th className="px-6 py-4 text-left font-medium">Nama</th>
-                <th className="px-6 py-4 text-left font-medium">Tanggal Permintaan</th>
-                <th className="px-6 py-4 text-left font-medium">Jenis Layanan</th>
+                <th className="px-6 py-4 text-left font-medium">
+                  Tanggal Permintaan
+                </th>
+                <th className="px-6 py-4 text-left font-medium">
+                  Jenis Layanan
+                </th>
                 <th className="px-6 py-4 text-center font-medium">Aksi</th>
                 <th className="px-6 py-4 text-center font-medium">Status</th>
               </tr>

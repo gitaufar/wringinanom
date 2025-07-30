@@ -25,7 +25,7 @@ const Footer: FC = (): JSX.Element | null => {
           <ul className="mt-2 text-sm space-y-2">
             <li className="flex items-center space-x-2">
              <Phone className="w-4 h-4 text-white-600" />
-             <span>0819-4555-1589</span>
+             <span>0822-3233-1839</span>
             </li>
             <li className="flex items-center space-x-2">
              <Mail className="w-4 h-4 text-white-600" />
