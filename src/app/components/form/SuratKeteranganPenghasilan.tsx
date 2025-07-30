@@ -5,6 +5,7 @@ import InputFieldDate from "../../components/field/InputFieldDate";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
 import { useState } from "react";
 import type { ReactNode } from "react"; 
+import InputFieldDropdown from "../field/InputFieldDropdown";
 
 
 type SuratKeteranganPenghasilanProps = {
@@ -29,6 +30,7 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
     namaPengaju: "",
     kabupatenLahir: "",
     tanggalLahir: "",
+    jenisKelamin:"",
     nik: "",
     pekerjaan: "", 
     alamat: "",
@@ -85,6 +87,7 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
       kota: formData.kabupatenLahir,
       tanggalLahir: formData.tanggalLahir,
       pekerjaan: formData.pekerjaan,
+      jenisKelamin: formData.jenisKelamin,
       nik: formData.nik,
       alamat: formData.alamat,
       namaDusun: formData.namaDusun,
@@ -191,6 +194,7 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
             <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kabupaten Lahir" inputPlaceholder="Kabupaten Lahir" data={formData.kabupatenLahir} setData={(val) => handleInputChange("kabupatenLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kabupatenLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
+            <InputFieldDropdown inputLabel="Jenis Kelamin" inputPlaceholder="Pilih jenis kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
             <InputField inputLabel="Alamat Lengkap" inputPlaceholder="Alamat Lengkap" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
             {/* BARU: InputField ditambahkan */}

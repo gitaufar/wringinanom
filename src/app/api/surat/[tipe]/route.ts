@@ -420,7 +420,7 @@ export async function POST(
           Pekerjaan: body.pekerjaan,
           Alamat: body.alamat,
           Negara: body.negara,
-          Status: body.status,
+          Status_Perkawinan: body.status,
           Tanggal_Surat: tanggalSurat,
         });
         break;
@@ -710,7 +710,7 @@ export async function POST(
         doc.setData({
           Nama_Wajib_Pajak: body.namaWajibPajak,
           NOP: body.nop,
-          Alamat_Objek_Pajak: body.alamatObjekPajak,
+          Alamat_Obyek_Pajak: body.alamatObjekPajak,
           Alamat_Wajib_Pajak: body.alamatWajibPajak,
           Luas: body.luas,
           NJOP: body.njop,
@@ -725,6 +725,7 @@ export async function POST(
         doc.setData({
           Nama: body.nama,
           Kota: body.kota,
+          Jenis_Kelamin: body.jenisKelamin,
           Tanggal_Lahir: body.tanggalLahir,
           Pekerjaan: body.pekerjaan,
           NIK: body.nik,
