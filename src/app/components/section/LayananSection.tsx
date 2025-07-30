@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const LayananSection = (): JSX.Element => {
   return (
-    <section className="relative w-full bg-[#34518D] py-20 overflow-hidden">
+    <section id="layanan" className="relative w-full bg-[#34518D] py-20 overflow-hidden">
       {/* 🔵 Dekorasi Shape Kiri Atas */}
       <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-[#008266] opacity-40 rounded-full blur-3xl z-0" />
 

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ButtonGeneral from "../button/ButtonGeneral";
 import SearchIcon from "../icon/SearchIcon";
+import InformationSection from "./InformationSection";
+import LayananSection from "./LayananSection";
 
 const HeroSection = (): JSX.Element => {
   const [search, setSearch] = useState("");
@@ -63,8 +65,14 @@ const HeroSection = (): JSX.Element => {
             className="px-4 py-1.5 sm:px-6 sm:py-2.5 text-xs sm:text-sm"
             text="Mulai Sekarang"
             icon="arrow"
-            onClick={() => {}}
-          />
+            onClick={() => {
+            const target = document.getElementById("layanan");
+            if (target) {
+               target.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+        />
+
         </div>
       </div>
     </section>

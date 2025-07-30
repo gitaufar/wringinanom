@@ -9,11 +9,11 @@ const InformationSection: React.FC = () => {
         {/* Kiri: Teks dan Tombol */}
         <div className="flex flex-col items-start gap-6 w-full max-w-[697px]">
           <h2 className="text-[#020B23] font-bold capitalize text-[40px] sm:text-[55px] leading-normal">
-            Ada Pertanyaan? Hubungi Kami Langsung
+            Ada Pertanyaan? <br/> Hubungi Kami Langsung
           </h2>
-          <p className="text-black capitalize text-[20px] leading-[30px]">
+          <p className="text-black text-[20px] leading-[30px]">
             Hubungi kontak kami di bawah ini untuk informasi layanan, pengaduan,
-            atau bantuan administrasi. Kami akan merespons secepat mungkin di
+            atau bantuan administrasi. <br/> Kami akan merespons secepat mungkin di
             hari kerja.
           </p>
 

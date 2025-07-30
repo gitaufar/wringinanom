@@ -33,7 +33,7 @@ const Footer: FC = (): JSX.Element | null => {
             </li>
             <li className="flex items-center space-x-2">
               <MapPin className="w-4 h-4 text-white-600" />
-              <span>Jl. Raya Kunci Wringinanom No.12, Simpar Utara</span>
+              <span>Jl. Raya Wringinanom No.12, Kode Pos 65167</span>
             </li>
         </ul>
         </div>
