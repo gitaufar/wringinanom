@@ -39,7 +39,11 @@ type WhereClause = {
     gte: Date;
     lt: Date;
   };
-  status?: string;
+  status?:
+    | {
+        not: string;
+      }
+    | string;
   OR?: Array<{
     no_resi?: {
       contains: string;
@@ -62,6 +66,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const limitParam = searchParams.get("limit");
     const searchParam = searchParams.get("search"); // Untuk pencarian nama/no_resi
     const statusParam = searchParams.get("status"); // Filter status
+    const excludeMenunggu = searchParams.get("exclude_menunggu"); // Parameter untuk exclude menunggu
 
     // Default pagination values
     const page = pageParam ? parseInt(pageParam, 10) : 1;
@@ -98,8 +103,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       };
     }
 
-    // Filter by status
-    if (
+    // Handle status filtering - exclude "Menunggu" by default for riwayat
+    if (excludeMenunggu === "true") {
+      whereClause.status = {
+        not: "Menunggu",
+      };
+    } else if (
       statusParam &&
       ["Menunggu", "Selesai", "Dibatalkan"].includes(statusParam)
     ) {
@@ -126,7 +135,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       ];
     }
 
-    // Get total count for pagination
+    // Get total count for pagination (after filtering)
     const total = await prisma.riwayatlayanan.count({
       where: whereClause,
     });
@@ -134,7 +143,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // Calculate total pages
     const totalPages = Math.ceil(total / limit);
 
-    // Get paginated data
+    // Get paginated data (after filtering)
     const riwayatlayanan = await prisma.riwayatlayanan.findMany({
       where: whereClause,
       include: {

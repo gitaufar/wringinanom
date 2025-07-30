@@ -17,7 +17,7 @@ export default function LoginScreen(): JSX.Element {
     try {
       const admin = await loginAdmin(email, password);
       console.log("Login berhasil:", admin);
-      window.location.href = "/admin/kependudukan";
+      window.location.href = "/admin/dashboard";
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Terjadi kesalahan saat login.";

@@ -210,7 +210,7 @@ Pelayanan Administrasi Desa`;
 
   // Fungsi untuk download surat
   const handleDownload = async (item: DataPermintaan): Promise<void> => {
-    const { nik, jenis_surat, data_dinamis, penduduk } = item;
+    const { no_resi, jenis_surat, data_dinamis, penduduk } = item;
     try {
       const fileRes = await fetch(`/api/surat/${jenis_surat}`, {
         method: "POST",
@@ -226,7 +226,7 @@ Pelayanan Administrasi Desa`;
       const fileURL = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = fileURL;
-      link.download = `${nik}-${penduduk.nama_lengkap}.docx`;
+      link.download = `${no_resi}-${penduduk.nama_lengkap}.docx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
