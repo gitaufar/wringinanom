@@ -209,7 +209,8 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps): JSX.Eleme
                   className="p-2 rounded hover:bg-green-50"
                   title="Setujui"
                   onClick={() => {
-
+                    setSelectedItem(row);
+                    setModalApproveOpen(true);
                   }}
                 >
                   <FaCheck className="text-green-600" size={16} />
