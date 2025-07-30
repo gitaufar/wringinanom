@@ -2,7 +2,8 @@
 
 import { JSX, useEffect, useState } from "react";
 import StatusCard from "../../components/card/StatusCard";
-import { FaEye, FaTrashAlt } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
+import { FaPhone, FaTrashAlt } from "react-icons/fa";
 
 type DataRiwayat = {
   no_resi: string;
@@ -130,8 +131,14 @@ const TabelRiwayatPermohonan = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">{row.tipe}</td>
                   <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
+                    <button
+                      className="text-white-500 hover:text-red-700"
+                      onClick={() => handleDeleteConfirm(row.no_resi)}
+                    >
+                      <FaPhone size={14} />
+                    </button>
                     <button className="hover:text-blue-700">
-                      <FaEye size={16} />
+                      <IoMdDownload size={16} />
                     </button>
                     <button
                       className="text-red-500 hover:text-red-700"
