@@ -262,7 +262,7 @@ export async function POST(
     case "penghasilan":
       pathFile = "C.01.04_Surat_Keterangan_Penghasilan.docx";
       break;
-    case "usaha":
+    case "Surat Keterangan Usaha":
       pathFile = "C.01.05_Surat_Keterangan_Usaha.docx";
       break;
     default:
@@ -734,7 +734,7 @@ export async function POST(
           Tanggal_Surat: tanggalSurat,
         });
         break;
-      case "usaha":
+      case "Surat Keterangan Usaha":
         doc.setData({
           Nama: body.nama,
           Kota: body.kota,

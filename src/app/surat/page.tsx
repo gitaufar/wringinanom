@@ -39,7 +39,7 @@ const BASE_LETTERS = [
   { id: 22, title: "Surat Keterangan Kuasa", description: "Surat yang memberikan kuasa kepada pihak lain untuk suatu urusan.", topic: "Pelayanan Umum", link:"kuasa" },
   { id: 23, title: "Surat Keterangan Objek", description: "Surat keterangan terkait kepemilikan atau status objek tertentu.", topic: "Pelayanan Umum", link:"objek" },
   { id: 24, title: "Surat Keterangan Penghasilan", description: "Surat yang menyatakan jumlah penghasilan seseorang.", topic: "Pelayanan Umum", link:"penghasilan" },
-  // { id: 25, title: "Surat Keterangan Usaha", description: "Surat keterangan yang menyatakan keberadaan suatu usaha.", topic: "Pelayanan Umum", link:"usaha" }
+  { id: 25, title: "Surat Keterangan Usaha", description: "Surat keterangan yang menyatakan keberadaan suatu usaha.", topic: "Pelayanan Umum", link:"usaha" }
 ];
 
 const LetterSelectionPage = (): JSX.Element => {
