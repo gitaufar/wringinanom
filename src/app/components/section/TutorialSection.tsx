@@ -48,7 +48,7 @@ const TutorialSection = (): JSX.Element => {
           icon="arrow"
           className="mt-2"
           onClick={() => {
-            window.open("https://youtu.be/LHuma8WzfQE?si=C_2bF0_C6_bIq6GM", "_blank");
+            window.open("https://youtu.be/KITcZh7CWos", "_blank");
           }} 
         />
       </div>

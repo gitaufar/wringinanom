@@ -159,20 +159,6 @@ const Receipt = (): JSX.Element => {
               WhatsApp
             </button>
           </Link>
-
-          <Link href="https://facebook.com" target="_blank">
-            <button className="px-5 py-2 bg-[#4267B2] text-white rounded-md flex items-center text-base hover:bg-blue-700">
-              <FaFacebook className="mr-2" />
-              Facebook
-            </button>
-          </Link>
-
-          <Link href="https://telegram.org" target="_blank">
-            <button className="px-5 py-2 bg-[#0088cc] text-white rounded-md flex items-center text-base hover:bg-blue-500">
-              <FaTelegram className="mr-2" />
-              Telegram
-            </button>
-          </Link>
         </div>
 
         <div className="flex justify-center mt-8">
