@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   FaWhatsapp,
-  FaFacebook,
-  FaTelegram,
   FaClipboard,
 } from "react-icons/fa";
 import StatusCard from "../components/card/StatusCard";
