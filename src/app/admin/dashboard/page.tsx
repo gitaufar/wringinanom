@@ -2,7 +2,8 @@
 
 import { JSX, useEffect, useState } from "react";
 import { FaUserAlt, FaChartLine } from "react-icons/fa";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
+import { IoMdDownload } from "react-icons/io";
 
 type Layanan = {
   no_resi: string;
@@ -307,9 +308,9 @@ export default function Dashboard(): JSX.Element {
                       <div className="flex gap-2 justify-center">
                         <button
                           className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
-                          title="Edit"
+                          title="Download"
                         >
-                          <FiEdit />
+                          <IoMdDownload />
                         </button>
                         <button
                           className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50"
