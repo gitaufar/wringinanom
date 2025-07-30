@@ -24,6 +24,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeteranganCatatanKepolisianProps): ReactNode {
   const initialData = {
+    no_wa:"",
     namaLengkap: "",
     kotaLahir: "",
     tanggalLahir: "",
@@ -107,6 +108,7 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.nik,
           jenis_surat: "catatan_kepolisian",
           tipe,
@@ -178,6 +180,8 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
             
             {/* DIUBAH: Semua komponen input sekarang menggunakan handleInputChange dan menerima prop 'error' */}
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaLengkap} setData={(val) => handleInputChange("namaLengkap", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaLengkap} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
@@ -185,7 +189,6 @@ export default function SuratKeteranganCatatanKepolisian({ tipe }: SuratKeterang
             <InputField inputLabel="Agama" inputPlaceholder="Agama" data={formData.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.agama} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
             <InputField inputLabel="Pendidikan Terakhir" inputPlaceholder="Pendidikan Terakhir" data={formData.pendidikanTerakhir} setData={(val) => handleInputChange("pendidikanTerakhir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pendidikanTerakhir} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />
             <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor KK" data={formData.nomorKK} setData={(val) => handleInputChange("nomorKK", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nomorKK} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
 

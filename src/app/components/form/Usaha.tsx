@@ -25,6 +25,7 @@ type ApiResponse = {
 
 export default function Usaha({ tipe }: UsahaProps): ReactNode {
   const initialData = {
+  no_wa:"",
   namaPengaju: "",
   kotaLahir: "",
   tanggalLahir: "",
@@ -33,8 +34,6 @@ export default function Usaha({ tipe }: UsahaProps): ReactNode {
   agama: "",
   alamat: "",
   statusPerkawinan: "",
-  jenisUsaha: "",
-  tahunBerdiri: "",
 };
 
   const [formData, setFormData] = useState(initialData);
@@ -96,6 +95,7 @@ const handleConfirm = async (): Promise<void>=> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.nik,
           jenis_surat: "Surat Keterangan Usaha",
           tipe: tipe,
@@ -187,17 +187,14 @@ const handleConfirm = async (): Promise<void>=> {
               Data Diri Pengaju
             </h1>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
             <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Hindu", "Buddha", "Konghucu"]} data={formData.agama} setData={(val) => handleInputChange("agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.agama} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
             <InputFieldDropdown inputLabel="Status Perkawinan" options={["Belum Menikah", "Menikah"]} data={formData.statusPerkawinan} setData={(val) => handleInputChange("statusPerkawinan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.statusPerkawinan} />
-            
-            <h1 className="text-black text-[32px] lg:text-[40px] font-bold pt-4">Data Usaha</h1>
-            <InputFieldDropdown inputLabel="Jenis Usaha" options={["Perdagangan", "Jasa", "Manufaktur", "Lainnya"]} data={formData.jenisUsaha} setData={(val) => handleInputChange("jenisUsaha", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisUsaha} />
-            <InputField inputLabel="Tahun Berdiri" inputPlaceholder="Tahun Berdiri" data={formData.tahunBerdiri} setData={(val) => handleInputChange("tahunBerdiri", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.tahunBerdiri} />
 
             <div className="flex gap-4">
               <button type="submit" className="px-6 py-3 rounded bg-blue-600 text-white text-sm font-medium">

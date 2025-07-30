@@ -31,6 +31,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
   const initialState = {
+    no_wa:"",
     namaLengkap: "",
     nik: "",
     nomorKK: "",
@@ -85,6 +86,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: form.no_wa,
           nik: form.nik,
           jenis_surat: "belum_nikah",
           tipe,
@@ -117,7 +119,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEdit(true); // Izinkan edit kembali jika ada error
+      setEdit(true);
     } finally {
       setLoading(false);
     }
@@ -161,6 +163,7 @@ export default function SuratKeteranganBelumNikah({ tipe }: SuratKeteranganBelum
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Identitas</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={form.namaLengkap} setData={(val) => handleInputChange("namaLengkap", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaLengkap} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={form.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikAnak} />
             <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor KK" data={form.nomorKK} setData={(val) => handleInputChange("nomorKK", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.nomorKK} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={form.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.kotaLahir} />

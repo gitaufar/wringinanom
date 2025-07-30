@@ -25,6 +25,7 @@ export default function SuratKeteranganObyek({
 }: SuratKeteranganObyekProps): ReactNode {
 
   const initialData = {
+  no_wa:"",
   namaPengaju: "",
   nikPengaju: "",
   nop: "",
@@ -185,6 +186,7 @@ export default function SuratKeteranganObyek({
             <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pengaju</h1>
             <InputField inputLabel="Nama Wajib Pajak" inputPlaceholder="Nama Wajib Pajak" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
             <InputField inputLabel="NIK Wajib Pajak" inputPlaceholder="Masukkan NIK Wajib Pajak" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nikPengaju} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             
             <h1 className="text-black text-xl lg:text-[24px] font-bold pt-4">Data Objek Pajak</h1>
             <InputField inputLabel="Nomor Objek Pajak (NOP)" inputPlaceholder="Nomor Objek Pajak" data={formData.nop} setData={(val) => handleInputChange("nop", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nop} />

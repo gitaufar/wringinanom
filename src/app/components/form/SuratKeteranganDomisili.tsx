@@ -23,6 +23,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisiliProps): ReactNode {
   const initialData = {
+    no_wa:"",
     NamaPengaju: "",
     NIKPengaju: "", 
     jeniskel: "",
@@ -86,6 +87,7 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.NIKPengaju,
           jenis_surat: "domisili",
           tipe: tipe,
@@ -173,6 +175,7 @@ export default function SuratKeteranganDomisili({ tipe }: SuratKeteranganDomisil
             </h1>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.NamaPengaju} setData={(val) => handleInputChange("NamaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.NamaPengaju} />
             <InputField inputLabel="NIK Pengaju" inputPlaceholder="Masukkan NIK Pengaju" data={formData.NIKPengaju} setData={(val) => handleInputChange("NIKPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.NIKPengaju} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jeniskel} setData={(val) => handleInputChange("jeniskel", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jeniskel} />
             <InputField inputLabel="Alamat" inputPlaceholder="Alamat" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />

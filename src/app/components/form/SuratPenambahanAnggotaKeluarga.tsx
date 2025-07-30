@@ -29,6 +29,7 @@ export default function SuratPenambahanAnggotaKeluarga({
     kepalaKeluarga: {
       nama: "",
       nik: "",
+      no_wa:"",
       kotaLahir: "",
       tanggalLahir: "",
       agama: "",
@@ -136,6 +137,7 @@ export default function SuratPenambahanAnggotaKeluarga({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.kepalaKeluarga.no_wa,
           nik: formData.kepalaKeluarga.nik,
           jenis_surat: "penambahan_anggota",
           tipe: tipe,
@@ -201,6 +203,7 @@ export default function SuratPenambahanAnggotaKeluarga({
               <h1 className="text-black text-[32px] font-bold">Data Kepala Keluarga</h1>
               <InputField inputLabel="Nama Kepala Keluarga" inputPlaceholder="Masukkan nama kepala keluarga" data={formData.kepalaKeluarga.nama} setData={(val) => handleInputChange("kepalaKeluarga.nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kepalaKeluarga_nama} />
               <InputField inputLabel="NIK Kepala Keluarga" inputPlaceholder="Masukkan NIK kepala keluarga" data={formData.kepalaKeluarga.nik} setData={(val) => handleInputChange("kepalaKeluarga.nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.kepalaKeluarga_nik} />
+              <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.kepalaKeluarga.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
               <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Masukkan tempat lahir" data={formData.kepalaKeluarga.kotaLahir} setData={(val) => handleInputChange("kepalaKeluarga.kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kepalaKeluarga_kotaLahir} />
               <InputFieldDate inputLabel="Tanggal Lahir" data={formData.kepalaKeluarga.tanggalLahir} setData={(val) => handleInputChange("kepalaKeluarga.tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kepalaKeluarga_tanggalLahir} />
               <InputFieldDropdown inputLabel="Agama" options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]} data={formData.kepalaKeluarga.agama} setData={(val) => handleInputChange("kepalaKeluarga.agama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kepalaKeluarga_agama} />

@@ -25,15 +25,16 @@ type ApiResponse = {
 
 export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMuridProps): ReactNode {
   const initialData = {
-  wali: {
-    nama: "",
-    nik: "",
-    kotaLahir: "",
-    tanggalLahir: "",
-    jenisKelamin: "",
-    kewarganegaraan: "WNI",
-    pekerjaan: "",
-    alamat: "",
+    wali: {
+      nama: "",
+      nik: "",
+      kotaLahir: "",
+      tanggalLahir: "",
+      jenisKelamin: "",
+      kewarganegaraan: "WNI",
+      pekerjaan: "",
+      alamat: "",
+      no_wa:"",
   },
   murid: {
     nama: "",
@@ -110,6 +111,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.wali.no_wa,
           nik: formData.wali.nik,
           jenis_surat: "wali_murid",
           tipe: tipe,
@@ -190,6 +192,7 @@ export default function SuratKeteranganWaliMurid({ tipe }: SuratKeteranganWaliMu
               <h1 className="text-black text-[32px] font-bold">Data Wali Murid (Pengaju)</h1>
               <InputField inputLabel="Nama Lengkap" inputPlaceholder="Masukkan nama lengkap wali" data={formData.wali.nama} setData={(val) => handleWaliChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.wali_nama} />
               <InputField inputLabel="NIK" inputPlaceholder="Masukkan NIK wali" data={formData.wali.nik} setData={(val) => handleWaliChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.wali_nik} />
+              <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.wali.no_wa} setData={(val) => handleWaliChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
               <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Masukkan tempat lahir wali" data={formData.wali.kotaLahir} setData={(val) => handleWaliChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.wali_kotaLahir} />
               <InputFieldDate inputLabel="Tanggal Lahir" data={formData.wali.tanggalLahir} setData={(val) => handleWaliChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.wali_tanggalLahir} />
               <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.wali.jenisKelamin} setData={(val) => handleWaliChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.wali_jenisKelamin} />

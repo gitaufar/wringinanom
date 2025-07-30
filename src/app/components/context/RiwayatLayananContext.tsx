@@ -9,6 +9,7 @@ import {
   JSX,
 } from "react";
 
+// Mendefinisikan tipe data untuk setiap item riwayat
 export type DataRiwayat = {
   no_resi: string;
   date: string;
@@ -20,6 +21,7 @@ export type DataRiwayat = {
   };
 };
 
+// Mendefinisikan tipe untuk konteks
 type RiwayatContextType = {
   dataRiwayat: DataRiwayat[];
   loading: boolean;
@@ -27,8 +29,10 @@ type RiwayatContextType = {
   setDataRiwayat: React.Dispatch<React.SetStateAction<DataRiwayat[]>>;
 };
 
+// Membuat konteks dengan nilai awal undefined
 const RiwayatContext = createContext<RiwayatContextType | undefined>(undefined);
 
+// Custom hook untuk menggunakan konteks Riwayat
 export const useRiwayat = (): RiwayatContextType => {
   const context = useContext(RiwayatContext);
   if (!context) {
@@ -37,7 +41,7 @@ export const useRiwayat = (): RiwayatContextType => {
   return context;
 };
 
-// ✅ Fixed: Added explicit return type
+// Komponen Provider untuk menyediakan data riwayat ke komponen anak
 export const RiwayatProvider = ({
   children,
 }: {
@@ -46,20 +50,31 @@ export const RiwayatProvider = ({
   const [dataRiwayat, setDataRiwayat] = useState<DataRiwayat[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fungsi untuk mengambil data riwayat dari API
   const fetchRiwayat = async (): Promise<void> => {
     try {
       setLoading(true);
       const res = await fetch("/api/layanan");
-      const json: unknown = await res.json();
+      
+      // Mem-parsing respons JSON dan memberikan tipe yang diharapkan
+      const result = (await res.json()) as { data?: DataRiwayat[]; error?: string };
 
-      if (Array.isArray(json)) {
-        const filtered = json.filter(
+      if (!res.ok) {
+        throw new Error(result.error || 'Gagal mengambil data riwayat');
+      }
+
+      // Memastikan properti 'data' dari respons adalah sebuah array
+      if (Array.isArray(result.data)) {
+        // Menyaring data untuk tidak menampilkan status "menunggu"
+        const filtered = result.data.filter(
           (item): item is DataRiwayat =>
             typeof item === "object" &&
             item !== null &&
-            (item as DataRiwayat).status?.toLowerCase() !== "menunggu"
+            // Penegasan tipe (as DataRiwayat) dihapus karena tidak perlu berkat type guard `item is DataRiwayat`
+            item.status?.toLowerCase() !== "menunggu"
         );
 
+        // Memetakan data yang sudah difilter ke format yang diinginkan
         const mappedData: DataRiwayat[] = filtered.map((item) => ({
           no_resi: item.no_resi,
           date: item.date,
@@ -73,20 +88,24 @@ export const RiwayatProvider = ({
 
         setDataRiwayat(mappedData);
       } else {
-        console.error("Response bukan array:", json);
+        // Jika 'data' bukan array, atur state ke array kosong untuk menghindari error
+        console.warn("Response.data bukan array, diatur ke array kosong:", result);
+        setDataRiwayat([]);
       }
     } catch (error) {
       console.error("Gagal fetch data riwayat:", error);
+      setDataRiwayat([]); // Atur ke array kosong jika terjadi error
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Fixed: Create a wrapper function that returns void
+  // Fungsi pembungkus untuk 'refetch' agar sesuai dengan tipe 'void'
   const refetchVoid = (): void => {
     void fetchRiwayat();
   };
 
+  // Mengambil data saat komponen pertama kali di-mount
   useEffect(() => {
     void fetchRiwayat();
   }, []);

@@ -25,6 +25,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeteranganBiodataPendudukProps): ReactNode {
   const initialData = {
+    no_wa:"",
     NamaPengaju: "",
     NIKPengaju: "",
     namaLengkap: "",
@@ -155,6 +156,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.NIKPengaju,
           jenis_surat: "biodata_penduduk",
           tipe,
@@ -174,7 +176,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
       } else {
         setErrorInfo("Terjadi kesalahan yang tidak diketahui.");
       }
-      setEditData(true); // Izinkan edit kembali jika ada error
+      setEditData(true); 
     } finally {
       setLoading(false);
     }
@@ -182,7 +184,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
 
   const handleReset = () => {
     setFormData(initialData);
-    setErrors({}); // BARU: Reset error juga
+    setErrors({});
     setSubmited("");
     setEditData(true);
   };
@@ -239,308 +241,317 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
               Nama Pengaju
             </h1>
             <InputField
-    inputLabel="Nama Pengaju"
-    inputPlaceholder="Nama Pengaju"
-    data={formData.NamaPengaju}
-    // DIUBAH: Menggunakan handleInputChange dan menambahkan prop error
-    setData={(val) => handleInputChange("NamaPengaju", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.NamaPengaju}
-  />
+            inputLabel="Nama Pengaju"
+            inputPlaceholder="Nama Pengaju"
+            data={formData.NamaPengaju}
+            setData={(val) => handleInputChange("NamaPengaju", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.NamaPengaju}
+            />
 
-  <InputField
-    inputLabel="NIK Pengaju"
-    inputPlaceholder="NIK"
-    data={formData.NIKPengaju}
-    // DIUBAH: Menggunakan handleInputChange dan menambahkan prop error
-    setData={(val) => handleInputChange("NIKPengaju", val)}
-    numberOnly
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.NIKPengaju}
-  />
+            <InputField
+            inputLabel="NIK Pengaju"
+            inputPlaceholder="NIK"
+            data={formData.NIKPengaju}
+            setData={(val) => handleInputChange("NIKPengaju", val)}
+            numberOnly
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.NIKPengaju}
+            />
 
-  <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
-    Data Identitas Personal
-  </h1>
+            <InputField 
+            inputLabel="Nomor WA" 
+            inputPlaceholder="No. WA Pengaju" 
+            data={formData.no_wa} 
+            setData={(val) => handleInputChange("no_wa", val)} 
+            setEditData={setEditData} 
+            editData={editData} 
+            submited={submited} 
+            error={errors.no_wa} 
+            />
 
-  <InputField
-    inputLabel="Nama Lengkap"
-    inputPlaceholder="Nama Lengkap"
-    data={formData.namaLengkap}
-    setData={(val) => handleInputChange("namaLengkap", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.namaLengkap}
-  />
+        <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+          Data Identitas Personal
+        </h1>
 
-  <InputField
-    inputLabel="Kota/Kabupaten Lahir"
-    inputPlaceholder="Kota/Kabupaten"
-    data={formData.kotaLahir}
-    setData={(val) => handleInputChange("kotaLahir", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.kotaLahir}
-  />
+          <InputField
+            inputLabel="Nama Lengkap"
+            inputPlaceholder="Nama Lengkap"
+            data={formData.namaLengkap}
+            setData={(val) => handleInputChange("namaLengkap", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.namaLengkap}
+          />
 
-  <InputFieldDate
-    inputLabel="Tanggal Lahir"
-    data={formData.tanggalLahir}
-    setData={(val) => handleInputChange("tanggalLahir", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.tanggalLahir}
-  />
+          <InputField
+            inputLabel="Kota/Kabupaten Lahir"
+            inputPlaceholder="Kota/Kabupaten"
+            data={formData.kotaLahir}
+            setData={(val) => handleInputChange("kotaLahir", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.kotaLahir}
+          />
 
-  <InputFieldDropdown
-    inputLabel="Jenis Kelamin"
-    options={["Laki-laki", "Perempuan"]}
-    data={formData.jenisKelamin}
-    setData={(val) => handleInputChange("jenisKelamin", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.jenisKelamin}
-  />
+          <InputFieldDate
+            inputLabel="Tanggal Lahir"
+            data={formData.tanggalLahir}
+            setData={(val) => handleInputChange("tanggalLahir", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.tanggalLahir}
+          />
 
-  <InputFieldDropdown
-    inputLabel="Golongan Darah"
-    options={["A", "B", "AB", "O"]}
-    data={formData.goldarah}
-    setData={(val) => handleInputChange("goldarah", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.goldarah}
-  />
+          <InputFieldDropdown
+            inputLabel="Jenis Kelamin"
+            options={["Laki-laki", "Perempuan"]}
+            data={formData.jenisKelamin}
+            setData={(val) => handleInputChange("jenisKelamin", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.jenisKelamin}
+          />
 
-  <InputFieldDropdown
-    inputLabel="Agama"
-    options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]}
-    data={formData.agama}
-    setData={(val) => handleInputChange("agama", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.agama}
-  />
+          <InputFieldDropdown
+            inputLabel="Golongan Darah"
+            options={["A", "B", "AB", "O"]}
+            data={formData.goldarah}
+            setData={(val) => handleInputChange("goldarah", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.goldarah}
+          />
 
-  <InputFieldDropdown
-    inputLabel="Status Perkawinan"
-    options={["Belum Menikah", "Menikah", "Cerai"]}
-    data={formData.statusperkawinan}
-    setData={(val) => handleInputChange("statusperkawinan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.statusperkawinan}
-  />
+          <InputFieldDropdown
+            inputLabel="Agama"
+            options={["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"]}
+            data={formData.agama}
+            setData={(val) => handleInputChange("agama", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.agama}
+          />
 
-  <InputField
-    inputLabel="Pekerjaan"
-    inputPlaceholder="Pekerjaan"
-    data={formData.pekerjaan}
-    setData={(val) => handleInputChange("pekerjaan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.pekerjaan}
-  />
+          <InputFieldDropdown
+            inputLabel="Status Perkawinan"
+            options={["Belum Menikah", "Menikah", "Cerai"]}
+            data={formData.statusperkawinan}
+            setData={(val) => handleInputChange("statusperkawinan", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.statusperkawinan}
+          />
 
-  <InputField
-    inputLabel="Pendidikan"
-    inputPlaceholder="Pendidikan"
-    data={formData.pendidikan}
-    setData={(val) => handleInputChange("pendidikan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.pendidikan}
-  />
+          <InputField
+            inputLabel="Pekerjaan"
+            inputPlaceholder="Pekerjaan"
+            data={formData.pekerjaan}
+            setData={(val) => handleInputChange("pekerjaan", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.pekerjaan}
+          />
 
-  <InputFieldDropdown
-    inputLabel="Status Dalam Keluarga"
-    options={["Kepala Keluarga", "Istri", "Anak"]}
-    data={formData.statuskeluarga}
-    setData={(val) => handleInputChange("statuskeluarga", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.statuskeluarga}
-  />
+          <InputField
+            inputLabel="Pendidikan"
+            inputPlaceholder="Pendidikan"
+            data={formData.pendidikan}
+            setData={(val) => handleInputChange("pendidikan", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.pendidikan}
+          />
 
-  <InputField
-    inputLabel="NIK Ibu"
-    inputPlaceholder="NIK Ibu"
-    data={formData.nikibu}
-    setData={(val) => handleInputChange("nikibu", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.nikibu}
-  />
+          <InputFieldDropdown
+            inputLabel="Status Dalam Keluarga"
+            options={["Kepala Keluarga", "Istri", "Anak"]}
+            data={formData.statuskeluarga}
+            setData={(val) => handleInputChange("statuskeluarga", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.statuskeluarga}
+          />
 
-  <InputField
-    inputLabel="Nama Ibu"
-    inputPlaceholder="Nama Ibu"
-    data={formData.namaibu}
-    setData={(val) => handleInputChange("namaibu", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.namaibu}
-  />
+          <InputField
+            inputLabel="NIK Ibu"
+            inputPlaceholder="NIK Ibu"
+            data={formData.nikibu}
+            setData={(val) => handleInputChange("nikibu", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.nikibu}
+          />
 
-  <InputField
-    inputLabel="NIK Ayah"
-    inputPlaceholder="NIK Ayah"
-    data={formData.nikayah}
-    setData={(val) => handleInputChange("nikayah", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.nikayah}
-  />
+          <InputField
+            inputLabel="Nama Ibu"
+            inputPlaceholder="Nama Ibu"
+            data={formData.namaibu}
+            setData={(val) => handleInputChange("namaibu", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.namaibu}
+          />
 
-  <InputField
-    inputLabel="Nama Ayah"
-    inputPlaceholder="Nama Ayah"
-    data={formData.namaayah}
-    setData={(val) => handleInputChange("namaayah", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.namaayah}
-  />
+          <InputField
+            inputLabel="NIK Ayah"
+            inputPlaceholder="NIK Ayah"
+            data={formData.nikayah}
+            setData={(val) => handleInputChange("nikayah", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.nikayah}
+          />
 
-  <InputField
-    inputLabel="Alamat Sebelumnya"
-    inputPlaceholder="Alamat Sebelumnya"
-    data={formData.alamatsebelum}
-    setData={(val) => handleInputChange("alamatsebelum", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.alamatsebelum}
-  />
+          <InputField
+            inputLabel="Nama Ayah"
+            inputPlaceholder="Nama Ayah"
+            data={formData.namaayah}
+            setData={(val) => handleInputChange("namaayah", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.namaayah}
+          />
 
-  <InputField
-    inputLabel="Alamat Sekarang"
-    inputPlaceholder="Alamat Sekarang"
-    data={formData.alamatsetelah}
-    setData={(val) => handleInputChange("alamatsetelah", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.alamatsetelah}
-  />
+          <InputField
+            inputLabel="Alamat Sebelumnya"
+            inputPlaceholder="Alamat Sebelumnya"
+            data={formData.alamatsebelum}
+            setData={(val) => handleInputChange("alamatsebelum", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.alamatsebelum}
+          />
 
-  <InputField
-    inputLabel="Kewarganegaraan"
-    inputPlaceholder="Kewarganegaraan"
-    data={formData.kewarganegaraan}
-    setData={(val) => handleInputChange("kewarganegaraan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.kewarganegaraan}
-  />
+          <InputField
+            inputLabel="Alamat Sekarang"
+            inputPlaceholder="Alamat Sekarang"
+            data={formData.alamatsetelah}
+            setData={(val) => handleInputChange("alamatsetelah", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.alamatsetelah}
+          />
 
-  <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
-    Data Kepemilikan Dokumen
-  </h1>
+          <InputField
+            inputLabel="Kewarganegaraan"
+            inputPlaceholder="Kewarganegaraan"
+            data={formData.kewarganegaraan}
+            setData={(val) => handleInputChange("kewarganegaraan", val)}
+            setEditData={setEditData}
+            editData={editData}
+            submited={submited}
+            error={errors.kewarganegaraan}
+          />
 
-  <InputField
-    inputLabel="Nomor Kartu Keluarga"
-    inputPlaceholder="Nomor Kartu Keluarga"
-    data={formData.nomorKK}
-    setData={(val) => handleInputChange("nomorKK", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.nomorKK}
-  />
+      <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
+        Data Kepemilikan Dokumen
+      </h1>
 
-  <InputField
-    inputLabel="Nomor Paspor (Opsional)"
-    inputPlaceholder="Nomor Paspor"
-    data={formData.Nomorpaspor}
-    setData={(val) => handleInputChange("Nomorpaspor", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.Nomorpaspor}
-  />
+            <InputField
+              inputLabel="Nomor Kartu Keluarga"
+              inputPlaceholder="Nomor Kartu Keluarga"
+              data={formData.nomorKK}
+              setData={(val) => handleInputChange("nomorKK", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.nomorKK}
+            />
 
-  <InputFieldDate
-    inputLabel="Tanggal Kadaluarsa Paspor (Opsional)"
-    data={formData.TanggalKadaluarsaPaspor}
-    setData={(val) => handleInputChange("TanggalKadaluarsaPaspor", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.TanggalKadaluarsaPaspor}
-  />
+            <InputField
+              inputLabel="Nomor Paspor (Opsional)"
+              inputPlaceholder="Nomor Paspor"
+              data={formData.Nomorpaspor}
+              setData={(val) => handleInputChange("Nomorpaspor", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.Nomorpaspor}
+            />
 
-  <InputField
-    inputLabel="Nomor Akta Kelahiran"
-    inputPlaceholder="Nomor Akta Kelahiran"
-    data={formData.NomorAktakelahiran}
-    setData={(val) => handleInputChange("NomorAktakelahiran", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.NomorAktakelahiran}
-  />
+            <InputFieldDate
+              inputLabel="Tanggal Kadaluarsa Paspor (Opsional)"
+              data={formData.TanggalKadaluarsaPaspor}
+              setData={(val) => handleInputChange("TanggalKadaluarsaPaspor", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.TanggalKadaluarsaPaspor}
+            />
 
-  <InputField
-    inputLabel="Nomor Akta Perkawinan (Opsional)"
-    inputPlaceholder="Nomor Akta Perkawinan"
-    data={formData.NomorAktaPerkawinan}
-    setData={(val) => handleInputChange("NomorAktaPerkawinan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.NomorAktaPerkawinan}
-  />
+            <InputField
+              inputLabel="Nomor Akta Kelahiran"
+              inputPlaceholder="Nomor Akta Kelahiran"
+              data={formData.NomorAktakelahiran}
+              setData={(val) => handleInputChange("NomorAktakelahiran", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.NomorAktakelahiran}
+            />
 
-  <InputFieldDate
-    inputLabel="Tanggal Perkawinan (Opsional)"
-    data={formData.TanggalPerkawinan}
-    setData={(val) => handleInputChange("TanggalPerkawinan", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.TanggalPerkawinan}
-  />
+            <InputField
+              inputLabel="Nomor Akta Perkawinan (Opsional)"
+              inputPlaceholder="Nomor Akta Perkawinan"
+              data={formData.NomorAktaPerkawinan}
+              setData={(val) => handleInputChange("NomorAktaPerkawinan", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.NomorAktaPerkawinan}
+            />
 
-  <InputField
-    inputLabel="Nomor Akta Perceraian (Opsional)"
-    inputPlaceholder="Nomor Akta Perceraian"
-    data={formData.NomorAktaPerceraian}
-    setData={(val) => handleInputChange("NomorAktaPerceraian", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.NomorAktaPerceraian}
-  />
+            <InputFieldDate
+              inputLabel="Tanggal Perkawinan (Opsional)"
+              data={formData.TanggalPerkawinan}
+              setData={(val) => handleInputChange("TanggalPerkawinan", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.TanggalPerkawinan}
+            />
 
-  <InputFieldDate
-    inputLabel="Tanggal Perceraian (Opsional)"
-    data={formData.TanggalPerceraian}
-    setData={(val) => handleInputChange("TanggalPerceraian", val)}
-    setEditData={setEditData}
-    editData={editData}
-    submited={submited}
-    error={errors.TanggalPerceraian}
-  />
+            <InputField
+              inputLabel="Nomor Akta Perceraian (Opsional)"
+              inputPlaceholder="Nomor Akta Perceraian"
+              data={formData.NomorAktaPerceraian}
+              setData={(val) => handleInputChange("NomorAktaPerceraian", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.NomorAktaPerceraian}
+            />
+
+            <InputFieldDate
+              inputLabel="Tanggal Perceraian (Opsional)"
+              data={formData.TanggalPerceraian}
+              setData={(val) => handleInputChange("TanggalPerceraian", val)}
+              setEditData={setEditData}
+              editData={editData}
+              submited={submited}
+              error={errors.TanggalPerceraian}
+            />
 
             {/* ... Lanjutkan untuk semua field lainnya, baik yang wajib maupun opsional ... */}
 

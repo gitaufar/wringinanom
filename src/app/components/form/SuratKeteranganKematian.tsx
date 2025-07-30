@@ -27,6 +27,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
   const initialData = {
     namaPengaju: "",
     nikPengaju: "",
+    no_wa:"",
     // Data Almarhum/ah
     namaAlmarhum: "",
     namaOrangTua: "",
@@ -114,6 +115,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.nikPengaju,
           jenis_surat: "kematian",
           tipe: tipe,
@@ -197,6 +199,7 @@ export default function SuratKeteranganKematian({ tipe }: SuratKeteranganKematia
             <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pengaju</h1>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
             <InputField inputLabel="NIK Pengaju" inputPlaceholder="NIK Pengaju" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nikPengaju} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
 
             <h1 className="text-black text-xl lg:text-[24px] font-bold pt-4">Data Almarhum/ah</h1>
             <InputField inputLabel="Nama" inputPlaceholder="Nama Almarhum/ah" data={formData.namaAlmarhum} setData={(val) => handleInputChange("namaAlmarhum", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaAlmarhum} />

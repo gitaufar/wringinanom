@@ -25,6 +25,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidakMampuProps): ReactNode {
   const initialData = {
+  no_wa:"",  
   nama: "",
   nik: "",
   kotaLahir: "",
@@ -97,6 +98,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.nik,
           jenis_surat: "tidak_mampu",
           tipe: tipe,
@@ -189,6 +191,7 @@ export default function SuratKeteranganTidakMampu({ tipe }: SuratKeteranganTidak
 
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.nama} setData={(val) => handleInputChange("nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nama} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nik} numberOnly />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kota/Kabupaten Lahir" data={formData.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} inputPlaceholder="Kota/Kabupaten" error={errors.kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />
