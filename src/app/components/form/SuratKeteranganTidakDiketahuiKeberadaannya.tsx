@@ -24,6 +24,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganTidakDiketahuiKeberadaannya({ tipe }: SuratKeteranganTidakDiketahuiKeberadaannyaProps): ReactNode {
   const initialData = {
+    no_wa:"",
     namaPengaju: "",
     nikPengaju: "",
     namaBersangkutan: "",
@@ -100,6 +101,7 @@ const handleConfirm = async (): Promise<void> => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.nikPengaju,
           jenis_surat: "tidak_diketahui",
           tipe: tipe,
@@ -183,6 +185,7 @@ const handleConfirm = async (): Promise<void> => {
             <h2 className="text-xl font-bold">Data Pengaju</h2>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nikPengaju} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
           </div>
 
           <div className="space-y-3">

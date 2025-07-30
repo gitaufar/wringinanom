@@ -26,6 +26,7 @@ export default function SuratKeteranganTidakKeberatan({
   tipe,
 }: SuratKeteranganTidakKeberatanProps): ReactNode {
   const initialData = {
+    no_wa:"",
     pengaju: {
       nama: "",
       nik: "",
@@ -155,6 +156,7 @@ export default function SuratKeteranganTidakKeberatan({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.pengaju.nik,
           jenis_surat: "tidak_keberatan",
           tipe: tipe,
@@ -237,6 +239,7 @@ export default function SuratKeteranganTidakKeberatan({
             <h2 className="text-xl font-bold">Data Pengaju (Orang Tua)</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.pengaju.nama} setData={(val) => handleInputChange("pengaju.nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_nama} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.pengaju.nik} setData={(val) => handleInputChange("pengaju.nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.pengaju_nik} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.pengaju.kotaLahir} setData={(val) => handleInputChange("pengaju.kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.pengaju.tanggalLahir} setData={(val) => handleInputChange("pengaju.tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_tanggalLahir} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.pengaju.jenisKelamin} setData={(val) => handleInputChange("pengaju.jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pengaju_jenisKelamin} />

@@ -26,6 +26,7 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({
   tipe,
 }: SuratKeteranganDitinggalSuamiAtauIstriProps): ReactNode {
   const initialState = {
+    no_wa:"",
     namaPengaju: "",
     nikPengaju: "",
     pihakYgMeninggalkan: {
@@ -137,6 +138,7 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:form.no_wa,
           nik: form.nikPengaju,
           jenis_surat: "ditinggal_pasangan",
           tipe,
@@ -220,6 +222,7 @@ export default function SuratKeteranganDitinggalSuamiAtauIstri({
             </h2>
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nikPengaju} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={form.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
 
             <h2 className="text-black text-xl lg:text-2xl font-bold pt-4">
               Data Pasangan Yang Meninggalkan

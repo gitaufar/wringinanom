@@ -25,6 +25,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJandaProps): ReactNode {
   const initialData = {
+    no_wa:"",
     namaPengaju: "",
     nikPengaju: "",
     namaLengkap: "",
@@ -105,6 +106,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.nikPengaju,
           jenis_surat: "duda_janda",
           tipe: tipe,
@@ -202,6 +204,7 @@ export default function SuratKeteranganDudaJanda({ tipe }: SuratKeteranganDudaJa
             </h1>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaLengkap} setData={(val) => handleInputChange("namaLengkap", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaLengkap} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.kabupaten} setData={(val) => handleInputChange("kabupaten", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kabupaten} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} numberOnly setEditData={setEditData} editData={editData} submited={submited} error={errors.nik} />
             <InputField inputLabel="Nomor Kartu Keluarga" inputPlaceholder="Nomor Kartu Keluarga" data={formData.nomorKartuKeluarga} setData={(val) => handleInputChange("nomorKartuKeluarga", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nomorKartuKeluarga} />

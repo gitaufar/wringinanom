@@ -27,6 +27,7 @@ export default function SuratKeteranganBedaIdentitas({
   tipe,
 }: SuratKeteranganBedaIdentitasProps): ReactNode { 
   const initialState = {
+    no_wa:"",
     namaPengaju: "",
     nikPengaju: "",
     namaLama: "",
@@ -94,6 +95,7 @@ export default function SuratKeteranganBedaIdentitas({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: form.no_wa,
           nik: form.nikPengaju,
           jenis_surat: "Beda Identitas",
           tipe,
@@ -207,6 +209,15 @@ export default function SuratKeteranganBedaIdentitas({
               numberOnly
               error={errors.nikPengaju}
             />
+            <InputField 
+              inputLabel="Nomor WA" 
+              inputPlaceholder="No. WA" 
+              data={form.no_wa} 
+              setData={(val) => handleInputChange("no_wa", val)} 
+              setEditData={setEdit} 
+              editData={edit} 
+              submited={submited} 
+              error={errors.no_wa} />
           </div>
 
           <div className="space-y-3">

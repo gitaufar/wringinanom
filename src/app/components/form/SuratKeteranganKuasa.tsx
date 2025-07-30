@@ -25,6 +25,7 @@ export default function SuratKeteranganKuasa({
   tipe,
 }: SuratKeteranganKuasaProps): ReactNode {
   const initialData = {
+    no_wa:"",
     pemberiKuasa: {
       nama: "",
       kotaLahir: "",
@@ -149,6 +150,7 @@ export default function SuratKeteranganKuasa({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.pemberiKuasa.nik,
           jenis_surat: "kuasa",
           tipe: tipe,
@@ -228,6 +230,7 @@ export default function SuratKeteranganKuasa({
             noValidate
             className="w-full max-w-[1320px] p-4 md:p-8 lg:p-[60px] flex flex-col gap-6 rounded-[15px] bg-white shadow"
           >
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <h1 className="text-black text-xl lg:text-[24px] font-bold">Data Pemberi Kuasa</h1>
             <InputField inputLabel="Nama Pemberi Kuasa" inputPlaceholder="Nama Pemberi Kuasa" data={formData.pemberiKuasa.nama} setData={(val) => handleInputChange("pemberiKuasa.nama", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberiKuasa_nama} />
             <InputField inputLabel="Kota Lahir" inputPlaceholder="Kota Lahir" data={formData.pemberiKuasa.kotaLahir} setData={(val) => handleInputChange("pemberiKuasa.kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pemberiKuasa_kotaLahir} />

@@ -13,12 +13,12 @@ type FormErrors = {
   [key: string]: string | undefined;
 };
 
-// Tipe spesifik untuk response dari API
+
 type ApiResponse = {
   permohonan: {
     no_resi: string;
   };
-  error?: string; // error bersifat opsional
+  error?: string; 
 };
 
 export default function PengajuanKeteranganAnakKandung({
@@ -32,6 +32,7 @@ export default function PengajuanKeteranganAnakKandung({
   const [errors, setErrors] = useState<FormErrors>({});
 
   const initialState = {
+    no_wa: "",
     namaPengaju: "",
     nikPengaju: "",
     namaLengkap: "",
@@ -50,6 +51,7 @@ export default function PengajuanKeteranganAnakKandung({
     const newErrors: FormErrors = {};
 
     // Validasi field level atas
+    if (!form.no_wa.trim()) newErrors.no_wa = "Nomor WA wajib diisi"
     if (!form.namaPengaju.trim()) newErrors.namaPengaju = "Nama Pengaju wajib diisi.";
     if (!form.nikPengaju.trim()) newErrors.nikPengaju = "NIK Pengaju wajib diisi.";
     if (!form.namaLengkap.trim()) newErrors.namaLengkap = "Nama Anak wajib diisi.";
@@ -99,6 +101,7 @@ export default function PengajuanKeteranganAnakKandung({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: form.no_wa,
           nik: form.nikPengaju,
           jenis_surat: "SK Anak Kandung",
           tipe,
@@ -182,6 +185,7 @@ export default function PengajuanKeteranganAnakKandung({
               <h2 className="text-xl font-bold">Nama Pengaju</h2>
               <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => { setForm({ ...form, namaPengaju: val }); if(errors.namaPengaju) setErrors(prev => ({...prev, namaPengaju: undefined})) }} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaPengaju} />
               <InputField inputLabel="NIK" inputPlaceholder="NIK Pengaju" data={form.nikPengaju} setData={(val) => { setForm({ ...form, nikPengaju: val }); if(errors.nikPengaju) setErrors(prev => ({...prev, nikPengaju: undefined})) }} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikPengaju} />
+              <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={form.no_wa} setData={(val) => { setForm({...form, no_wa: val}); if(errors.no_wa) setErrors(prev => ({...prev, nikPengaju: undefined})) }} setEditData={setEdit} editData={edit} submited={submited} error={errors.no_wa} />
             </div>
 
             <div className="space-y-3">

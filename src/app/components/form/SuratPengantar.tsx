@@ -25,6 +25,7 @@ type ApiResponse = {
 export default function SuratPengantar({ tipe }: SuratPengantarProps): ReactNode {
   
   const initialData = {
+    no_wa:"",
     namaLengkap: "",
     kotaLahir: "",
     tanggalLahir: "",
@@ -102,6 +103,7 @@ export default function SuratPengantar({ tipe }: SuratPengantarProps): ReactNode
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa: formData.no_wa,
           nik: formData.nik,
           jenis_surat: "pengantar",
           tipe: tipe,
@@ -187,6 +189,7 @@ export default function SuratPengantar({ tipe }: SuratPengantarProps): ReactNode
           <div className="space-y-3">
             <h2 className="text-xl font-bold">Data Pengaju</h2>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaLengkap} setData={(val) => handleInputChange("namaLengkap", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaLengkap} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten" data={formData.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} numberOnly error={errors.nik} />

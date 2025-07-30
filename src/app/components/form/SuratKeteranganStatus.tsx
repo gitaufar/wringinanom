@@ -26,6 +26,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganStatus({ tipe }: SuratKeteranganStatusProps): ReactNode {
   const initialData = {
+  no_wa:"",
   namaPengaju: "",
   binti: "", 
   nik: "",
@@ -104,6 +105,7 @@ const validateForm = (): FormErrors => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.nik,
           jenis_surat: "status",
           tipe: tipe,
@@ -192,8 +194,9 @@ const validateForm = (): FormErrors => {
             {/* DIUBAH: Semua input disesuaikan dengan state baru dan sistem validasi */}
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">Data Diri</h1>
             <InputField inputLabel="Nama Lengkap" inputPlaceholder="Nama Lengkap" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
-            <InputField inputLabel="Binti / Bin" inputPlaceholder="Nama Ayah Kandung" data={formData.binti} setData={(val) => handleInputChange("binti", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.binti} />
             <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nik} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
+            <InputField inputLabel="Binti / Bin" inputPlaceholder="Nama Ayah Kandung" data={formData.binti} setData={(val) => handleInputChange("binti", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.binti} />
             <InputField inputLabel="Kota/Kabupaten Lahir" inputPlaceholder="Kota/Kabupaten Lahir" data={formData.kotaLahir} setData={(val) => handleInputChange("kotaLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kotaLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
             <InputFieldDropdown inputLabel="Jenis Kelamin" options={["Laki-laki", "Perempuan"]} data={formData.jenisKelamin} setData={(val) => handleInputChange("jenisKelamin", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.jenisKelamin} />

@@ -25,6 +25,7 @@ type ApiResponse = {
 
 export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPenghasilanProps): ReactNode {
   const initialData = {
+    no_wa:"",
     namaPengaju: "",
     kabupatenLahir: "",
     tanggalLahir: "",
@@ -79,6 +80,7 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
     setEditData(false);
 
     const data_dinamis = {
+      no_wa: formData.no_wa,
       nama: formData.namaPengaju,
       kota: formData.kabupatenLahir,
       tanggalLahir: formData.tanggalLahir,
@@ -94,6 +96,7 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:formData.no_wa,
           nik: formData.nik,
           jenis_surat: "penghasilan",
           tipe: tipe,
@@ -183,11 +186,11 @@ export default function SuratKeteranganPenghasilan({ tipe }: SuratKeteranganPeng
             <h1 className="text-black text-[32px] lg:text-[40px] font-bold">
               Data Pengaju
             </h1>
-
             <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={formData.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.namaPengaju} />
+            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nik} />
+            <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={formData.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.no_wa} />
             <InputField inputLabel="Kabupaten Lahir" inputPlaceholder="Kabupaten Lahir" data={formData.kabupatenLahir} setData={(val) => handleInputChange("kabupatenLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.kabupatenLahir} />
             <InputFieldDate inputLabel="Tanggal Lahir" data={formData.tanggalLahir} setData={(val) => handleInputChange("tanggalLahir", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.tanggalLahir} />
-            <InputField inputLabel="NIK" inputPlaceholder="NIK" data={formData.nik} setData={(val) => handleInputChange("nik", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.nik} />
             <InputField inputLabel="Pekerjaan" inputPlaceholder="Pekerjaan" data={formData.pekerjaan} setData={(val) => handleInputChange("pekerjaan", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.pekerjaan} />
             <InputField inputLabel="Alamat Lengkap" inputPlaceholder="Alamat Lengkap" data={formData.alamat} setData={(val) => handleInputChange("alamat", val)} setEditData={setEditData} editData={editData} submited={submited} error={errors.alamat} />
             {/* BARU: InputField ditambahkan */}

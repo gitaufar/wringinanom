@@ -28,6 +28,7 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
   const initialState = {
     namaPengaju: "",
     nikPengaju: "",
+    no_wa:"",
     
     dokumen1: "", 
     dokumen2: "", 
@@ -121,6 +122,7 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          no_wa:form.no_wa,
           nik: form.nikPengaju,
           jenis_surat: "identitas",
           tipe: tipe,
@@ -188,6 +190,7 @@ export default function SuratKeteranganIdentitas({ tipe }: SuratKeteranganIdenti
               <h2 className="text-xl font-bold">Nama Pengaju</h2>
               <InputField inputLabel="Nama Pengaju" inputPlaceholder="Nama Pengaju" data={form.namaPengaju} setData={(val) => handleInputChange("namaPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.namaPengaju} />
               <InputField inputLabel="NIK" inputPlaceholder="NIK" data={form.nikPengaju} setData={(val) => handleInputChange("nikPengaju", val)} setEditData={setEdit} editData={edit} submited={submited} numberOnly error={errors.nikPengaju} />
+              <InputField inputLabel="Nomor WA" inputPlaceholder="No. WA Pengaju" data={form.no_wa} setData={(val) => handleInputChange("no_wa", val)} setEditData={setEdit} editData={edit} submited={submited} error={errors.no_wa} />
             </div>
 
             <div className="space-y-3 mt-8">
