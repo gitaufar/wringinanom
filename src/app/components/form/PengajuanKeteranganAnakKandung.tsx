@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import type { ReactNode } from 'react'; // Impor tipe ReactNode
+import type { ReactNode } from 'react'; 
 import InputField from "../../components/field/InputField";
 import InputFieldDate from "../../components/field/InputFieldDate";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
@@ -18,7 +18,7 @@ type ApiResponse = {
   permohonan: {
     no_resi: string;
   };
-  error?: string; 
+  error?: string;   
 };
 
 export default function PengajuanKeteranganAnakKandung({
@@ -90,7 +90,7 @@ export default function PengajuanKeteranganAnakKandung({
   };
 
   const handleConfirm = async (): Promise<void> => {
-    setSubmited(null);
+    setSubmited("");
     setLoading(true);
 
     const angkaNum = parseInt(form.anakKe || "0");
@@ -148,7 +148,7 @@ export default function PengajuanKeteranganAnakKandung({
     setForm(initialState);
     setErrors({});
     setEdit(true);
-    setSubmited(null);
+    setSubmited("");
   };
 
   return (
