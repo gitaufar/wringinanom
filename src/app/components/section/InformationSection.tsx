@@ -21,7 +21,7 @@ const InformationSection: React.FC = () => {
           <ButtonGeneral
             text="Telepon"
             onClick={() =>
-            (window.location.href = "https://wa.me/6281945551589")
+            (window.location.href = "https://wa.me/6282232331839")
           }
           />
         </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { JSX, useEffect, useState } from "react";
-import { FaPhone, FaCheck, FaTimes, FaEye } from "react-icons/fa";
+import { FaPhone, FaCheck, FaTimes, } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
 import StatusCard from "../../components/card/StatusCard";
 import * as mammoth from "mammoth";
 import ConfirmationModal from "@/app/components/modal/ConfirmationModal";
@@ -209,7 +210,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps): JSX.Eleme
                   className="p-2 rounded hover:bg-green-50"
                   title="Setujui"
                   onClick={() => {
-
+                    
                   }}
                 >
                   <FaCheck className="text-green-600" size={16} />
@@ -235,7 +236,7 @@ const TabelPermohonan = ({ setChange, change }: TabelPermohonanProps): JSX.Eleme
                     }
                   }}
                 >
-                  <FaEye className="text-blue-600" size={16} />
+                  <IoMdDownload className="text-white-600" size={16} />
                 </button>
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">

@@ -24,7 +24,7 @@ const steps = [
     number: "03",
     title: "Kirim dan Tunggu Notifikasi",
     description:
-      "Setelah formulir dikirim, sistem akan memproses dan mengirim nomor resi saat laporan dibuat. Kamu juga bisa cek statusnya di kolom pencarian menggunakan nomor resi yang diberikan.",
+      "Setelah formulir dikirim, sistem akan memproses dan mengirim nomor resi saat laporan dibuat. Anda juga bisa cek statusnya di kolom pencarian menggunakan nomor resi yang diberikan.",
     icon: <BellRing size={48} />,
   },
 ];
@@ -51,7 +51,7 @@ const TutorialSection = (): JSX.Element => {
             window.open("https://youtu.be/KITcZh7CWos", "_blank");
           }} 
         />
-      </div>
+      </div>  
 
       {/* Kanan: Step List */}
       <div
