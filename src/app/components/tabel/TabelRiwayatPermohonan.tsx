@@ -67,16 +67,22 @@ const TabelRiwayatPermohonan = ({
       const params = new URLSearchParams({
         page: page.toString(),
         limit: pagination.limit.toString(),
-        exclude_menunggu: "true", // Always exclude "Menunggu" status for riwayat
       });
+
+      // Handle status filtering logic properly
+      if (statusFilter && statusFilter !== "") {
+        // If specific status is selected, use that
+        params.append("status", statusFilter);
+      } else {
+        // If no specific status selected, exclude "Menunggu" for riwayat
+        params.append("exclude_menunggu", "true");
+      }
 
       if (searchTerm.trim()) {
         params.append("search", searchTerm.trim());
       }
 
-      if (statusFilter && statusFilter !== "") {
-        params.append("status", statusFilter);
-      }
+      console.log("Fetch params:", params.toString()); // Debug log
 
       const res = await fetch(`/api/layanan?${params.toString()}`);
       const result = (await res.json()) as ApiResponse;
@@ -201,8 +207,7 @@ const TabelRiwayatPermohonan = ({
 
   // Fungsi untuk download surat
   const handleDownload = async (item: DataRiwayat): Promise<void> => {
-    const { nik, no_resi, tipe, data_dinamis, penduduk, status } =
-      item;
+    const { nik, no_resi, tipe, data_dinamis, penduduk, status } = item;
 
     // Cek apakah surat sudah selesai
     if (status !== "Selesai") {

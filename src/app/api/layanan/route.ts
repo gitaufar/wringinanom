@@ -5,18 +5,6 @@ import { Prisma } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 
 // Type untuk response data dari query
-type RiwayatLayananWithRelations = Prisma.riwayatlayananGetPayload<{
-  include: {
-    penduduk: true;
-    permohonansurat: {
-      select: {
-        data_dinamis: true;
-        no_wa: true;
-        nik: true;
-      };
-    };
-  };
-}>;
 
 // Type untuk where clause
 type WhereClause = {
@@ -43,6 +31,7 @@ type WhereClause = {
   }>;
 };
 
+// First, update your type definitions
 // First, update your type definitions
 type LayananApiResponse = {
   no_resi: string;
@@ -124,15 +113,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     // Handle status filtering - exclude "Menunggu" by default for riwayat
-    if (excludeMenunggu === "true") {
-      whereClause.status = {
-        not: "Menunggu",
-      };
-    } else if (
+    if (
       statusParam &&
       ["Menunggu", "Selesai", "Dibatalkan"].includes(statusParam)
     ) {
+      // If specific status is requested, use that
       whereClause.status = statusParam;
+    } else if (excludeMenunggu === "true") {
+      // If no specific status but exclude_menunggu is true, exclude "Menunggu"
+      whereClause.status = {
+        not: "Menunggu",
+      };
     }
 
     // Search by nama or no_resi
@@ -249,7 +240,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 }
-
 export async function DELETE(req: Request): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
