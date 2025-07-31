@@ -95,20 +95,6 @@ export default function LoginScreen(): JSX.Element {
             />
           </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="remember"
-              checked={rememberPassword}
-              onChange={(e) => setRememberPassword(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-            />
-            <label htmlFor="remember" className="text-gray-600 text-sm">
-              Remember Password
-            </label>
-          </div>
-
           {/* Error Message */}
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 

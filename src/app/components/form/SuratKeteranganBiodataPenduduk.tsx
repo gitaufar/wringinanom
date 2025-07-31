@@ -139,7 +139,7 @@ export default function SuratKeteranganBiodataPenduduk({ tipe }: SuratKeterangan
     alamatLama: formData.alamatsebelum,
     alamatBaru: formData.alamatsetelah,
     noKK: formData.nomorKK,
-    Nopaspor: formData.Nomorpaspor ,
+    noPaspor: formData.Nomorpaspor ,
     tglBerakhirPaspor: formData.TanggalKadaluarsaPaspor ,
     noAktaKelahiran: formData.NomorAktakelahiran,
     noAktaPerkawinan: formData.NomorAktaPerkawinan,
