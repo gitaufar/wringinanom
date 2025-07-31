@@ -160,6 +160,7 @@ const TabelRiwayatPermohonan = ({
   // Fungsi untuk membuka WhatsApp
   const handleWhatsApp = (item: DataRiwayat): void => {
     const { no_wa, penduduk, tipe, no_resi, status } = item;
+    console.log(item.no_wa);
 
     if (!no_wa) {
       alert("Nomor WhatsApp tidak tersedia untuk riwayat ini.");
@@ -207,7 +208,7 @@ const TabelRiwayatPermohonan = ({
 
   // Fungsi untuk download surat
   const handleDownload = async (item: DataRiwayat): Promise<void> => {
-    const { nik, no_resi, tipe, data_dinamis, penduduk, status } = item;
+    const { no_resi, tipe, data_dinamis, penduduk, status } = item;
 
     // Cek apakah surat sudah selesai
     if (status !== "Selesai") {

@@ -182,6 +182,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         tipe: item.tipe,
         keterangan: item.keterangan,
         status: item.status,
+        data_dinamis: item.data_dinamis,
+        no_wa: item.no_wa,
         penduduk: item.penduduk,
       };
 
