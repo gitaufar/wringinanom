@@ -7,7 +7,8 @@ import HeroSection from '../section/HeroSection';
 import LayananSection from '../section/LayananSection';
 import TutorialSection from '../section/TutorialSection';
 import InformationSection from '../section/InformationSection';
-import Footer from '../section/Footer';
+import { Component } from '../section/Footer';
+
 
 const LandingPage = (): JSX.Element => {
   useEffect(() => {
@@ -48,7 +49,7 @@ const LandingPage = (): JSX.Element => {
 
       {/* Footer */}
       <section className="w-full" data-aos="fade-up">
-        <Footer />
+        <Component />
       </section>
 
     </main>

@@ -16,7 +16,7 @@ const createSlug = (title: string) =>
 // Data surat dideklarasikan di luar komponen agar stable across renders
 const BASE_LETTERS = [
   // { id: 1, title: "Surat Keterangan Anak Kandung", description: "Surat keterangan yang menyatakan hubungan anak kandung.", topic: "Pemerintahan", link:"anak_kandung" },
-  { id: 3, title: "Surat Keterangan Beda Identitas Formal", description: "Surat keterangan perbedaan identitas secara resmi.", topic: "Pemerintahan", link:"beda_identitas" },
+  { id: 3, title: "Surat Keterangan Beda Identitas", description: "Surat keterangan perbedaan identitas secara resmi.", topic: "Pemerintahan", link:"beda_identitas" },
   { id: 4, title: "Surat Keterangan Belum Nikah", description: "Surat keterangan yang menyatakan belum menikah.", topic: "Pemerintahan", link:"belum_nikah" },
   { id: 5, title: "Surat Keterangan Biodata Penduduk", description: "Surat yang memuat biodata lengkap seorang penduduk.", topic: "Pemerintahan", link:"biodata_penduduk" },
   { id: 6, title: "Surat Keterangan Duda atau Janda", description: "Surat keterangan status sebagai duda atau janda.", topic: "Pemerintahan", link:"duda_janda" },
