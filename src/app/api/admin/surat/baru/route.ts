@@ -64,7 +64,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     "domisili": "C.01.01_Surat_Keterangan_Domisili.docx",
     "kuasa": "C.01.02_Surat_Keterangan_Kuasa.docx",
     "objek": "C.01.03_Surat_Keterangan_Objek.docx",
-    "penghasilan": "Surat_Keterangan_Penghasilan_Admin.docx",
+    "penghasilan": "Surat_Keterangan_Penghasilan_(ADMIN).docx",
     "usaha": "C.01.05_Surat_Keterangan_Usaha.docx",
   };
 

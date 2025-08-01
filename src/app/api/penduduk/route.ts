@@ -85,7 +85,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    // Type assertion untuk request body
     const data = (await req.json()) as PendudukRequest;
     const {
       nik,
@@ -133,68 +132,44 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     if (existing) {
-      const updated = await prisma.penduduk.update({
-        where: { nik },
-        data: {
-          no_kk,
-          nama_lengkap,
-          nama_ibu: nama_ibu || null,
-          nama_ayah: nama_ayah || null,
-          jenis_kelamin,
-          tempat_lahir,
-          tanggal_lahir: new Date(tanggal_lahir),
-          agama,
-          pendidikan,
-          pekerjaan: pekerjaan || null,
-          status_perkawinan,
-          tanggal_perkawinan: tanggal_perkawinan
-            ? new Date(tanggal_perkawinan)
-            : null,
-          status_keluarga,
-          alamat,
-          rt: typeof rt === "string" ? parseInt(rt, 10) : rt,
-          rw: typeof rw === "string" ? parseInt(rw, 10) : rw,
-        },
-      });
-
-      return NextResponse.json({
-        message: "✅ Data penduduk diperbarui",
-        penduduk: updated,
-      });
-    } else {
-      const created = await prisma.penduduk.create({
-        data: {
-          nik,
-          no_kk,
-          nama_lengkap,
-          nama_ibu: nama_ibu || null,
-          nama_ayah: nama_ayah || null,
-          jenis_kelamin,
-          tempat_lahir,
-          tanggal_lahir: new Date(tanggal_lahir),
-          agama,
-          pendidikan,
-          pekerjaan: pekerjaan || null,
-          status_perkawinan,
-          tanggal_perkawinan: tanggal_perkawinan
-            ? new Date(tanggal_perkawinan)
-            : null,
-          status_keluarga,
-          alamat,
-          rt: typeof rt === "string" ? parseInt(rt, 10) : rt,
-          rw: typeof rw === "string" ? parseInt(rw, 10) : rw,
-        },
-      });
-
-      return NextResponse.json({
-        message: "✅ Penduduk berhasil ditambahkan",
-        penduduk: created,
-      });
+      return NextResponse.json(
+        { message: "⚠️ Penduduk dengan NIK tersebut sudah ada" },
+        { status: 409 }
+      );
     }
+
+    const created = await prisma.penduduk.create({
+      data: {
+        nik,
+        no_kk,
+        nama_lengkap,
+        nama_ibu: nama_ibu || null,
+        nama_ayah: nama_ayah || null,
+        jenis_kelamin,
+        tempat_lahir,
+        tanggal_lahir: new Date(tanggal_lahir),
+        agama,
+        pendidikan,
+        pekerjaan: pekerjaan || null,
+        status_perkawinan,
+        tanggal_perkawinan: tanggal_perkawinan
+          ? new Date(tanggal_perkawinan)
+          : null,
+        status_keluarga,
+        alamat,
+        rt: typeof rt === "string" ? parseInt(rt, 10) : rt,
+        rw: typeof rw === "string" ? parseInt(rw, 10) : rw,
+      },
+    });
+
+    return NextResponse.json({
+      message: "✅ Penduduk berhasil ditambahkan",
+      penduduk: created,
+    });
   } catch (error: unknown) {
-    console.error("❌ Error tambah/update penduduk:", error);
+    console.error("❌ Error tambah penduduk:", error);
     return NextResponse.json(
-      { error: "Gagal menambah atau memperbarui penduduk" },
+      { error: "Gagal menambah penduduk" },
       { status: 500 }
     );
   }

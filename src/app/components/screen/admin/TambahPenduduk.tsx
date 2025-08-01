@@ -24,6 +24,13 @@ export type PendudukProps = {
   rw: string;
 };
 
+// Type for API response
+type ApiResponse = {
+  message?: string;
+  error?: string;
+  data?: unknown;
+};
+
 const defaultForm: PendudukProps = {
   nik: "",
   no_kk: "",
@@ -46,16 +53,15 @@ const defaultForm: PendudukProps = {
 
 type TambahPendudukProps = {
   formDataProps?: PendudukProps;
+  isEdit?: boolean;
 };
 
-// ✅ Perbaikan: tidak perlu assertion `as string`
 const sanitizeFormData = (data: PendudukProps | undefined): PendudukProps => {
   if (!data) return defaultForm;
 
   const sanitized = { ...data };
   (Object.keys(sanitized) as Array<keyof PendudukProps>).forEach((key) => {
-    const value = sanitized[key];
-    sanitized[key] = value ?? "";
+    sanitized[key] = sanitized[key] ?? "";
   });
 
   return sanitized;
@@ -63,13 +69,17 @@ const sanitizeFormData = (data: PendudukProps | undefined): PendudukProps => {
 
 export const TambahPenduduk = ({
   formDataProps,
+  isEdit = false,
 }: TambahPendudukProps): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<PendudukProps>(
     sanitizeFormData(formDataProps)
   );
+  const [showNikExistsModal, setShowNikExistsModal] = useState(false);
 
-  const [editStates, setEditStates] = useState<Record<keyof PendudukProps, boolean>>(
+  const [editStates, setEditStates] = useState<
+    Record<keyof PendudukProps, boolean>
+  >(
     Object.fromEntries(
       Object.keys(defaultForm).map((key) => [key, formDataProps ? false : true])
     ) as Record<keyof PendudukProps, boolean>
@@ -92,18 +102,33 @@ export const TambahPenduduk = ({
   const onSubmit = async (): Promise<void> => {
     setLoading(true);
     try {
-      const res = await fetch("/api/penduduk", {
-        method: "POST",
+      const endpoint = isEdit
+        ? `/api/penduduk/${formData.nik}`
+        : "/api/penduduk";
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(endpoint, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Gagal mengirim data");
+      // Type the response properly
+      const result: ApiResponse = await res.json() as ApiResponse;
 
-      const result: unknown = await res.json(); // ✅ Hindari `any`
+      if (!res.ok) {
+        if (res.status === 409 && result.message && result.message.includes("sudah ada")) {
+          setShowNikExistsModal(true);
+        } else {
+          throw new Error(result.error || "Gagal mengirim data");
+        }
+        return;
+      }
+
       resetForm();
-      alert("Data berhasil dikirim!");
-      console.log("✅ Data terkirim:", result);
+      alert(
+        isEdit ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!"
+      );
       window.location.href = "/admin/kependudukan";
     } catch (err) {
       console.error("❌ Gagal mengirim:", err);
@@ -124,7 +149,9 @@ export const TambahPenduduk = ({
 
   return (
     <main className="min-h-full w-full bg-[#F5F6FA] px-7 pb-10 pt-5 flex flex-col gap-6 relative">
-      <h1 className="text-black font-bold text-3xl">Tambah Penduduk</h1>
+      <h1 className="text-black font-bold text-3xl">
+        {isEdit ? "Edit Penduduk" : "Tambah Penduduk"}
+      </h1>
 
       <TambahPendudukForm
         formData={formData}
@@ -143,10 +170,31 @@ export const TambahPenduduk = ({
           {loading ? (
             <Spinner size="sm" />
           ) : (
-            <p className="text-white font-bold text-xl">Tambah</p>
+            <p className="text-white font-bold text-xl">
+              {isEdit ? "Simpan Perubahan" : "Tambah"}
+            </p>
           )}
         </button>
       </div>
+
+      {showNikExistsModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-2">Data Sudah Ada</h2>
+            <p className="text-sm mb-4">
+              Penduduk dengan NIK tersebut sudah terdaftar.
+            </p>
+            <div className="flex justify-end">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-md"
+                onClick={() => setShowNikExistsModal(false)}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

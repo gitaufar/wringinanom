@@ -85,5 +85,5 @@ export default function Page(): JSX.Element {
   if (error) return <p>Error: {error}</p>;
   if (!data) return <p>No data found</p>;
 
-  return <TambahPenduduk formDataProps={data} />;
+  return <TambahPenduduk formDataProps={data} isEdit={true} />;
 }
