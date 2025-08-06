@@ -57,6 +57,8 @@ interface SuratData {
   pekerjaan?: string;
   nik?: string;
   alamat?: string;
+  rt?: string;
+  rw?: string;
   namaLama?: string;
   noKK?: string;
   kewarganegaraan?: string;
@@ -161,6 +163,7 @@ interface SuratData {
   tujuanPengajuan?: string;
   namaDusun?: string;
   penghasilan?: number;
+  keterangan?: string;
 }
 
 function isDocxTemplaterError(error: unknown): error is DocxTemplaterError {
@@ -264,6 +267,9 @@ export async function POST(
       break;
     case "Surat Keterangan Usaha":
       pathFile = "C.01.05_Surat_Keterangan_Usaha.docx";
+      break;
+    case "Surat Keterangan Flexibel":
+      pathFile = "Surat_Keterangan_FLEXIBEL.docx";
       break;
     default:
       console.log("❌ Tipe surat tidak dikenali:", tipe);
@@ -746,6 +752,20 @@ export async function POST(
           Status_Perkawinan: body.statusPerkawinan,
           Alamat: body.alamat,
           Tanggal_Surat: tanggalSurat,
+        });
+        break;
+      case "Surat Keterangan Flexibel":
+        doc.setData({
+          Nama: body.nama,
+          Kota: body.kota,
+          Tanggal_Lahir: body.tanggalLahir,
+          NIK: body.nik,
+          Jenis_Kelamin: body.jenisKelamin,
+          Agama: body.agama,
+          Status_Perkawinan: body.statusPerkawinan,
+          Alamat: `Dusun ${body.alamat} RT ${body.rt} RW ${body.rw} Desa Wringinanom Kecamatan Poncokusumo Kabupaten Malang`,
+          Tanggal_Surat: tanggalSurat,
+          keterangan: body.keterangan,
         });
         break;
       default:

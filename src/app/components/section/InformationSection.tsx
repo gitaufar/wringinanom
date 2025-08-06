@@ -31,7 +31,7 @@ const InformationSection: React.FC = () => {
           <div
             className="w-full h-full rounded-full"
             style={{
-            background: 'url("/png/ACHMAD MUSLIMIN.JPG") center 10% / cover no-repeat',
+            background: 'url("/png/bg-perangkat.jpg") center 10% / cover no-repeat',
             flexShrink: 0,
       }}
           />
